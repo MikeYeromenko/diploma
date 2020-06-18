@@ -19,40 +19,41 @@ class SeanceListView(ListView):
     model = Seance
     template_name = 'seance/index.html'
 
-    # def get_queryset(self):
-    #     query = Q(is_active=True)
-    #
-    #     # if user wants to watch seances for tomorrow this key will be GET
-    #
-    #     if self.request.GET.get('days', None):
-    #         tomorrow = datetime.date.today() + datetime.timedelta(days=1)
-    #         query &= Q(date_starts__lte=tomorrow) & Q(date_ends__gte=tomorrow)
-    #     else:
-    #         query &= (Q(date_starts__lte=datetime.date.today()) & Q(date_ends__gte=datetime.date.today()) &
-    #                   Q(time_starts__gt=timezone.now()))
-    #
-    #     seances = Seance.objects.filter(query)
-    #
-    #     # if user selected type of ordering
-    #     ordering_param = self.request.GET.get('ordering', None)
-    #     if ordering_param:
-    #         seances = self.order_queryset(ordering_param, seances)
-    #     return seances
+    def get_queryset(self):
+        query = Q(seance_base__is_active=True)
 
-    # @staticmethod
-    # def order_queryset(ordering_param, seances):
-    #     """
-    #     orders seances queryset by users ordering
-    #     """
-    #     if ordering_param == 'cheap':
-    #         return seances.order_by('ticket_price')
-    #     elif ordering_param == 'expensive':
-    #         return seances.order_by('-ticket_price')
-    #     elif ordering_param == 'latest':
-    #         return seances.order_by('-time_starts')
-    #     elif ordering_param == 'closest':
-    #         return seances.order_by('time_starts')
-    #
+        # if user wants to watch seances for tomorrow this key will be in GET
+
+        if self.request.GET.get('days', None):
+            tomorrow = datetime.date.today() + datetime.timedelta(days=1)
+            query &= Q(seance_base__date_starts__lte=tomorrow) & Q(seance_base__date_ends__gte=tomorrow)
+        else:
+            query &= (Q(seance_base__date_starts__lte=datetime.date.today()) &
+                      Q(seance_base__date_ends__gte=datetime.date.today()) &
+                      Q(time_starts__gt=timezone.now()))
+
+        seances = Seance.objects.filter(query)
+
+        # if user selected type of ordering
+        ordering_param = self.request.GET.get('ordering', None)
+        if ordering_param:
+            seances = self.order_queryset(ordering_param, seances)
+        return seances
+
+    @staticmethod
+    def order_queryset(ordering_param, seances):
+        """
+        orders seances queryset by users ordering
+        """
+        if ordering_param == 'cheap':
+            return seances.order_by('ticket_price')
+        elif ordering_param == 'expensive':
+            return seances.order_by('-ticket_price')
+        elif ordering_param == 'latest':
+            return seances.order_by('-time_starts')
+        elif ordering_param == 'closest':
+            return seances.order_by('time_starts')
+
     # def get_context_data(self, *args, **kwargs):
     #     """
     #     Adds OrderingForm to context

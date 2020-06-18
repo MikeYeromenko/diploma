@@ -57,8 +57,19 @@ class Hall(models.Model):
         return self.name
 
     def validate_all_seats_created(self):
-        """Validates, that all seats for hall were created"""
-        pass
+        """Validates, that all seats for hall were created. If all seats created - returns True"""
+        return not bool(self.quantity_seats-self.seats.count())
+
+    def create_seats(self, row, number_start, number_end, admin, seat_category):
+        """Creates seats in hall corresponding to given by admin info"""
+        for number in range(number_start, number_end + 1):
+            Seat.objects.create(
+                hall=Hall.objects.get(name=self.name),
+                seat_category=seat_category,
+                number=number,
+                row=row,
+                admin=admin
+            )
 
 
 class SeatCategory(models.Model):
@@ -79,6 +90,11 @@ class Seat(models.Model):
     row = models.PositiveSmallIntegerField(default=0, verbose_name=_('number of row'))
     admin = models.ForeignKey(AdvUser, on_delete=models.PROTECT, verbose_name=_('instance created by'),
                               related_name='seats')
+
+    class Meta:
+        unique_together = ('row', 'number', 'hall')
+        verbose_name = _('seat')
+        verbose_name_plural = _('seats')
 
 
 class SeanceBase(models.Model):
@@ -125,8 +141,8 @@ class Seance(models.Model):
     time_starts = models.TimeField(verbose_name=_('starts at: '))
     time_ends = models.TimeField(null=True, blank=True, verbose_name=_('ends at: '))
     time_hall_free = models.TimeField(null=True, blank=True, verbose_name=_('ends at: '))
-    advertisements_duration = models.TimeField(default=datetime.time(0, 10), verbose_name=_('adds duration: '))
-    cleaning_duration = models.TimeField(default=datetime.time(0, 10), verbose_name=_('cleaning duration: '))
+    advertisements_duration = models.TimeField(null=True, blank=True, verbose_name=_('adds duration: '))
+    cleaning_duration = models.TimeField(null=True, blank=True, default=datetime.time(0, 10), verbose_name=_('cleaning duration: '))
     description = models.TextField(verbose_name=_('description'))
     seance_base = models.ForeignKey(SeanceBase, on_delete=models.PROTECT, related_name='seances',
                                     verbose_name=_('base seance'))
@@ -143,6 +159,10 @@ class Seance(models.Model):
         Adds time_ends if it wasn't added by admin
         """
         if not self.id:
+            if not self.advertisements_duration:
+                self.advertisements_duration = datetime.time(0, 10)
+            if not self.cleaning_duration:
+                self.cleaning_duration = datetime.time(0, 10)
             if not self.time_ends:
                 self.time_ends = self.get_time_ends
             if not self.time_hall_free:
