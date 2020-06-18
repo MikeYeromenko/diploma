@@ -9,10 +9,10 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone, dateformat
-from django.views.generic import ListView, CreateView, TemplateView, FormView, DetailView, RedirectView
+from django.views.generic import ListView, CreateView, TemplateView, FormView, DetailView, RedirectView, View
 
 from seance.forms import RegistrationForm, OrderingForm
-from seance.models import Seance, AdvUser, Hall, Seat
+from seance.models import Seance, AdvUser, Hall, Seat, Purchase, Ticket
 
 
 class SeanceListView(ListView):
@@ -127,10 +127,6 @@ class BasketRedirectView(LoginRequiredMixin, RedirectView):
         seance_pk = request.GET.get('seance', None)
         seance_date = request.GET.get('seance_date', None)
         basket = request.session.get('basket')
-        # if seance_date:
-        #     seance_date = datetime.datetime.strptime(seance_date, "%Y-%m-%d").date()
-        # else:
-        #     seance_date = datetime.date.today()
         if basket and seat_pk and seance_pk and seance_date and row and number:
             for key in basket:
                 if (basket[key]['seat_pk'] == seat_pk and
@@ -166,7 +162,16 @@ class BasketRedirectView(LoginRequiredMixin, RedirectView):
                 'created': dateformat.format(timezone.now(), 'Y-m-d H:i:s')
             }
             request.session['last_seance'] = seance_pk
+            request.session['total_price'] = self.get_total_price(request.session.get('basket'))
             request.session.modified = True
+
+    @staticmethod
+    def get_total_price(basket):
+        """count total price of tickets in the basket"""
+        total_price = 0
+        for key in basket:
+            total_price += float(basket[key]['price'])
+        return total_price
 
 
 class BasketCancelView(LoginRequiredMixin, RedirectView):
@@ -174,6 +179,93 @@ class BasketCancelView(LoginRequiredMixin, RedirectView):
 
     def dispatch(self, request, *args, **kwargs):
         key = request.GET.get('seance_cancel', None)
-        request.session.get('basket').pop(key)
+        request.session.get('basket').pop(key, None)
         request.session.modified = True
         return super(BasketCancelView, self).dispatch(request, *args, **kwargs)
+
+
+class TicketListView(ListView):
+    pass
+
+
+class PurchaseCreateView(LoginRequiredMixin, RedirectView):
+    url = reverse_lazy('seance:my_tickets')
+
+    def post(self, request, *args, **kwargs):
+        # if there are problems - don't create purchase
+        if not self.check_basket_and_total_price(request):
+            self.session_clean_and_redirect(request, *args, **kwargs)
+
+        # get user object
+        user = get_object_or_404(AdvUser, pk=request.user.pk)
+        tickets = []
+        total_price = self.get_price_and_create_datalist(request, tickets, *args, **kwargs)
+
+        if user.wallet - total_price >= 0:
+            user.wallet -= total_price
+            user.save()
+            purchase = Purchase.objects.create(user=user, total_price=total_price)
+            for ticket in tickets:
+                Ticket.objects.create(seance=ticket.get('seance'),
+                                      date_seance=ticket.get('data_seance'),
+                                      seat=ticket.get('seat'),
+                                      purchase=purchase
+                                      )
+            return super().post(request, *args, **kwargs)
+
+        messages.add_message(request, messages.INFO, 'Insufficient funds')
+        return self.session_clean_and_redirect(request, *args, **kwargs)
+
+    def session_clean_and_redirect(self, request, *args, **kwargs):
+        """Removes all custom data from session"""
+        self.url = reverse_lazy('seance:index')
+        request.session.pop('basket', None)
+        request.session.pop('last_seance', None)
+        request.session.pop('total_price', None)
+        return super().post(request, *args, **kwargs)
+
+    @staticmethod
+    def check_basket_and_total_price(request):
+        """Checks if user has tickets in basket and enough money for them"""
+        basket = request.session.get('basket', None)
+        total_price = request.session.get('total_price', None)
+        if not basket:
+            return False
+        if total_price:
+            if total_price > request.user.wallet:
+                messages.add_message(request, messages.INFO, 'Insufficient funds')
+                return False
+        return True
+
+    def get_price_and_create_datalist(self, request, tickets, *args, **kwargs):
+        """
+        Creates list with data for creating tickets.
+        We will create tickets only if initial data for all of them is OK
+        If not - clean basket and ask user to full it once again
+        List of initial data for tickets is saved in argument tickets, which is the same with
+        tickets in main post()
+
+        Also check that tickets with the same data don't exist
+        :returns total price of all tickets
+        """
+        basket = request.session.get('basket', None)
+        total_price = 0
+        for key in basket:
+            seat = get_object_or_404(Seat, pk=basket[key].get('seat_pk'))
+            seance = get_object_or_404(Seance, pk=basket[key].get('seance_pk'))
+            seance_date = basket[key].get('seance_date', None)
+            total_price += seance.prices.get(seat_category=seat.seat_category).price
+
+            # if ticket already exists or there problems with init. data - don't create purchase
+            if (not seat or not seance or not seance_date or
+                    Ticket.objects.filter(seance=seance, seat=seat, date_seance=seance_date)):
+                messages.add_message(request, messages.ERROR, 'Error occurred, please try once again')
+                self.session_clean_and_redirect(request, *args, **kwargs)
+            else:
+                tickets.append({
+                    'seance': seance,
+                    'date_seance': seance_date,
+                    'seat': seat
+                })
+        return total_price
+

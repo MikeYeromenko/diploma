@@ -128,7 +128,7 @@ class Price(models.Model):
     seance = models.ForeignKey('Seance', on_delete=models.PROTECT, related_name='prices', verbose_name=_('seance'))
     seat_category = models.ForeignKey(SeatCategory, on_delete=models.PROTECT,
                                       related_name='prices', verbose_name=_('seat category'))
-    price = models.DecimalField(max_digits=15, decimal_places=2, verbose_name=_('price per one seat'))
+    price = models.FloatField(verbose_name=_('price per one seat'))
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('instance created at'))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_('instance updated at'))
 
@@ -217,7 +217,7 @@ class Purchase(models.Model):
     user = models.ForeignKey(AdvUser, on_delete=models.PROTECT, related_name='purchases', verbose_name=_('user'))
 
     # maybe it has sense to set total_price as property without saving to database
-    total_price = models.DecimalField(max_digits=15, decimal_places=2, verbose_name=_('payed:'))
+    total_price = models.DecimalField(max_digits=15, decimal_places=2, verbose_name=_('total price'))
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('instance created at'))
     was_returned = models.BooleanField(default=False, verbose_name=_('was returned?'))
     returned_at = models.DateTimeField(blank=True, null=True, verbose_name=_('returned at'))
@@ -242,6 +242,9 @@ class Ticket(models.Model):
             if not self.date_seance:
                 self.date_seance = datetime.date.today()
         return super().save(*args, **kwargs)
+
+    class Meta:
+        unique_together = ('seance', 'date_seance', 'seat')
 
 
 class Return:

@@ -29,7 +29,8 @@
                 </form>
             {% endif %}
         {% if basket %}
-            <form action="" method="get">
+            <form action="{% url 'seance:buy' %}" method="post">
+                {% csrf_token %}
                 <input type="submit" value="{% trans 'Buy' %}" style="width: 90px; height: 50px">
             </form>
         {% endif %}

@@ -3,7 +3,7 @@ from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from seance.models import AdvUser
+from seance.models import AdvUser, Ticket
 
 
 class RegistrationForm(forms.ModelForm):
@@ -66,3 +66,11 @@ DAY_CHOICES = (
 class OrderingForm(forms.Form):
     ordering = forms.ChoiceField(choices=ORDERING_CHOICES, label=_('Order by'), required=False)
     days = forms.ChoiceField(choices=DAY_CHOICES, label=_('When?'), required=False)
+
+
+# class TicketForm(forms.Form):
+#     # film =
+#     row = forms.IntegerField(label=_('Row'))
+#     number = forms.IntegerField(label=_('Seat number'))
+#     date = forms.DateField(label=_('Date of seance'))
+
