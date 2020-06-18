@@ -50,7 +50,7 @@ def initial_db_base(apps, schema_editor):
     )
 
     # create seats for hall
-    for row in range(1, hall_yellow.quantity_rows):
+    for row in range(1, hall_yellow.quantity_rows + 1):
         for number in range(1, 10):
             Seat.objects.create(
                 hall=hall_yellow,

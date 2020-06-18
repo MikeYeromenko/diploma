@@ -36,53 +36,22 @@ class SeanceListView(ListView):
 
         # if user selected type of ordering
         ordering_param = self.request.GET.get('ordering', None)
-        # if ordering_param:
-        #     seances = self.order_queryset(ordering_param, seances)
+        if ordering_param:
+            seances = self.order_queryset(ordering_param, seances)
         return seances
 
-    # def order_queryset(self, ordering_param, seances):
-    #     """
-    #     orders seances queryset by users ordering
-    #     """
-    #     if ordering_param == 'cheap' or ordering_param == 'expensive':
-    #         return self.order_by_price(ordering_param, seances)
-    #     elif ordering_param == 'latest':
-    #         return seances.order_by('-time_starts')
-    #     elif ordering_param == 'closest':
-    #         return seances.order_by('time_starts')
-
-    @staticmethod
-    def order_by_price(ordering_param, seances):
+    def order_queryset(self, ordering_param, seances):
+        """
+        orders seances queryset by users ordering
+        """
         if ordering_param == 'cheap':
-            query = Q('seat_category__price_list__price')
-        else:
-            query = ~Q('seat_category__price_list__price')
-
-        # build a list of prices on tickets
-        prices = []
-        for i in range(0, len(seances)):
-            seat = seances[i].seance_base.hall.seats.order_by(query).first()
-            prices.append(seat.seat_category.price_list.price)
-
-        seances_result = []
-        if ordering_param == 'cheap':
-            for i in range(len(prices)):
-                # find index if minimal element
-                index = prices.index(min(prices))
-
-                # give the element of on that position the biggest value for it not to take place in search
-                prices[index] = max(prices) + 1
-                seances_result.append(seances[index])
-
+            return seances.order_by('prices__price')
         if ordering_param == 'expensive':
-            for i in range(len(prices)):
-                # find index if maximal element
-                index = prices.index(max(prices))
-
-                # give the element of on that position the lowest value for it not to take place in search
-                prices[index] = min(prices) - 1
-                seances_result.append(seances[index])
-        return seances_result
+            return seances.order_by('-prices__price')
+        elif ordering_param == 'latest':
+            return seances.order_by('-time_starts')
+        elif ordering_param == 'closest':
+            return seances.order_by('time_starts')
 
     def get_context_data(self, *args, **kwargs):
         """

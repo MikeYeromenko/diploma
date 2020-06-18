@@ -9,6 +9,11 @@ def filter_range(start, end):
     return list(range(start, end+1))
 
 
+@register.simple_tag(name='assign')
+def assign(value):
+    return value
+
+
 @register.simple_tag()
 def get_item(dictionary, key):
     return dictionary.get(key)

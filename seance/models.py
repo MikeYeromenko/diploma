@@ -91,6 +91,7 @@ class Seat(models.Model):
         unique_together = ('row', 'number', 'hall')
         verbose_name = _('seat')
         verbose_name_plural = _('seats')
+        ordering = ('row', 'number')
 
 
 class SeanceBase(models.Model):
