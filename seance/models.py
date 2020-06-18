@@ -217,7 +217,6 @@ class Purchase(models.Model):
     user = models.ForeignKey(AdvUser, on_delete=models.PROTECT, related_name='purchases', verbose_name=_('user'))
 
     # maybe it has sense to set total_price as property without saving to database
-    total_price = models.DecimalField(max_digits=15, decimal_places=2, verbose_name=_('total price'))
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('instance created at'))
     was_returned = models.BooleanField(default=False, verbose_name=_('was returned?'))
     returned_at = models.DateTimeField(blank=True, null=True, verbose_name=_('returned at'))
@@ -225,11 +224,23 @@ class Purchase(models.Model):
     def __str__(self):
         return f'{self.user.username} at {self.created_at}'
 
+    class Meta:
+        ordering = ('-created_at', )
+
+    @property
+    def total_price(self):
+        """Counts total price of purchase"""
+        total_price = 0
+        for price in self.tickets.values('price'):
+            total_price += price.get('price')
+        return total_price
+
 
 class Ticket(models.Model):
     seance = models.ForeignKey(Seance, on_delete=models.PROTECT, related_name='tickets', verbose_name=_('seance'))
     date_seance = models.DateField(verbose_name=_('date of seance'))
     seat = models.ForeignKey(Seat, on_delete=models.PROTECT, related_name='tickets', verbose_name=_('seat'))
+    price = models.FloatField(verbose_name=_('price'))
     purchase = models.ForeignKey(Purchase, on_delete=models.PROTECT, related_name='tickets', verbose_name=_('purchase'))
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('instance created at'))
     was_returned = models.BooleanField(default=False, verbose_name=_('was_returned?'))

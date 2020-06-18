@@ -1,0 +1,24 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+    {% if purchase_list %}
+        <br>
+        <h2>You have made purchases:</h2>
+        {% for purchase in purchase_list %}
+            <br>
+            <strong>date / time: {{ purchase.created_at }}
+            total price: {{ purchase.total_price }} hrn.</strong>
+            <br>
+            {% for ticket in purchase.tickets.all %}
+              Film: {{ ticket.seance.seance_base.film.title }}
+              Hall: {{ ticket.seance.seance_base.hall.name }}
+              Row: {{ ticket.seat.row }}
+              Seat: {{ ticket.seat.number }}
+              Price: {{ ticket.price }} hrn.
+                <br>
+            {% endfor %}
+        {% endfor %}
+    {% else %}
+        You have not any purchases yet
+    {% endif %}
+{% endblock content %}

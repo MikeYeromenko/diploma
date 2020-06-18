@@ -184,10 +184,6 @@ class BasketCancelView(LoginRequiredMixin, RedirectView):
         return super(BasketCancelView, self).dispatch(request, *args, **kwargs)
 
 
-class TicketListView(ListView):
-    pass
-
-
 class PurchaseCreateView(LoginRequiredMixin, RedirectView):
     url = reverse_lazy('seance:my_tickets')
 
@@ -204,21 +200,23 @@ class PurchaseCreateView(LoginRequiredMixin, RedirectView):
         if user.wallet - total_price >= 0:
             user.wallet -= total_price
             user.save()
-            purchase = Purchase.objects.create(user=user, total_price=total_price)
+            purchase = Purchase.objects.create(user=user)
             for ticket in tickets:
                 Ticket.objects.create(seance=ticket.get('seance'),
                                       date_seance=ticket.get('data_seance'),
                                       seat=ticket.get('seat'),
-                                      purchase=purchase
+                                      purchase=purchase,
+                                      price=ticket.get('price')
                                       )
-            return super().post(request, *args, **kwargs)
+            return self.session_clean_and_redirect(request, error_exit=False, *args, **kwargs)
 
         messages.add_message(request, messages.INFO, 'Insufficient funds')
         return self.session_clean_and_redirect(request, *args, **kwargs)
 
-    def session_clean_and_redirect(self, request, *args, **kwargs):
+    def session_clean_and_redirect(self, request, error_exit=True, *args, **kwargs):
         """Removes all custom data from session"""
-        self.url = reverse_lazy('seance:index')
+        if error_exit:
+            self.url = reverse_lazy('seance:index')
         request.session.pop('basket', None)
         request.session.pop('last_seance', None)
         request.session.pop('total_price', None)
@@ -254,7 +252,9 @@ class PurchaseCreateView(LoginRequiredMixin, RedirectView):
             seat = get_object_or_404(Seat, pk=basket[key].get('seat_pk'))
             seance = get_object_or_404(Seance, pk=basket[key].get('seance_pk'))
             seance_date = basket[key].get('seance_date', None)
-            total_price += seance.prices.get(seat_category=seat.seat_category).price
+
+            price = seance.prices.get(seat_category=seat.seat_category).price
+            total_price += price
 
             # if ticket already exists or there problems with init. data - don't create purchase
             if (not seat or not seance or not seance_date or
@@ -265,7 +265,15 @@ class PurchaseCreateView(LoginRequiredMixin, RedirectView):
                 tickets.append({
                     'seance': seance,
                     'date_seance': seance_date,
-                    'seat': seat
+                    'seat': seat,
+                    'price': price
                 })
         return total_price
+
+
+class PurchaseListView(LoginRequiredMixin, ListView):
+    model = Purchase
+
+    def get_queryset(self):
+        return Purchase.objects.filter(user_id=self.request.user.pk)
 
