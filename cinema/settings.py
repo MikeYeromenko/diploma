@@ -121,3 +121,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'seance.AdvUser'
+
+DEFAULT_SUM_TO_WALLET = 10000
