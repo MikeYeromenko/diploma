@@ -1,0 +1,33 @@
+{% load i18n %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title id="site_title">{% block title %}Broadway cinema{% endblock title %}</title>
+</head>
+<body>
+
+{% if user.is_authenticated %}
+    <a id="link-login" href="{% url 'seance:logout' %}">{% trans 'LogOut' %}</a>
+{% else %}
+    <a id="link-login" href="{% url 'seance:login' %}">{% trans 'LogIn' %}</a>
+{% endif %}
+<a id="link-register" href="{% url 'seance:register' %}">{% trans 'Registration' %}</a>
+<a id="link-main" href="{% url 'seance:index' %}">{% trans 'Main' %}</a>
+<a id="link-main" href="{% url 'seance:basket' %}">{% trans 'Basket' %}</a>
+
+{% block messages %}
+    {% if messages %}
+        {% for message in messages %}
+            <h3 style="color: red">{{ message }}</h3>
+        {% endfor %}
+    {% endif %}
+{% endblock messages %}
+
+  {% block content %}
+  {% endblock content %}
+
+</body>
+</html>
