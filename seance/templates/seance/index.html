@@ -1,0 +1,38 @@
+{% extends 'layout/base.html' %}
+{% load i18n %}
+{% load mathfilters %}
+
+
+{% block content %}
+    <br>
+
+    <form action="{% url 'seance:index' %}" id="ordering-form" method="get">
+      {{ ordering_form.as_p }}
+       <input type="submit" value="{% trans 'Submit' %}" id="submit-ordering">
+    </form>
+
+
+    <br>
+  <tr><td>Film</td> <td>Duration</td> <td>Dates</td> <td>Hall</td> <td>Price</td></tr>
+    {% for seance in seance_list %}
+      <table>
+        <tr>
+          <div class="seance-search-result">
+            <td><p>{{ seance.film.title }}</p></td>
+            <td><p>{{ seance.time_starts }} - {{ seance.time_ends }}</p></td>
+            <td><p>{{ seance.date_starts }} - {{ seance.date_ends }}</p></td>
+            <td><p>{{ seance.hall.name }}</p></td>
+            <td><p>{{ seance.ticket_price }} hrn.</p></td>
+            <td><p>Free chairs: {{ seance.get_free_seats_quantity }}</p></td>
+            <td><p>Quantity seats {{ seance.hall.get_size }}</p></td>
+            <td>
+                <form action="{% url 'seance:seance_detail' seance.pk %}" method="get" id="show-seance-details-form">
+                    <input type="submit" id="show-details" value="{% trans 'Show details' %}">
+                </form>
+            </td>
+{#            <td><input type="submit"></td>#}
+          </div>
+        </tr>
+      </table>
+    {% endfor %}
+{% endblock content %}

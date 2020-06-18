@@ -1,0 +1,16 @@
+{% extends 'layout/base.html' %}
+{% load i18n %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        <p>{% trans 'You have already logged in' %}</p>
+    {% else %}
+        <form method="post" id="login-form" action="{% url 'seance:login' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="hidden" name="next" value="{{ next }}">
+            <input type="submit" value="{% trans 'Login' %}" id="submit-login-form">
+
+        </form>
+    {% endif %}
+{% endblock content %}

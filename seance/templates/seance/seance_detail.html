@@ -1,0 +1,34 @@
+{% extends 'layout/base.html' %}
+{% load my_filters %}
+
+
+{% block content %}
+    <p>Film: {{ seance.film }}</p>
+    <p>Hall: {{ seance.hall }}</p>
+    <p>Dates: {{ seance.date_starts }} - {{ seance.date_ends }}</p>
+    <p>Duration: {{ seance.time_starts }} - {{ seance.time_ends }}</p>
+    <p>Description: {{ seance.description }}</p>
+    <p>Ticket price: {{ seance.ticket_price }} hrn.</p>
+    <p>Free seats: {{ seance.get_free_seats_quantity }}</p>
+
+    <h1 style="text-align: center">{{ seance.hall.name }} hall</h1>
+
+    {% for row in 1|range:seance.hall.rows %}
+        {% spaceless %}
+            Row {{ row }}:
+            {% for seat in 1|range:seance.hall.seats %}
+                <form action="{% url 'seance:basket-redirect' %}" style="display: inline-block">
+                    <input type="hidden" name="row" value="{{ row }}">
+                    <input type="hidden" name="seat" value="{{ seat }}">
+                    <input type="hidden" name="seance" value="{{ seance.pk }}">
+                    <input type="submit" value="{{ seat }}" style="width: 40px">
+                </form>
+                &nbsp
+            {% endfor %}
+        {% endspaceless %}
+        <br>
+        <br>
+    {% endfor %}
+
+
+{% endblock content %}

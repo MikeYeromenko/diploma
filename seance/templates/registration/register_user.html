@@ -1,0 +1,10 @@
+{% extends 'layout/base.html' %}
+{% load i18n %}
+
+{% block content %}
+    <form method="post" id="registration-form" action="{% url 'seance:register' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" id="form-submit" value="{% trans 'Submit' %}">
+    </form>
+{% endblock content %}

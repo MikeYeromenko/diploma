@@ -8,6 +8,7 @@
     <title id="site_title">{% block title %}Broadway cinema{% endblock title %}</title>
 </head>
 <body>
+{#  <a class="navbar-brand">Broadway cinema</a>#}
 
 {% if user.is_authenticated %}
     <a id="link-login" href="{% url 'seance:logout' %}">{% trans 'LogOut' %}</a>

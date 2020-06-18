@@ -1,0 +1,38 @@
+{% extends 'layout/base.html' %}
+{% load i18n %}
+{% load my_filters %}
+
+
+{% block content %}
+    {% if basket %}
+        <h4>You have booked tickets:</h4>
+        <div style="font-size: 20px">
+        {% for datetime, my_dict in basket.items %}
+              Film: {% get_item my_dict 'film' %}
+              Hall: {% get_item my_dict 'hall' %}
+              Row: {% get_item my_dict 'row' %}
+              Seat: {% get_item my_dict 'seat' %}
+              Price: {% get_item my_dict 'price' %} hrn.
+              Created at: {% get_item my_dict 'created' %}
+            <form action="{% url 'seance:basket-cancel' %}" style="display: inline-block" method="get">
+              <input type="hidden" name="seance" value="{{ datetime }}">
+              <input type="submit" value="{% trans 'Cancel' %}" style="width: 60px">
+            </form>
+
+            <br>
+
+        {% endfor %}
+         <strong>Total price: {{ total_price }} hrn.</strong>
+            {% if last_seance %}
+                <form action="{% url 'seance:seance_detail' last_seance %}" method="get">
+                    <input type="submit" value="{% trans 'Add one more tickets' %}">
+                </form>
+            {% endif %}
+        {% if basket %}
+            <form action="" method="get">
+                <input type="submit" value="{% trans 'Buy' %}" style="width: 90px; height: 50px">
+            </form>
+        {% endif %}
+        </div>
+    {% endif %}
+{% endblock content %}
