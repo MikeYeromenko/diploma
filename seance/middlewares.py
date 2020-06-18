@@ -32,6 +32,7 @@ def seance_context_processor(request):
     context = {}
     basket = request.session.get('basket', None)
     last_seance = request.session.get('last_seance', None)
+    seance_date = request.session.get('seance_date', None)
     if basket:
         context['basket'] = basket
         total_price = 0
@@ -40,5 +41,7 @@ def seance_context_processor(request):
         context['total_price'] = total_price
     if last_seance:
         context['last_seance'] = last_seance
+    if seance_date:
+        context['seance_date'] = seance_date
     return context
 

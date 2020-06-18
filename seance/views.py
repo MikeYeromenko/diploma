@@ -12,7 +12,7 @@ from django.utils import timezone, dateformat
 from django.views.generic import ListView, CreateView, TemplateView, FormView, DetailView, RedirectView
 
 from seance.forms import RegistrationForm, OrderingForm
-from seance.models import Seance, AdvUser, Hall
+from seance.models import Seance, AdvUser, Hall, Seat
 
 
 class SeanceListView(ListView):
@@ -27,10 +27,12 @@ class SeanceListView(ListView):
         if self.request.GET.get('days', None):
             tomorrow = datetime.date.today() + datetime.timedelta(days=1)
             query &= Q(seance_base__date_starts__lte=tomorrow) & Q(seance_base__date_ends__gte=tomorrow)
+            self.request.session['seance_date'] = str(datetime.date.today() + datetime.timedelta(days=1))
         else:
             query &= (Q(seance_base__date_starts__lte=datetime.date.today()) &
                       Q(seance_base__date_ends__gte=datetime.date.today()) &
                       Q(time_starts__gt=timezone.now()))
+            self.request.session['seance_date'] = str(datetime.date.today())
 
         seances = Seance.objects.filter(query)
 
@@ -110,54 +112,68 @@ class BasketView(LoginRequiredMixin, TemplateView):
 class BasketRedirectView(LoginRequiredMixin, RedirectView):
     url = reverse_lazy('seance:basket')
 
-    # def dispatch(self, request, *args, **kwargs):
-    #     self.add_to_session(request)
-    #     return super(BasketRedirectView, self).dispatch(request, *args, **kwargs)
-    #
-    # def inspect_double_chosen(self, request):
-    #     """
-    #     Looks through the basket, and if dict with the same row, seat and seance is in it, messages user
-    #     he can't book the same seat twice
-    #     """
-    #     row = request.GET.get('row', None)
-    #     seat = request.GET.get('seat', None)
-    #     seance_pk = request.GET.get('seance', None)
-    #     basket = request.session.get('basket')
-    #     if basket and row and seat and seance_pk:
-    #         for key in basket:
-    #             if (basket[key]['row'] == row and basket[key]['seat'] == seat
-    #                     and basket[key]['seance_pk'] == seance_pk):
-    #                 messages.add_message(request, messages.INFO, f'You can\'t choose the same seat twice')
-    #                 self.url = reverse_lazy('seance:seance_detail', kwargs={'pk': seance_pk})
-    #                 return None, None, None
-    #     return row, seat, seance_pk
-    #
-    # def add_to_session(self, request):
-    #     """Adds info about the ticket in the basket into sessions"""
-    #     row, seat, seance_pk = self.inspect_double_chosen(request)
-    #     if row and seat and seance_pk:
-    #         if not request.session.get('basket', None):
-    #             request.session['basket'] = {}
-    #         seance = get_object_or_404(Seance, pk=seance_pk)
-    #         key = str(datetime.datetime.now().timestamp()).replace('.', '')
-    #         request.session['basket'][f'{key}'] = {
-    #             'row': row,
-    #             'seat': seat,
-    #             'seance_pk': seance_pk,
-    #             'film': seance.film.title,
-    #             'hall': seance.hall.name,
-    #             'price': str(seance.ticket_price),
-    #             'created': dateformat.format(timezone.now(), 'Y-m-d H:i:s')
-    #         }
-    #         request.session['last_seance'] = seance_pk
-    #         request.session.modified = True
+    def dispatch(self, request, *args, **kwargs):
+        self.add_to_session(request)
+        return super(BasketRedirectView, self).dispatch(request, *args, **kwargs)
+
+    def inspect_double_chosen(self, request):
+        """
+        Looks through the basket, and if dict with the same row, seat and seance is in it, messages user
+        he can't book the same seat twice
+        """
+        seat_pk = request.GET.get('seat_pk', None)
+        row = request.GET.get('row', None)
+        number = request.GET.get('number', None)
+        seance_pk = request.GET.get('seance', None)
+        seance_date = request.GET.get('seance_date', None)
+        basket = request.session.get('basket')
+        # if seance_date:
+        #     seance_date = datetime.datetime.strptime(seance_date, "%Y-%m-%d").date()
+        # else:
+        #     seance_date = datetime.date.today()
+        if basket and seat_pk and seance_pk and seance_date and row and number:
+            for key in basket:
+                if (basket[key]['seat_pk'] == seat_pk and
+                        basket[key]['seance_pk'] == seance_pk and
+                        basket[key]['seance_date'] == seance_date):
+                    messages.add_message(request, messages.INFO, f'You can\'t choose the same seat twice')
+                    self.url = reverse_lazy('seance:seance_detail', kwargs={'pk': seance_pk})
+                    return None, None, None, None, None
+        return seat_pk, seance_pk, seance_date, row, number
+
+    def add_to_session(self, request):
+        """Adds info about the ticket in the basket into sessions"""
+        seat_pk, seance_pk, seance_date, row, number = self.inspect_double_chosen(request)
+        if seat_pk and seance_pk and seance_date:
+            if not request.session.get('basket', None):
+                request.session['basket'] = {}
+            seance = get_object_or_404(Seance, pk=seance_pk)
+            seat = get_object_or_404(Seat, pk=seat_pk)
+            price = 0
+            if seat and seance:
+                price = seance.prices.get(seat_category=seat.seat_category).price
+
+            key = str(datetime.datetime.now().timestamp()).replace('.', '')
+            request.session['basket'][f'{key}'] = {
+                'seat_pk': seat_pk,
+                'row': row,
+                'number': number,
+                'seance_pk': seance_pk,
+                'seance_date': seance_date,
+                'film': seance.seance_base.film.title,
+                'hall': seance.seance_base.hall.name,
+                'price': str(price),
+                'created': dateformat.format(timezone.now(), 'Y-m-d H:i:s')
+            }
+            request.session['last_seance'] = seance_pk
+            request.session.modified = True
 
 
 class BasketCancelView(LoginRequiredMixin, RedirectView):
     pattern_name = 'seance:basket'
 
-    # def dispatch(self, request, *args, **kwargs):
-    #     key = request.GET.get('seance', None)
-    #     request.session.get('basket').pop(key)
-    #     request.session.modified = True
-    #     return super(BasketCancelView, self).dispatch(request, *args, **kwargs)
+    def dispatch(self, request, *args, **kwargs):
+        key = request.GET.get('seance_cancel', None)
+        request.session.get('basket').pop(key)
+        request.session.modified = True
+        return super(BasketCancelView, self).dispatch(request, *args, **kwargs)

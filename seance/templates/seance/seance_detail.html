@@ -14,7 +14,8 @@
     {% endfor %}
     </p>
 
-    <h1 style="text-align: center">{{ seance.seance_base.hall.name }} hall</h1>
+    <h1 style="text-align: center">Choose seats in {{ seance.seance_base.hall.name }} hall
+    {% if seance_date %} for {{ seance_date }} {% endif %}</h1>
 
 
 {#{% for row in 1|range:seance.seance_base.hall.quantity_rows %}#}
@@ -24,9 +25,11 @@
     {% for seat in seance.seance_base.hall.seats.all %}
         {% if seat.row == row %}
             <form action="{% url 'seance:basket-redirect' %}" style="display: inline-block">
-                <input type="hidden" name="row" value="{{ row }}">
-                <input type="hidden" name="seat" value="{{ seat.number }}">
+                <input type="hidden" name="seat_pk" value="{{ seat.pk }}">
+                <input type="hidden" name="number" value="{{ seat.number }}">
+                <input type="hidden" name="row" value="{{ seat.row }}">
                 <input type="hidden" name="seance" value="{{ seance.pk }}">
+                <input type="hidden" name="seance_date" value="{{ seance_date }}">
                 <input type="submit" value="{{ seat.number }}" style="width: 40px">
             </form>
         {% else %}
@@ -41,21 +44,6 @@
             </form>
         {% endif %}
     {% endfor %}
-
-
-
-
-{#    {% for row in 1|range:seance.seance_base.hall.quantity_rows %}#}
-{#        {% spaceless %}#}
-{#            Row {{ row }}:#}
-{#            {% for seat in 1|range:seance.hall.seats %}#}
-
-{#                &nbsp#}
-{#            {% endfor %}#}
-{#        {% endspaceless %}#}
-{#        <br>#}
-{#        <br>#}
-{#    {% endfor %}#}
 
 
 {% endblock content %}

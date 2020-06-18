@@ -11,11 +11,11 @@
               Film: {% get_item my_dict 'film' %}
               Hall: {% get_item my_dict 'hall' %}
               Row: {% get_item my_dict 'row' %}
-              Seat: {% get_item my_dict 'seat' %}
+              Seat: {% get_item my_dict 'number' %}
               Price: {% get_item my_dict 'price' %} hrn.
               Created at: {% get_item my_dict 'created' %}
             <form action="{% url 'seance:basket-cancel' %}" style="display: inline-block" method="get">
-              <input type="hidden" name="seance" value="{{ datetime }}">
+              <input type="hidden" name="seance_cancel" value="{{ datetime }}">
               <input type="submit" value="{% trans 'Cancel' %}" style="width: 60px">
             </form>
 

@@ -51,7 +51,7 @@ def initial_db_base(apps, schema_editor):
 
     # create seats for hall
     for row in range(1, hall_yellow.quantity_rows + 1):
-        for number in range(1, 10):
+        for number in range(1, 11):
             Seat.objects.create(
                 hall=hall_yellow,
                 seat_category=seat_category,
@@ -67,8 +67,8 @@ def initial_db_base(apps, schema_editor):
         admin=admin
     )
 
-    for row in range(1, hall_red.quantity_rows):
-        for number in range(1, 15):
+    for row in range(1, hall_red.quantity_rows + 1):
+        for number in range(1, 16):
             Seat.objects.create(
                 hall=hall_red,
                 seat_category=seat_category,
