@@ -208,7 +208,7 @@ class Purchase(models.Model):
 
 class Ticket(models.Model):
     seance = models.ForeignKey(Seance, on_delete=models.PROTECT, related_name='tickets', verbose_name=_('seance'))
-    date_seance = models.DateField(default=datetime.date.today(), verbose_name=_('date of seance'))
+    date_seance = models.DateField(verbose_name=_('date of seance'))
     seat = models.ForeignKey(Seat, on_delete=models.PROTECT, related_name='tickets', verbose_name=_('seat'))
     purchase = models.ForeignKey(Purchase, on_delete=models.PROTECT, related_name='tickets', verbose_name=_('purchase'))
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('instance created at'))
@@ -216,6 +216,12 @@ class Ticket(models.Model):
 
     def __str__(self):
         return self.seance.__str__()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            if not self.date_seance:
+                self.date_seance = datetime.date.today()
+        return super().save(*args, **kwargs)
 
 
 class Return:
