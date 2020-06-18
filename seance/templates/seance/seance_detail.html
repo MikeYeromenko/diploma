@@ -3,8 +3,8 @@
 
 
 {% block content %}
-    <p>Film: {{ seance.seance_base.film }}</p>
-    <p>Hall: {{ seance.seance_base.hall }}</p>
+    <p>Film: {{ seance.seance_base.film.title }}</p>
+    <p>Hall: {{ seance.seance_base.hall.name }}</p>
     <p>Dates: {{ seance.seance_base.date_starts }} - {{ seance.seance_base.date_ends }}</p>
     <p>Duration: {{ seance.time_starts }} - {{ seance.time_ends }}</p>
     <p>Description: {{ seance.description }}</p>

@@ -136,8 +136,9 @@ class Price(models.Model):
 class Seance(models.Model):
     time_starts = models.TimeField(verbose_name=_('starts at: '))
     time_ends = models.TimeField(null=True, blank=True, verbose_name=_('ends at: '))
-    time_hall_free = models.TimeField(null=True, blank=True, verbose_name=_('ends at: '))
-    advertisements_duration = models.TimeField(null=True, blank=True, verbose_name=_('adds duration: '))
+    time_hall_free = models.TimeField(null=True, blank=True, verbose_name=_('hall free at: '))
+    advertisements_duration = models.TimeField(null=True, blank=True, default=datetime.time(0, 10),
+                                               verbose_name=_('advertisements duration: '))
     cleaning_duration = models.TimeField(null=True, blank=True, default=datetime.time(0, 10),
                                          verbose_name=_('cleaning duration: '))
     description = models.TextField(verbose_name=_('description'))

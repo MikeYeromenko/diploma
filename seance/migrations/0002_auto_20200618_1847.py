@@ -92,6 +92,7 @@ def initial_db_base(apps, schema_editor):
 
     seance_bond_noon = Seance.objects.create(
         time_starts=datetime.time(12, 0),
+        time_ends=datetime.time(14, 00),
         description='For those who have long dinner time)',
         seance_base=seance_base_bond,
         admin=admin
@@ -99,6 +100,7 @@ def initial_db_base(apps, schema_editor):
 
     seance_bond_evening = Seance.objects.create(
         time_starts=datetime.time(19, 0),
+        time_ends=datetime.time(21, 0),
         description='For those who have time after work!)',
         seance_base=seance_base_bond,
         admin=admin
@@ -106,6 +108,7 @@ def initial_db_base(apps, schema_editor):
 
     seance_bond_night = Seance.objects.create(
         time_starts=datetime.time(23, 50),
+        time_ends=datetime.time(1, 30),
         description='For those who don\'t sleep at night!)',
         seance_base=seance_base_bond,
         admin=admin
@@ -113,6 +116,7 @@ def initial_db_base(apps, schema_editor):
 
     seance_365_noon = Seance.objects.create(
         time_starts=datetime.time(12, 0),
+        time_ends=datetime.time(15, 0),
         description='For those who have long dinner time)',
         seance_base=seance_base_365,
         admin=admin
@@ -120,6 +124,7 @@ def initial_db_base(apps, schema_editor):
 
     seance_365_evening = Seance.objects.create(
         time_starts=datetime.time(19, 0),
+        time_ends=datetime.time(21, 0),
         description='For those who have time after work!)',
         seance_base=seance_base_365,
         admin=admin
@@ -127,6 +132,7 @@ def initial_db_base(apps, schema_editor):
 
     seance_365_night = Seance.objects.create(
         time_starts=datetime.time(23, 50),
+        time_ends=datetime.time(1, 30),
         description='For those who don\'t sleep at night!)',
         seance_base=seance_base_365,
         admin=admin
