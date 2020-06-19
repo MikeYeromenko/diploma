@@ -1,8 +1,8 @@
 from django.urls import path
 
-
+from seance.custom_admin import AdminMainView
 from seance.views import SeanceListView, RegisterUserView, UserLoginView, UserProfileView, UserLogoutView, BasketView, \
-    SeanceDetailView, BasketRedirectView, BasketCancelView, PurchaseCreateView, PurchaseListView, AdminMainView
+    SeanceDetailView, BasketRedirectView, BasketCancelView, PurchaseCreateView, PurchaseListView
 
 app_name = 'seance'
 
