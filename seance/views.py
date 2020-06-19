@@ -2,7 +2,7 @@ import datetime
 
 from django.contrib import messages
 from django.contrib.auth import login
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, AccessMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.db.models import Q
 from django.http import HttpResponseRedirect
@@ -297,3 +297,14 @@ class PurchaseListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Purchase.objects.filter(user_id=self.request.user.pk)
 
+
+class IsStaffRequiredMixin(AccessMixin):
+    """Verify that the current user is authenticated and is_staff."""
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated and not request.user.is_staff:
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
+
+
+class AdminMainView(IsStaffRequiredMixin, TemplateView):
+    template_name = 'seance/admin_page.html'
