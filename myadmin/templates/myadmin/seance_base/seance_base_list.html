@@ -1,0 +1,70 @@
+{% extends 'myadmin/base.html' %}
+{% load i18n %}
+
+{% block content %}
+    <h2>{% trans 'Create new base seance' %}:</h2>
+    <form action="{% url 'myadmin:seance_base_create' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+        <input type="submit" value="{% trans 'Create' %}">
+    </form>
+
+
+    <h2>{% trans 'Seance bases' %}:</h2>
+
+{% if sb_objects %}
+
+    <table>
+
+    {% for seancebase, form in sb_objects %}
+        <tr>
+<td>{{ forloop.counter }}:</td>
+        <td><form action="{% url 'myadmin:seance_base_update' seancebase.pk %}" method="post">
+        {% csrf_token %}
+         {{ form.as_p }}
+        Updated last: {{ seancebase.updated_at }}; <br>
+        {% for seance in seancebase.seances.all %}
+            {{ forloop.counter }}: {{ seance }}; in run? {{ seance.is_active }}
+            <br>
+        {% endfor %}
+            <input type="submit" value="{% trans 'Update' %}">
+        </form>
+        <a href="">
+            <button>{% trans 'Delete' %}</button>
+        </a>
+        <br><br><br></td>
+        </tr>
+    {% endfor %}
+
+</table>
+
+
+
+{% endif %}
+{% endblock content %}
+
+
+
+
+{#    {% for seancebase in seancebase_list %}#}
+{#        <br>#}
+{#                Film: {{ seancebase.film.title }};#}
+{#        Hall: {{ seancebase.hall }};#}
+{#        Date starts: {{ seancebase.date_starts }};#}
+{#        Date ends: {{ seancebase.date_ends }};#}
+{##}
+{#        Updated last: {{ seancebase.updated_at }};#}
+{#        <br>#}
+{#        Seances: <br>#}
+{#        {% for seance in seancebase.seances.all %}#}
+{#            {{ forloop.counter }}: {{ seance }}; in run? {{ seance.is_active }}#}
+{#            <br>#}
+{#        {% endfor %}#}
+{#        <a href="{% url 'myadmin:seance_base_update' seancebase.pk %}">#}
+{#            <button>{% trans 'Update' %}</button>#}
+{#        </a>#}
+{#        <a href="">#}
+{#            <button>{% trans 'Delete' %}</button>#}
+{#        </a>#}
+{#        <br>#}
+{#    {% endfor %}#}

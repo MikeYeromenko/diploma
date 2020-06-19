@@ -117,6 +117,9 @@ class SeanceBase(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('instance created at'))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_('instance updated at'))
 
+    class Meta:
+        ordering = ('-updated_at', )
+
     def save(self, *args, **kwargs):
         """
         Adds date_ends and if it wasn't added by admin.

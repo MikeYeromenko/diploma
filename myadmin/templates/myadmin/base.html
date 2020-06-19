@@ -18,6 +18,15 @@
             <a id="link-main" href="{% url 'myadmin:film_create' %}">{% trans 'Create new film' %}</a>
     </div>
   </div>
+  <div class="dropdown">
+    <button class="dropbtn">
+      <i class="fa fa-caret-down">{% trans 'SeanceBases' %}</i>
+    </button>
+    <div class="dropdown-content">
+            <a id="link-main" href="{% url 'myadmin:seance_base_list' %}">{% trans 'SeanceBases list' %}</a>
+            <a id="link-main" href="">{% trans 'Create new base seance' %}</a>
+    </div>
+  </div>
 </div>
 
     <br>

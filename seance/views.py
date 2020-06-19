@@ -20,7 +20,7 @@ class SeanceListView(ListView):
     template_name = 'seance/index.html'
 
     def get_queryset(self):
-        query = Q(seance_base__is_active=True)
+        query = Q(is_active=True)
 
         # if user wants to watch seances for tomorrow this key will be in GET
 

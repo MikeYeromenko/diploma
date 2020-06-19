@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib import messages
 from django.contrib.auth.mixins import AccessMixin
 from django.db.models import Q
@@ -175,6 +177,34 @@ class PriceCreateView(IsStaffRequiredMixin, CreateView):
     template_name = 'myadmin/price/price_list.html'
 
 
-class SeanceBaseListView(ListView):
-    model = SeanceBase
+class SeanceBaseTemplateView(IsStaffRequiredMixin, TemplateView):
+    template_name = 'myadmin/seance_base/seance_base_list.html'
 
+    def get_context_data(self, **kwargs):
+        """Adds list of prices to context"""
+        context = super().get_context_data(**kwargs)
+        form = forms.SeanceBaseModelForm(initial={'date_starts': datetime.date.today(),
+                                                  'date_ends': datetime.date.today() + datetime.timedelta(days=15)})
+        sb_list = SeanceBase.objects.filter(date_ends__gte=datetime.date.today())
+        context['sb_objects'] = [(sb, forms.SeanceBaseModelForm(instance=sb)) for sb in sb_list]
+        context['form'] = form
+        return context
+
+
+class SeanceBaseListView(IsStaffRequiredMixin, ListView):
+    model = SeanceBase
+    template_name = 'myadmin/seance_base/seance_base_list.html'
+
+
+class SeanceBaseUpdateView(IsStaffRequiredMixin, UpdateView):
+    model = SeanceBase
+    template_name = 'myadmin/seance_base/seancebase_update.html'
+    success_url = reverse_lazy('myadmin:seance_base_list')
+    form_class = forms.SeanceBaseModelForm
+
+
+class SeanceBaseCreateView(IsStaffRequiredMixin, CreateView):
+    model = SeanceBase
+    template_name = 'myadmin/seance_base/seance_base_list.html'
+    success_url = reverse_lazy('myadmin:seance_base_list')
+    form_class = forms.SeanceBaseModelForm
