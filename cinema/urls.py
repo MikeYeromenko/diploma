@@ -19,4 +19,5 @@ from django.urls import path, include
 urlpatterns = [
     path('', include('seance.urls')),
     path('admin/', admin.site.urls),
+    path('myadmin', include('myadmin.urls')),
 ]
