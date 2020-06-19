@@ -1,11 +1,25 @@
 {% extends 'layout/base.html' %}
 {% load i18n %}
 
+
 {% block admin_links %}
     <br>
     <br>
-    <a id="link-main" href="{% url 'myadmin:film_list' %}">{% trans 'Films' %}</a>
-    <br>
+
+<div class="navbar">
+  <a href="#">Home</a>
+  <a href="#">News</a>
+  <div class="dropdown">
+    <button class="dropbtn">
+      <i class="fa fa-caret-down">{% trans 'Films' %}</i>
+    </button>
+    <div class="dropdown-content">
+            <a id="link-main" href="{% url 'myadmin:film_list' %}">{% trans 'Films list' %}</a>
+            <a id="link-main" href="{% url 'myadmin:film_create' %}">{% trans 'Create new film' %}</a>
+    </div>
+  </div>
+</div>
+
     <br>
 
 {% endblock admin_links %}

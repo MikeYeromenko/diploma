@@ -13,6 +13,10 @@
         Has active status? {{ film.is_active }}
         Film added to this site: {{ film.created_at }}
         Updated last: {{ film.updated_at }}
+        Last editor: {{ film.admin }}
+        <a href="{% url 'myadmin:film_update' film.pk %}">
+            <button>Update</button>
+        </a>
         <br>
     {% endfor %}
 {% endblock content %}

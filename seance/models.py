@@ -26,6 +26,9 @@ class AdvUser(AbstractUser):
             self.wallet = DEFAULT_SUM_TO_WALLET
         return super().save(*args, **kwargs)
 
+    def __str__(self):
+        return self.username
+
 
 class Film(models.Model):
     title = models.CharField(max_length=100, verbose_name=_('title'))

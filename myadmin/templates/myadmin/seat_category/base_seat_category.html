@@ -1,0 +1,28 @@
+{% extends 'myadmin/base.html' %}
+{% load i18n %}
+
+
+
+{% block content %}
+
+{% block list_view %}
+{% endblock list_view %}
+
+{% block update_view %}
+{% endblock update_view %}
+
+{% block create_view %}
+{% endblock create_view %}
+
+
+
+    <h2>{% block h2 %}{% endblock h2 %}</h2>
+    <form action="" method="post">
+        {{ form.as_p }}
+
+        {% csrf_token %}
+        {% block input_submit %}
+        {% endblock input_submit %}
+    </form>
+
+{% endblock content %}

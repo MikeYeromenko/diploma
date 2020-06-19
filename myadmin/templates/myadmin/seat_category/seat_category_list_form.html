@@ -1,0 +1,22 @@
+{% extends 'myadmin/base.html' %}
+{% load i18n %}
+
+{% block content %}
+    <h2>{% trans 'Films' %}</h2>
+    {% for film in film_list %}
+        <br>
+        Title: {{ film.title }}
+        Starrong: {{ film.starring }}
+        Director: {{ film.director }}
+        Duration: {{ film.duration }}
+        Description: {{ film.description }}
+        Has active status? {{ film.is_active }}
+        Film added to this site: {{ film.created_at }}
+        Updated last: {{ film.updated_at }}
+        Last editor: {{ film.admin }}
+        <a href="{% url 'myadmin:film_update' film.pk %}">
+            <button>Update</button>
+        </a>
+        <br>
+    {% endfor %}
+{% endblock content %}

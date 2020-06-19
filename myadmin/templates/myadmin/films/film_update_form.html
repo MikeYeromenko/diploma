@@ -1,0 +1,10 @@
+{% extends 'myadmin/films/base_create_update.html' %}
+{% load i18n %}
+
+{% block h2 %}
+    Update film
+{% endblock h2 %}
+
+{% block input_submit %}
+<input type="submit" value="{% trans 'Update' %}">
+{% endblock input_submit %}
