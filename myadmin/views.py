@@ -16,7 +16,7 @@ class IsStaffRequiredMixin(AccessMixin):
 
 
 class AdminMainView(IsStaffRequiredMixin, TemplateView):
-    template_name = 'seance/admin/admin_page.html'
+    template_name = 'myadmin/main.html'
 
 
 class FilmDetailView(DetailView):
@@ -26,3 +26,4 @@ class FilmDetailView(DetailView):
 class FilmListView(ListView):
     model = Film
     paginate_by = 30
+    template_name = 'myadmin/film_list.html'

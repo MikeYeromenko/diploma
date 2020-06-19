@@ -1,0 +1,12 @@
+{% extends 'layout/base.html' %}
+{% load i18n %}
+
+{% block admin_links %}
+    <br>
+    <br>
+    <a id="link-main" href="{% url 'myadmin:film_list' %}">{% trans 'Films' %}</a>
+    <br>
+    <br>
+
+{% endblock admin_links %}
+
