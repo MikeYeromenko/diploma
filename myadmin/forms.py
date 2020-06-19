@@ -2,7 +2,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 
-from seance.models import Film, SeatCategory
+from seance.models import Film, SeatCategory, Price
 
 
 class FilmModelForm(forms.ModelForm):
@@ -16,6 +16,13 @@ class SeatCategoryModelForm(forms.ModelForm):
     class Meta:
         model = SeatCategory
         fields = ('name', )
+
+
+class PriceModelForm(forms.ModelForm):
+
+    class Meta:
+        model = Price
+        fields = ('seance', 'seat_category', 'price')
 
 
 

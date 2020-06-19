@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import AccessMixin
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -7,7 +8,7 @@ from django.views.generic import TemplateView, DetailView, ListView, UpdateView,
 
 from myadmin import forms
 from myadmin.forms import FilmModelForm
-from seance.models import Film, AdvUser, SeatCategory
+from seance.models import Film, AdvUser, SeatCategory, Price, Seance, SeanceBase
 
 
 class IsStaffRequiredMixin(AccessMixin):
@@ -49,7 +50,8 @@ class FilmListView(IsStaffRequiredMixin, ListView):
 
     def get_queryset(self):
         """Filters only films with is_active = True status"""
-        return Film.objects.filter(is_active=True)
+        active = self.request.GET.get('active', False)
+        return Film.objects.filter(is_active=active) if active else Film.objects.all()
 
 
 class FilmCreateView(IsStaffRequiredMixin, CreateView):
@@ -71,7 +73,7 @@ class FilmCreateView(IsStaffRequiredMixin, CreateView):
         return render(request, 'myadmin/films/film_create_form.html', {'form': form})
 
 
-class FilmDeleteView(DeleteView):
+class FilmDeleteView(IsStaffRequiredMixin, DeleteView):
     model = Film
     success_url = reverse_lazy('myadmin:film_list')
     template_name = 'myadmin/films/film_confirm_delete.html'
@@ -123,8 +125,56 @@ class SeatCategoryCRUDView(IsStaffRequiredMixin, FormView):
                 return self.form_invalid(form)
 
 
-class SeatCategoryDeleteView(DeleteView):
+class SeatCategoryDeleteView(IsStaffRequiredMixin, DeleteView):
     model = SeatCategory
     success_url = reverse_lazy('myadmin:seat_category_crud')
     template_name = 'myadmin/seat_category/seat_category_delete.html'
+
+
+class PriceTemplateView(IsStaffRequiredMixin, TemplateView):
+    template_name = 'myadmin/price/price_list.html'
+
+    def get_context_data(self, **kwargs):
+        """Adds list of prices to context"""
+        context = super().get_context_data(**kwargs)
+        form = forms.PriceModelForm()
+        price_list = Price.objects.all()
+        context['price_objects'] = [(price, forms.PriceModelForm(instance=price)) for price in price_list]
+        context['form'] = form
+        return context
+
+
+class PriceUpdateView(IsStaffRequiredMixin, UpdateView):
+    model = Price
+    fields = ('seance', 'seat_category', 'price')
+    template_name = 'myadmin/price/price_create_update.html'
+    success_url = reverse_lazy('myadmin:price_list')
+
+
+class PriceDeleteView(IsStaffRequiredMixin, DeleteView):
+    model = Price
+    success_url = reverse_lazy('myadmin:price_list')
+    template_name = 'myadmin/price/price_confirm_delete.html'
+
+    def post(self, request, *args, **kwargs):
+        """If price is in active seances, we cannot delete it, only modify"""
+        price = get_object_or_404(Price, pk=kwargs.get('pk'))
+        if price.seance.is_active:
+            messages.add_message(request, messages.INFO, 'You can\'t delete price if it relates to '
+                                                         'active seance.\n Set seance.is_acticve (in run) to '
+                                                         'false first, or delete seance.\n Or you may update '
+                                                         'this price, but not to delete!')
+            return redirect(self.success_url)
+        return self.delete(request, *args, **kwargs)
+
+
+class PriceCreateView(IsStaffRequiredMixin, CreateView):
+    model = Price
+    form_class = forms.PriceModelForm
+    success_url = reverse_lazy('myadmin:price_list')
+    template_name = 'myadmin/price/price_list.html'
+
+
+class SeanceBaseListView(ListView):
+    model = SeanceBase
 

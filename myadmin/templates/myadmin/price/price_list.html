@@ -1,0 +1,35 @@
+{% extends 'myadmin/base.html' %}
+{% load i18n %}
+
+{% block content %}
+
+    <h2>{% trans 'Create new price' %}:</h2>
+    <form action="{% url 'myadmin:price_create' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+        <input type="submit" value="{% trans 'Create' %}">
+    </form>
+
+{% if price_objects %}
+<h2>{% trans 'Prices' %}: </h2>
+<table>
+
+    {% for price, form in price_objects %}
+        <tr>
+<td>{{ forloop.counter }}:</td>
+        <td><form action="{% url 'myadmin:price_update' price.pk %}" method="post">
+        {% csrf_token %}
+         {{ form.as_p }}
+        Updated last: {{ price.updated_at }};
+            <input type="submit" value="{% trans 'Update' %}">
+        </form>
+        <a href="{% url 'myadmin:price_delete' price.pk %}">
+            <button>{% trans 'Delete' %}</button>
+        </a>
+        <br><br><br></td>
+        </tr>
+    {% endfor %}
+
+</table>
+    {% endif %}
+{% endblock content %}

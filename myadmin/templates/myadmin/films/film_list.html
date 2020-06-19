@@ -3,10 +3,20 @@
 
 {% block content %}
     <h2>{% trans 'Films' %}</h2>
+
+<a href="{% url 'myadmin:film_list' %}">
+    <button>{% trans 'Show all' %}</button>
+</a>
+<form action="" method="get">
+    <input type="hidden" name="active" value="True">
+    <input type="submit" value="{% trans 'Show only active' %}">
+</form>
+
+
     {% for film in film_list %}
         <br>
         Title: {{ film.title }}
-        Starrong: {{ film.starring }}
+        Starring: {{ film.starring }}
         Director: {{ film.director }}
         Duration: {{ film.duration }}
         Description: {{ film.description }}

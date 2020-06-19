@@ -12,7 +12,7 @@ def initial_db_base(apps, schema_editor):
     Hall = apps.get_model('seance', 'Hall')
     Seance = apps.get_model('seance', 'Seance')
     SeanceBase = apps.get_model('seance', 'SeanceBase')
-    Price = apps.get_model('seance', 'Price')
+    Price = apps.get_model('seance', 'price')
     SeatCategory = apps.get_model('seance', 'SeatCategory')
     Seat = apps.get_model('seance', 'Seat')
 

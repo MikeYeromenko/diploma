@@ -116,7 +116,6 @@ class SeanceBase(models.Model):
     date_ends = models.DateField(null=True, blank=True, verbose_name=_('ends'))
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('instance created at'))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_('instance updated at'))
-    is_active = models.BooleanField(default=True, verbose_name=_('in run?'))
 
     def save(self, *args, **kwargs):
         """
@@ -147,6 +146,13 @@ class Price(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('instance created at'))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_('instance updated at'))
 
+    class Meta:
+        ordering = ('-updated_at', )
+        unique_together = ('seance', 'seat_category')
+
+    def __str__(self):
+        return f'price for {self.seat_category} in {self.seance}'
+
 
 class Seance(models.Model):
     time_starts = models.TimeField(verbose_name=_('starts at: '))
@@ -159,6 +165,7 @@ class Seance(models.Model):
     description = models.TextField(verbose_name=_('description'))
     seance_base = models.ForeignKey(SeanceBase, on_delete=models.PROTECT, related_name='seances',
                                     verbose_name=_('base seance'))
+    is_active = models.BooleanField(default=True, verbose_name=_('in run?'))
     admin = models.ForeignKey(AdvUser, on_delete=models.PROTECT, verbose_name=_('instance created by'),
                               related_name='seances')
 

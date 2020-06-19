@@ -6,6 +6,10 @@ app_name = 'myadmin'
 
 
 urlpatterns = [
+    path('price/create/', views.PriceCreateView.as_view(), name='price_create'),
+    path('price/delete/<int:pk>/', views.PriceDeleteView.as_view(), name='price_delete'),
+    path('price/update/<int:pk>/', views.PriceUpdateView.as_view(), name='price_update'),
+    path('price/list/', views.PriceTemplateView.as_view(), name='price_list'),
     path('seat/category/delete/<int:pk>/', views.SeatCategoryDeleteView.as_view(), name='seat_category_delete'),
     path('seat/category/update/<int:pk>/', views.SeatCategoryCRUDView.as_view(), name='seat_category_update'),
     path('seat/category/', views.SeatCategoryCRUDView.as_view(), name='seat_category_crud'),

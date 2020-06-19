@@ -148,7 +148,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Price',
+            name='price',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('price', models.FloatField(verbose_name='price per one seat')),
