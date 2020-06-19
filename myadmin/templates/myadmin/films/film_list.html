@@ -15,7 +15,10 @@
         Updated last: {{ film.updated_at }}
         Last editor: {{ film.admin }}
         <a href="{% url 'myadmin:film_update' film.pk %}">
-            <button>Update</button>
+            <button>{% trans 'Update' %}</button>
+        </a>
+        <a href="{% url 'myadmin:film_delete' film.pk %}">
+            <button>{% trans 'Delete' %}</button>
         </a>
         <br>
     {% endfor %}

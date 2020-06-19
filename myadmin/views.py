@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import AccessMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import TemplateView, DetailView, ListView, UpdateView, CreateView
+from django.views.generic import TemplateView, DetailView, ListView, UpdateView, CreateView, DeleteView
 
 from myadmin import forms
 from myadmin.forms import FilmUpdateCreateForm
@@ -69,3 +69,9 @@ class FilmCreateView(IsStaffRequiredMixin, CreateView):
             messages.add_message(request, messages.SUCCESS, _('Film was created successfully'))
             return redirect(self.success_url)
         return render(request, 'myadmin/films/film_create_form.html', {'form': form})
+
+
+class FilmDeleteView(DeleteView):
+    model = Film
+    success_url = reverse_lazy('myadmin:film_list')
+    template_name = 'myadmin/films/film_confirm_delete.html'
