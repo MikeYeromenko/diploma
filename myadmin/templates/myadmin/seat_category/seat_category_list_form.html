@@ -2,21 +2,30 @@
 {% load i18n %}
 
 {% block content %}
-    <h2>{% trans 'Films' %}</h2>
-    {% for film in film_list %}
+    <h2>{% trans 'Seat categories:' %}</h2>
+    {% for category, form in object_list %}
+{#        <div style="border-style: ridge; border-width: 1px; border-color: grey; width: max-content">#}
         <br>
-        Title: {{ film.title }}
-        Starrong: {{ film.starring }}
-        Director: {{ film.director }}
-        Duration: {{ film.duration }}
-        Description: {{ film.description }}
-        Has active status? {{ film.is_active }}
-        Film added to this site: {{ film.created_at }}
-        Updated last: {{ film.updated_at }}
-        Last editor: {{ film.admin }}
-        <a href="{% url 'myadmin:film_update' film.pk %}">
-            <button>Update</button>
+        Updated last: {{ category.updated_at }};
+        Last editor: {{ category.admin }};
+{#            <div style="display: compact">#}
+        <form action="{% url 'myadmin:seat_category_update' category.pk %}" method="post">
+            {% csrf_token %}
+        {{ form.as_p }}
+            <input type="submit" value="{% trans 'Update' %} ">
+        </form>
+        <a href="{% url 'myadmin:seat_category_delete' category.pk %}">
+            <button>{% trans 'Delete' %}</button>
         </a>
-        <br>
+{#</div>#}
+
+{#        </div>#}
+                <br>
     {% endfor %}
+    <h4>{% trans 'Create new category' %}:</h4>
+    <form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+        <input type="submit" value="{% trans 'Create' %}">
+    </form>
 {% endblock content %}

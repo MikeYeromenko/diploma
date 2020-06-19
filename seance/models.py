@@ -44,6 +44,9 @@ class Film(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        ordering = ('-updated_at', )
+
 
 class Hall(models.Model):
     name = models.CharField(max_length=20, verbose_name=_('name'))
@@ -55,6 +58,9 @@ class Hall(models.Model):
     is_active = models.BooleanField(default=True, verbose_name=_('in run?'))
     admin = models.ForeignKey(AdvUser, on_delete=models.PROTECT, verbose_name=_('instance created by'),
                               related_name='halls')
+
+    class Meta:
+        ordering = ('-updated_at', )
 
     def __str__(self):
         return self.name
@@ -81,6 +87,12 @@ class SeatCategory(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_('instance updated at'))
     admin = models.ForeignKey(AdvUser, on_delete=models.PROTECT, verbose_name=_('instance created by'),
                               related_name='seat_categories')
+
+    class Meta:
+        ordering = ('-updated_at',)
+
+    def __str__(self):
+        return self.name
 
 
 class Seat(models.Model):
@@ -214,7 +226,7 @@ class Seance(models.Model):
         return seances
 
     def __str__(self):
-        return f'Seance with {self.seance_base.film.title} in {self.time_starts} o\'clock'
+        return f'Seance with {self.seance_base.film.title} in {self.time_starts}-{self.time_ends} o\'clock'
 
 
 class Purchase(models.Model):
