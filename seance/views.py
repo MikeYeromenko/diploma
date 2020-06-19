@@ -75,6 +75,16 @@ class SeanceDetailView(DetailView):
     model = Seance
     template_name = 'seance/seance_detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        seance_date = self.request.session.get('seance_date', None)
+        tickets = context.get('seance').tickets.filter(date_seance=seance_date)
+
+        seats_taken = [ticket.seat for ticket in tickets]
+        context['seats_taken'] = seats_taken
+
+        return context
+
 
 class RegisterUserView(CreateView):
     model = AdvUser
@@ -190,37 +200,44 @@ class PurchaseCreateView(LoginRequiredMixin, RedirectView):
     def post(self, request, *args, **kwargs):
         # if there are problems - don't create purchase
         if not self.check_basket_and_total_price(request):
-            self.session_clean_and_redirect(request, *args, **kwargs)
+            self.session_clean_and_redirect(request)
+            return super().post(request, *args, **kwargs)
 
         # get user object
         user = get_object_or_404(AdvUser, pk=request.user.pk)
         tickets = []
-        total_price = self.get_price_and_create_datalist(request, tickets, *args, **kwargs)
+        self.create_tickets_datalist(request, tickets, *args, **kwargs)
+        if tickets:
+            # last element is total_price
+            total_price = tickets.pop(len(tickets) - 1)
+            if user.wallet - total_price >= 0:
+                user.wallet -= total_price
+                user.save()
+                purchase = Purchase.objects.create(user=user)
+                for ticket in tickets:
+                    Ticket.objects.create(seance=ticket.get('seance'),
+                                          date_seance=ticket.get('date_seance'),
+                                          seat=ticket.get('seat'),
+                                          purchase=purchase,
+                                          price=ticket.get('price')
+                                          )
+                self.session_clean_and_redirect(request, change_url=False)
+                return super().post(request, *args, **kwargs)
+            messages.add_message(request, messages.INFO, 'Insufficient funds')
+        self.session_clean_and_redirect(request)
+        return super().post(request, *args, **kwargs)
 
-        if user.wallet - total_price >= 0:
-            user.wallet -= total_price
-            user.save()
-            purchase = Purchase.objects.create(user=user)
-            for ticket in tickets:
-                Ticket.objects.create(seance=ticket.get('seance'),
-                                      date_seance=ticket.get('data_seance'),
-                                      seat=ticket.get('seat'),
-                                      purchase=purchase,
-                                      price=ticket.get('price')
-                                      )
-            return self.session_clean_and_redirect(request, error_exit=False, *args, **kwargs)
+    def create_purchase_and_tickets(self):
+        """Creates purchase and tickets in it"""
+        pass
 
-        messages.add_message(request, messages.INFO, 'Insufficient funds')
-        return self.session_clean_and_redirect(request, *args, **kwargs)
-
-    def session_clean_and_redirect(self, request, error_exit=True, *args, **kwargs):
+    def session_clean_and_redirect(self, request, change_url=True):
         """Removes all custom data from session"""
-        if error_exit:
+        if change_url:
             self.url = reverse_lazy('seance:index')
         request.session.pop('basket', None)
         request.session.pop('last_seance', None)
         request.session.pop('total_price', None)
-        return super().post(request, *args, **kwargs)
 
     @staticmethod
     def check_basket_and_total_price(request):
@@ -235,16 +252,17 @@ class PurchaseCreateView(LoginRequiredMixin, RedirectView):
                 return False
         return True
 
-    def get_price_and_create_datalist(self, request, tickets, *args, **kwargs):
+    @staticmethod
+    def create_tickets_datalist(request, tickets, *args, **kwargs):
         """
         Creates list with data for creating tickets.
         We will create tickets only if initial data for all of them is OK
         If not - clean basket and ask user to full it once again
-        List of initial data for tickets is saved in argument tickets, which is the same with
+        List of initial data for tickets is saved in argument tickets, which is the same list() -
         tickets in main post()
 
         Also check that tickets with the same data don't exist
-        :returns total price of all tickets
+        Last element in tickets[], if its not empty, we push total_price
         """
         basket = request.session.get('basket', None)
         total_price = 0
@@ -260,7 +278,8 @@ class PurchaseCreateView(LoginRequiredMixin, RedirectView):
             if (not seat or not seance or not seance_date or
                     Ticket.objects.filter(seance=seance, seat=seat, date_seance=seance_date)):
                 messages.add_message(request, messages.ERROR, 'Error occurred, please try once again')
-                self.session_clean_and_redirect(request, *args, **kwargs)
+                tickets = []
+                break
             else:
                 tickets.append({
                     'seance': seance,
@@ -268,7 +287,8 @@ class PurchaseCreateView(LoginRequiredMixin, RedirectView):
                     'seat': seat,
                     'price': price
                 })
-        return total_price
+        if tickets:
+            tickets.append(total_price)
 
 
 class PurchaseListView(LoginRequiredMixin, ListView):

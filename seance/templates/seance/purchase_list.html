@@ -12,6 +12,8 @@
             {% for ticket in purchase.tickets.all %}
               Film: {{ ticket.seance.seance_base.film.title }}
               Hall: {{ ticket.seance.seance_base.hall.name }}
+              Date of seance: {{ ticket.date_seance }}
+              Time of seance: {{ ticket.seance.time_starts }}
               Row: {{ ticket.seat.row }}
               Seat: {{ ticket.seat.number }}
               Price: {{ ticket.price }} hrn.

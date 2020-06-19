@@ -13,6 +13,7 @@
               Row: {% get_item my_dict 'row' %}
               Seat: {% get_item my_dict 'number' %}
               Price: {% get_item my_dict 'price' %} hrn.
+              Seance_date: {% get_item my_dict 'seance_date' %}
               Created at: {% get_item my_dict 'created' %}
             <form action="{% url 'seance:basket-cancel' %}" style="display: inline-block" method="get">
               <input type="hidden" name="seance_cancel" value="{{ datetime }}">
