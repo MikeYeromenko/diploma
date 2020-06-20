@@ -7,10 +7,11 @@
 <head>
     <meta charset="UTF-8">
     <title id="site_title">{% block title %}Broadway cinema{% endblock title %}</title>
+{% block styles %}
     <link rel="stylesheet" type="text/css" href="{% static 'seance/style.css' %}">
+{% endblock styles %}
 </head>
 <body>
-{#  <a class="navbar-brand">Broadway cinema</a>#}
 
 {% if user.is_authenticated %}
     <a id="link-login" href="{% url 'seance:logout' %}">{% trans 'LogOut' %}</a>

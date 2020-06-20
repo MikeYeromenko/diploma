@@ -5,20 +5,19 @@
     <h2>{% trans 'Seances' %}:</h2>
 
 
-
     <br>
           <table>
-  <tr><td>Film</td> <td>Duration</td> <td>Dates</td> <td>Hall</td> <td>Price</td><td>Updated at</td>
-  <td>Is active?</td><td>Admin</td></tr>
+  <tr><th>Film</th> <th>Duration</th> <th>Dates</th> <th>Hall</th> <th>Price</th><th>Updated at</th>
+  <th>Advertisement  duration: </th><th>Cleaning for: </th><th>Is active?</th><th>Admin</th><th></th></tr>
     {% for seance in seance_list %}
 
         <tr>
           <div class="seance-search-result">
             <td><p>{{ seance.seance_base.film.title }}</p></td>
-            <td><p>{{ seance.time_starts }} - {{ seance.time_ends }}</p></td>
+            <td><p>{{ seance.time_starts|date:"H:i" }} - {{ seance.time_ends|date:"H:i" }}</p></td>
             <td><p>{{ seance.seance_base.date_starts }} - {{ seance.seance_base.date_ends }}</p></td>
             <td><p>{{ seance.seance_base.hall.name }}</p></td>
-            <td><p>Ticket price:
+            <td><p>
             {% spaceless %}
             {% for price in seance.prices.all %}
                 {{ price.price }} hrn.
@@ -26,6 +25,8 @@
             {% endspaceless %}
             </p></td>
             <td><p>{{ seance.updated_at }}</p></td>
+            <td><p>{{ seance.advertisements_duration|time:"i" }} min</p></td>
+            <td><p>{{ seance.cleaning_duration|time:"i" }} min</p></td>
             <td><p>{{ seance.is_active }}</p></td>
             <td><p>{{ seance.admin }}</p></td>
             <td>
@@ -33,13 +34,11 @@
                     <input type="submit" value="{% trans 'Update' %}">
                 </form></td>
           {% if not seance.is_active %}
-                <form action="{% url 'myadmin:seance_activate' seance.pk %}">
+               <td> <form action="{% url 'myadmin:seance_activate' seance.pk %}">
                     <input type="submit" value="{% trans 'Activate' %}">
                 </form></td>
           {% endif %}
-            <td>
 
-            </td>
           </div>
         </tr>
 

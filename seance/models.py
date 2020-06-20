@@ -2,7 +2,7 @@ import datetime
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, F
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
@@ -169,13 +169,13 @@ class Price(models.Model):
 
 
 class Seance(models.Model):
-    time_starts = models.TimeField(verbose_name=_('starts at: '))
-    time_ends = models.TimeField(null=True, blank=True, verbose_name=_('ends at: '))
-    time_hall_free = models.TimeField(null=True, blank=True, verbose_name=_('hall free at: '))
+    time_starts = models.TimeField(verbose_name=_('starts at '))
+    time_ends = models.TimeField(null=True, blank=True, verbose_name=_('ends at '))
+    time_hall_free = models.TimeField(null=True, blank=True, verbose_name=_('hall free at '))
     advertisements_duration = models.TimeField(null=True, blank=True, default=datetime.time(0, 10),
-                                               verbose_name=_('advertisements duration: '))
+                                               verbose_name=_('advertisements duration '))
     cleaning_duration = models.TimeField(null=True, blank=True, default=datetime.time(0, 10),
-                                         verbose_name=_('cleaning duration: '))
+                                         verbose_name=_('cleaning duration '))
     description = models.TextField(verbose_name=_('description'))
     seance_base = models.ForeignKey(SeanceBase, on_delete=models.PROTECT, related_name='seances',
                                     verbose_name=_('base seance'))
@@ -190,7 +190,7 @@ class Seance(models.Model):
         verbose_name = _('seance')
         verbose_name_plural = _('seances')
 
-    def save(self, *args, **kwargs):
+    def save(self, commit=True, *args, **kwargs):
         """
         Adds time_ends if it wasn't added by admin
         """
@@ -203,7 +203,8 @@ class Seance(models.Model):
                 self.time_ends = self.get_time_ends
             if not self.time_hall_free:
                 self.time_hall_free = self.get_time_hall_free
-        super().save(*args, **kwargs)
+        if commit:
+            super().save(*args, **kwargs)
 
     @property
     def get_time_ends(self):
@@ -233,29 +234,53 @@ class Seance(models.Model):
         time_hall_free = datetime.time(hour=hours, minute=minutes)
         return time_hall_free
 
-    @staticmethod
-    def validate_seances_intersect(hall_id, date_starts, time_starts, date_ends, time_hall_free):
+    def validate_seances_intersect(self, seance_exclude_pk=None):
         """
         Validates, that given seance doesn't intersect with others in current hall in time
         To the time_ends of seance cleaning_duration is added, not to set next seance without
         giving time to clean hall
+        hall_id, date_starts, time_starts, date_ends, time_hall_free
         :returns seances which intersect or empty queryset
         """
-        seances = Seance.objects.filter(Q(seance_base__hall_id=hall_id) &
-                                        Q(seance_base__date_starts__lte=date_ends) &
-                                        Q(seance_base__date_ends__gte=date_starts) &
-                                        Q(time_starts__lt=time_hall_free) &
-                                        Q(time_hall_free__gt=time_starts))
-        return seances
+        seances = Seance.objects.filter(Q(seance_base__hall=self.seance_base.hall) &
+                                        Q(seance_base__date_starts__lte=self.seance_base.date_ends) &
+                                        Q(seance_base__date_ends__gte=self.seance_base.date_starts))
 
-    def get_sold_tickets(self, date_starts, date_ends):
+        seances_day = seances.filter(time_starts__lt=F('time_hall_free'))
+        seances_midnight = seances.filter(time_starts__gt=F('time_hall_free'))
+
+        if self.time_starts < self.time_hall_free:
+            seances1 = seances_day.filter(Q(time_starts__lt=self.time_hall_free) &
+                                          Q(time_hall_free__gt=self.time_starts))
+            seances2 = seances_midnight.filter(time_starts__lt=self.time_hall_free)
+            seances3 = seances_midnight.filter(time_hall_free__gt=self.time_starts)
+        else:
+            seances1 = seances_day.filter(time_hall_free__gt=self.time_starts)
+            seances2 = seances_day.filter(time_starts__lt=self.time_hall_free)
+            seances3 = seances_midnight
+        result = seances1 | seances2 | seances3
+        if seance_exclude_pk:
+            result = result.exclude(pk=seance_exclude_pk)
+        return result
+
+    def get_sold_but_not_used_tickets(self, date_starts=None, date_ends=None):
         """returns tickets sold on the seance"""
+        if not date_starts:
+            date_starts = datetime.date.today()
+        if not date_ends:
+            date_ends = self.seance_base.date_ends
         tickets = self.tickets.filter(Q(date_seance__gte=date_starts) & Q(date_seance__lte=date_ends))
+
+        # if today seance has begun, we don't put todays ticket to queryset
+        if self.time_starts < datetime.datetime.now().time():
+            tickets = tickets.filter(date_seance__gt=date_starts)
         return tickets
 
     def __str__(self):
         return f'Seance with {self.seance_base.film.title} in {self.time_starts}-{self.time_ends} o\'clock'
 
+    def __repr__(self):
+        return f'Seance with {self.seance_base.film.title} in {self.time_starts}-{self.time_ends} o\'clock'
 
 class Purchase(models.Model):
     user = models.ForeignKey(AdvUser, on_delete=models.PROTECT, related_name='purchases', verbose_name=_('user'))

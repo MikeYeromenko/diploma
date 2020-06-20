@@ -89,8 +89,8 @@ class SeanceBaseUpdateForm(SeanceBaseCreateForm):
         if 'date_starts' in self.changed_data:
             date_starts = self.cleaned_data.get('date_starts')
             if date_starts > self.instance.date_starts:
-                tickets_list = [seance.get_sold_tickets(date_starts=self.instance.date_starts,
-                                                        date_ends=date_starts - datetime.timedelta(days=1))
+                tickets_list = [seance.get_sold_but_not_used_tickets(date_starts=self.instance.date_starts,
+                                                                     date_ends=date_starts - datetime.timedelta(days=1))
                                 for seance in seance_base.seances.all()]
                 if tickets_list:
                     raise ValidationError(f'You can\'t change date_starts because there are sold tickets on '
@@ -98,8 +98,8 @@ class SeanceBaseUpdateForm(SeanceBaseCreateForm):
         if 'date_ends' in self.changed_data:
             date_ends = self.cleaned_data.get('date_ends')
             if date_ends < self.instance.date_ends:
-                tickets_list = [seance.get_sold_tickets(date_starts=date_ends + datetime.timedelta(days=1),
-                                                        date_ends=self.instance.date_ends)
+                tickets_list = [seance.get_sold_but_not_used_tickets(date_starts=date_ends + datetime.timedelta(days=1),
+                                                                     date_ends=self.instance.date_ends)
                                 for seance in seance_base.seances.all()]
                 if tickets_list:
                     raise ValidationError(f'You can\'t change date_starts because there are sold tickets on '
@@ -108,8 +108,8 @@ class SeanceBaseUpdateForm(SeanceBaseCreateForm):
         if 'hall' in self.changed_data:
             hall = Hall.objects.get(name=self.cleaned_data.get('hall'))
             if hall.quantity_seats < self.instance.hall.quantity_seats:
-                tickets_list = [seance.get_sold_tickets(date_starts=datetime.date.today(),
-                                                        date_ends=seance_base.date_ends)
+                tickets_list = [seance.get_sold_but_not_used_tickets(date_starts=datetime.date.today(),
+                                                                     date_ends=seance_base.date_ends)
                                 for seance in seance_base.seances.all()]
                 if tickets_list:
                     raise ValidationError(f'You can\'t change hall because there are sold tickets on '
@@ -117,20 +117,63 @@ class SeanceBaseUpdateForm(SeanceBaseCreateForm):
                                     f'you want to set has less quantity of seats than hall set before')
 
         if 'film' in self.changed_data:
-            tickets_list = [seance.get_sold_tickets(date_starts=datetime.date.today(),
-                                                    date_ends=seance_base.date_ends)
+            tickets_list = [seance.get_sold_but_not_used_tickets(date_starts=datetime.date.today(),
+                                                                 date_ends=seance_base.date_ends)
                             for seance in seance_base.seances.all()]
             if tickets_list:
                 raise ValidationError(f'You can\'t change hall because there are sold tickets on '
-                                f'seances with film you want to change: {tickets_list}')
+                                      f'seances with film you want to change: {tickets_list}')
 
 
-class SeanceCreateForm(forms.ModelForm):
+class SeanceModelForm(forms.ModelForm):
     class Meta:
         model = Seance
-        fields = ('time_starts', 'time_ends', 'time_hall_free', 'advertisements_duration', 'cleaning_duration',
-                  'description', 'seance_base', 'is_active')
+        fields = ('time_starts', 'advertisements_duration', 'cleaning_duration',
+                  'description', 'seance_base')
+
+    def clean(self, seance_exclude_pk=None):
+        """Validates that Seance object doesn't intersect with other seances in current hall"""
+        super(SeanceModelForm, self).clean()
+        starts = self.cleaned_data.get('time_starts')
+        adds = self.cleaned_data.get('advertisements_duration')
+        clean = self.cleaned_data.get('cleaning_duration')
+        sb = self.cleaned_data.get('seance_base')
+        if self.is_valid():
+            # create instance of Seance without saving to database to auto generate time_ends etc
+            seance = Seance(time_starts=starts, advertisements_duration=adds,
+                            cleaning_duration=clean, seance_base=sb)
+            seance.save(commit=False)
+            if seance_exclude_pk:
+                seances = seance.validate_seances_intersect(seance_exclude_pk=seance_exclude_pk)
+            else:
+                seances = seance.validate_seances_intersect()
+            if seances:
+                raise ValidationError(f'There are intersections in times with other Seances in this hall: '
+                                      f'{seances}'
+                                      f'Seance\'s you are going to create values: '
+                                      f'time_starts: {seance.time_starts}; time_hall_free: {seance.time_hall_free}, '
+                                      f'film duration: {seance.seance_base.film.duration}')
 
 
-class SeanceUpdateForm(SeanceCreateForm):
-    pass
+class SeanceUpdateForm(SeanceModelForm):
+    class Meta(SeanceModelForm.Meta):
+        fields = SeanceModelForm.Meta.fields + ('is_active', )
+
+    def clean(self):
+        super().clean(seance_exclude_pk=self.instance.pk)
+        if 'is_active' in self.changed_data:
+            is_active = self.cleaned_data.get('is_active')
+            if is_active:
+                raise ValidationError(f'To activate Seance please use "Activate" button in Seance list'
+                                      f'Here its possible only to deactivate seance')
+            else:
+                tickets = self.instance.get_sold_but_not_used_tickets()
+                if tickets:
+                    raise ValidationError(f'You can\'t deactivate this seance because there are sold tickets on '
+                                          f'it: {tickets}')
+        if 'time_starts' in self.changed_data:
+            tickets = self.instance.get_sold_but_not_used_tickets(date_starts=datetime.date.today(),
+                                                                  date_ends=self.instance.seance_base.date_ends)
+            if tickets:
+                raise ValidationError(f'You can\'t change time_starts because there are sold and not used tickets on '
+                                      f'it: {tickets}')

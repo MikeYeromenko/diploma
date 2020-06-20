@@ -57,3 +57,31 @@
 .dropdown:hover .dropdown-content {
   display: block;
 }
+
+.h1, .h2, .h3, .h4 {
+  font-family: 'Lobster', cursive;
+
+}
+
+ul {
+  color: red;
+  font-weight: bolder;
+}
+
+
+table {
+  width: 100%; /* Ширина таблицы */
+  border: 4px black; /* Рамка вокруг таблицы */
+  border-collapse: collapse; /* Отображать только одинарные линии */
+  text-align: center;
+}
+th {
+  text-align: left; /* Выравнивание по левому краю */
+  background: #ccc; /* Цвет фона ячеек */
+  padding: 5px; /* Поля вокруг содержимого ячеек */
+  border: 1px solid black; /* Граница вокруг ячеек */
+}
+td {
+  padding: 5px; /* Поля вокруг содержимого ячеек */
+  border: 1px solid black; /* Граница вокруг ячеек */
+}

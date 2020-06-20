@@ -123,7 +123,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'seance/static')
 
 AUTH_USER_MODEL = 'seance.AdvUser'
 
 DEFAULT_SUM_TO_WALLET = 10000
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'

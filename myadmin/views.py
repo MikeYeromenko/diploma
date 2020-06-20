@@ -239,6 +239,9 @@ class SeanceListView(IsStaffRequiredMixin, ListView):
     template_name = 'myadmin/seances/seance_list.html'
     paginate_by = 10
 
+    def get_queryset(self):
+        return Seance.objects.all().order_by('-updated_at')
+
 
 class SeanceUpdateView(IsStaffRequiredMixin, UpdateView):
     model = Seance
@@ -246,12 +249,29 @@ class SeanceUpdateView(IsStaffRequiredMixin, UpdateView):
     template_name = 'myadmin/seances/seance_update_form.html'
     form_class = forms.SeanceUpdateForm
 
+    def form_valid(self, form):
+        """Adds admin field to Seance instance"""
+        self.object = form.save(commit=False)
+        self.object.admin = self.request.user
+        self.object.save()
+        return redirect(self.success_url)
+
 
 class SeanceCreateView(IsStaffRequiredMixin, CreateView):
     model = Seance
     template_name = 'myadmin/seances/seance_create_form.html'
-    form_class = forms.SeanceCreateForm
-    success_url = reverse_lazy('myadmin:seance_activate')
+    form_class = forms.SeanceModelForm
+
+    def form_valid(self, form):
+        """Adds admin field to Seance instance"""
+        self.object = form.save(commit=False)
+        self.object.admin = self.request.user
+        self.object.save()
+        return redirect(reverse_lazy('myadmin:seance_activate', kwargs={'pk': self.object.pk}))
+
+
+# class SeanceDeleteView(DetailView):
+#     model = Seance
 
 
 class SeanceActivateView(IsStaffRequiredMixin, DetailView):
