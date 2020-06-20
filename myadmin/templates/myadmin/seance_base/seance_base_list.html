@@ -29,7 +29,7 @@
         {% endfor %}
             <input type="submit" value="{% trans 'Update' %}">
         </form>
-        <a href="">
+        <a href="{% url 'myadmin:seance_base_delete' seancebase.pk %}">
             <button>{% trans 'Delete' %}</button>
         </a>
         <br><br><br></td>

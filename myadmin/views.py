@@ -161,10 +161,9 @@ class PriceDeleteView(IsStaffRequiredMixin, DeleteView):
     def post(self, request, *args, **kwargs):
         """If price is in active seances, we cannot delete it, only modify"""
         price = get_object_or_404(Price, pk=kwargs.get('pk'))
-        if price.seance.is_active:
-            messages.add_message(request, messages.INFO, 'You can\'t delete price if it relates to '
-                                                         'active seance.\n Set seance.is_acticve (in run) to '
-                                                         'false first, or delete seance.\n Or you may update '
+        if price.seance:
+            messages.add_message(request, messages.INFO, 'You can\'t delete price if there are related to it '
+                                                         'seances.\n Try to delete seance first.\n Or you may update '
                                                          'this price, but not to delete!')
             return redirect(self.success_url)
         return self.delete(request, *args, **kwargs)
@@ -183,28 +182,40 @@ class SeanceBaseTemplateView(IsStaffRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         """Adds list of prices to context"""
         context = super().get_context_data(**kwargs)
-        form = forms.SeanceBaseModelForm(initial={'date_starts': datetime.date.today(),
+        form = forms.SeanceBaseCreateForm(initial={'date_starts': datetime.date.today(),
                                                   'date_ends': datetime.date.today() + datetime.timedelta(days=15)})
         sb_list = SeanceBase.objects.filter(date_ends__gte=datetime.date.today())
-        context['sb_objects'] = [(sb, forms.SeanceBaseModelForm(instance=sb)) for sb in sb_list]
+        context['sb_objects'] = [(sb, forms.SeanceBaseCreateForm(instance=sb)) for sb in sb_list]
         context['form'] = form
         return context
-
-
-class SeanceBaseListView(IsStaffRequiredMixin, ListView):
-    model = SeanceBase
-    template_name = 'myadmin/seance_base/seance_base_list.html'
 
 
 class SeanceBaseUpdateView(IsStaffRequiredMixin, UpdateView):
     model = SeanceBase
     template_name = 'myadmin/seance_base/seancebase_update.html'
     success_url = reverse_lazy('myadmin:seance_base_list')
-    form_class = forms.SeanceBaseModelForm
+    form_class = forms.SeanceBaseUpdateForm
 
 
 class SeanceBaseCreateView(IsStaffRequiredMixin, CreateView):
     model = SeanceBase
     template_name = 'myadmin/seance_base/seance_base_list.html'
     success_url = reverse_lazy('myadmin:seance_base_list')
-    form_class = forms.SeanceBaseModelForm
+    form_class = forms.SeanceBaseCreateForm
+
+
+class SeanceBaseDeleteView(IsStaffRequiredMixin, DeleteView):
+    model = SeanceBase
+    template_name = 'myadmin/seance_base/seancebase_confirm_delete.html'
+    success_url = reverse_lazy('myadmin:seance_base_list')
+
+    def post(self, request, *args, **kwargs):
+        """If SeanceBase we want to delete has related seances we can't delete it"""
+        seance_base = get_object_or_404(SeanceBase, pk=kwargs.get('pk'))
+        if seance_base.seances.all():
+            messages.add_message(request, messages.INFO, 'You can\'t delete base seance if there are related to it '
+                                                         'seances.\n Try to delete seances first.\n Or you may update '
+                                                         'this base seance, but not to delete!')
+            return redirect(self.success_url)
+        return self.delete(request, *args, **kwargs)
+

@@ -3,6 +3,7 @@ import datetime
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
 from cinema.settings import DEFAULT_SUM_TO_WALLET
@@ -110,7 +111,7 @@ class Seat(models.Model):
 
 
 class SeanceBase(models.Model):
-    film = models.ForeignKey(Film, on_delete=models.PROTECT, related_name='seances', verbose_name=_('films'))
+    film = models.ForeignKey(Film, on_delete=models.PROTECT, related_name='seances', verbose_name=_('film'))
     hall = models.ForeignKey(Hall, on_delete=models.PROTECT, related_name='seances', verbose_name=_('hall'))
     date_starts = models.DateField(verbose_name=_('starts'))
     date_ends = models.DateField(null=True, blank=True, verbose_name=_('ends'))
@@ -138,7 +139,17 @@ class SeanceBase(models.Model):
         return self.date_starts + datetime.timedelta(days=15)
 
     def __str__(self):
-        return f'Base seance with {self.film.title}'
+        return f'Base seance with {self.film.title} in dates: {self.date_starts} - {self.date_ends}'
+
+    @staticmethod
+    def validate_seances_base_intersect(date_starts, date_ends, film, hall, sb_pk_exclude=None):
+        """Validates, that SeanceBase doesn't intersect with others seances base with this film in this hall"""
+        seance_bases = SeanceBase.objects.filter(Q(film=film) & Q(hall=hall) &
+                                                 Q(date_starts__lte=date_ends) &
+                                                 Q(date_ends__gte=date_starts))
+        if sb_pk_exclude:
+            seance_bases = seance_bases.exclude(pk=sb_pk_exclude)
+        return seance_bases
 
 
 class Price(models.Model):
@@ -235,6 +246,11 @@ class Seance(models.Model):
                                         Q(time_hall_free__gt=time_starts))
         return seances
 
+    def get_sold_tickets(self, date_starts, date_ends):
+        """returns tickets sold on the seance"""
+        tickets = self.tickets.filter(Q(date_seance__gte=date_starts) & Q(date_seance__lte=date_ends))
+        return tickets
+
     def __str__(self):
         return f'Seance with {self.seance_base.film.title} in {self.time_starts}-{self.time_ends} o\'clock'
 
@@ -272,7 +288,7 @@ class Ticket(models.Model):
     was_returned = models.BooleanField(default=False, verbose_name=_('was_returned?'))
 
     def __str__(self):
-        return self.seance.__str__()
+        return f'ticket on {self.seance.__str__()} on {self.date_seance}'
 
     def save(self, *args, **kwargs):
         if not self.id:
