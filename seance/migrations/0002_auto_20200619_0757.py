@@ -46,6 +46,7 @@ def initial_db_base(apps, schema_editor):
         quantity_seats=100,
         quantity_rows=10,
         description='Convenient place for your exciting journey',
+        is_active=True,
         admin=admin
     )
 
@@ -64,6 +65,7 @@ def initial_db_base(apps, schema_editor):
         quantity_seats=150,
         quantity_rows=10,
         description='Convenient place for your exciting journey... if you love many people in one place at a time)',
+        is_active=True,
         admin=admin
     )
 
@@ -95,6 +97,7 @@ def initial_db_base(apps, schema_editor):
         time_ends=datetime.time(14, 00),
         description='For those who have long dinner time)',
         seance_base=seance_base_bond,
+        is_active=True,
         admin=admin
     )
 
@@ -103,6 +106,7 @@ def initial_db_base(apps, schema_editor):
         time_ends=datetime.time(21, 0),
         description='For those who have time after work!)',
         seance_base=seance_base_bond,
+        is_active=True,
         admin=admin
     )
 
@@ -111,6 +115,7 @@ def initial_db_base(apps, schema_editor):
         time_ends=datetime.time(1, 30),
         description='For those who don\'t sleep at night!)',
         seance_base=seance_base_bond,
+        is_active=True,
         admin=admin
     )
 
@@ -119,6 +124,7 @@ def initial_db_base(apps, schema_editor):
         time_ends=datetime.time(15, 0),
         description='For those who have long dinner time)',
         seance_base=seance_base_365,
+        is_active=True,
         admin=admin
     )
 
@@ -127,6 +133,7 @@ def initial_db_base(apps, schema_editor):
         time_ends=datetime.time(21, 0),
         description='For those who have time after work!)',
         seance_base=seance_base_365,
+        is_active=True,
         admin=admin
     )
 
@@ -135,6 +142,7 @@ def initial_db_base(apps, schema_editor):
         time_ends=datetime.time(1, 30),
         description='For those who don\'t sleep at night!)',
         seance_base=seance_base_365,
+        is_active=True,
         admin=admin
     )
 
