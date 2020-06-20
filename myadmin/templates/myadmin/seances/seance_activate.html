@@ -1,20 +1,15 @@
-{% extends 'layout/base.html' %}
+{% extends 'myadmin/base.html' %}
 {% load i18n %}
-{% load mathfilters %}
-
 
 {% block content %}
-    <br>
+    <h2>{% trans 'Seances' %}:</h2>
 
-    <form action="{% url 'seance:index' %}" id="ordering-form" method="get">
-      {{ ordering_form.as_p }}
-       <input type="submit" value="{% trans 'Submit' %}" id="submit-ordering">
-    </form>
 
 
     <br>
           <table>
-  <tr><td>Film</td> <td>Duration</td> <td>Dates</td> <td>Hall</td> <td>Price</td></tr>
+  <tr><td>Film</td> <td>Duration</td> <td>Dates</td> <td>Hall</td> <td>Price</td><td>Updated at</td>
+  <td>Is active?</td><td>Admin</td></tr>
     {% for seance in seance_list %}
 
         <tr>
@@ -30,15 +25,20 @@
             {% endfor %}
             {% endspaceless %}
             </p></td>
+            <td><p>{{ seance.updated_at }}</p></td>
+            <td><p>{{ seance.is_active }}</p></td>
+            <td><p>{{ seance.admin }}</p></td>
             <td>
-                <form action="{% url 'seance:seance_detail' seance.pk %}" method="get" id="show-seance-details-form">
-                    <input type="submit" id="show-details" value="{% trans 'Show details' %}">
-                </form>
+                <form action="{% url 'myadmin:seance_update' seance.pk %}">
+                    <input type="submit" value="{% trans 'Update' %}">
+                </form></td>
+            <td>
+
             </td>
-{#            <td><input type="submit"></td>#}
           </div>
         </tr>
 
     {% endfor %}
                 </table>
+
 {% endblock content %}

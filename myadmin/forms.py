@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
 
-from seance.models import Film, SeatCategory, Price, SeanceBase, Hall
+from seance.models import Film, SeatCategory, Price, SeanceBase, Hall, Seance
 
 
 class FilmModelForm(forms.ModelForm):
@@ -125,5 +125,12 @@ class SeanceBaseUpdateForm(SeanceBaseCreateForm):
                                 f'seances with film you want to change: {tickets_list}')
 
 
+class SeanceCreateForm(forms.ModelForm):
+    class Meta:
+        model = Seance
+        fields = ('time_starts', 'time_ends', 'time_hall_free', 'advertisements_duration', 'cleaning_duration',
+                  'description', 'seance_base', 'is_active')
 
 
+class SeanceUpdateForm(SeanceCreateForm):
+    pass

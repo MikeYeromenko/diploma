@@ -1,0 +1,15 @@
+{% extends 'myadmin/base.html' %}
+{% load i18n %}
+
+{% block content %}
+    <h2>{% block h2 %}Update seance:{% endblock h2 %}</h2>
+    <form action="" method="post">
+        {{ form.as_p }}
+
+        {% csrf_token %}
+        {% block input_submit %}
+        <input type="submit" value="Update">
+            {% endblock input_submit %}
+    </form>
+
+{% endblock content %}

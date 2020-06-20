@@ -1,0 +1,49 @@
+{% extends 'myadmin/base.html' %}
+{% load i18n %}
+
+{% block content %}
+    <h2>{% trans 'Seances' %}:</h2>
+
+
+
+    <br>
+          <table>
+  <tr><td>Film</td> <td>Duration</td> <td>Dates</td> <td>Hall</td> <td>Price</td><td>Updated at</td>
+  <td>Is active?</td><td>Admin</td></tr>
+    {% for seance in seance_list %}
+
+        <tr>
+          <div class="seance-search-result">
+            <td><p>{{ seance.seance_base.film.title }}</p></td>
+            <td><p>{{ seance.time_starts }} - {{ seance.time_ends }}</p></td>
+            <td><p>{{ seance.seance_base.date_starts }} - {{ seance.seance_base.date_ends }}</p></td>
+            <td><p>{{ seance.seance_base.hall.name }}</p></td>
+            <td><p>Ticket price:
+            {% spaceless %}
+            {% for price in seance.prices.all %}
+                {{ price.price }} hrn.
+            {% endfor %}
+            {% endspaceless %}
+            </p></td>
+            <td><p>{{ seance.updated_at }}</p></td>
+            <td><p>{{ seance.is_active }}</p></td>
+            <td><p>{{ seance.admin }}</p></td>
+            <td>
+                <form action="{% url 'myadmin:seance_update' seance.pk %}">
+                    <input type="submit" value="{% trans 'Update' %}">
+                </form></td>
+          {% if not seance.is_active %}
+                <form action="{% url 'myadmin:seance_activate' seance.pk %}">
+                    <input type="submit" value="{% trans 'Activate' %}">
+                </form></td>
+          {% endif %}
+            <td>
+
+            </td>
+          </div>
+        </tr>
+
+    {% endfor %}
+                </table>
+
+{% endblock content %}

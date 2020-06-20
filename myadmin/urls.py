@@ -6,6 +6,10 @@ app_name = 'myadmin'
 
 
 urlpatterns = [
+    path('seance/activate/<int:pk>/', views.SeanceActivateView.as_view(), name='seance_activate'),
+    path('seance/create/', views.SeanceCreateView.as_view(), name='seance_create'),
+    path('seance/update/<int:pk>/', views.SeanceUpdateView.as_view(), name='seance_update'),
+    path('seance/', views.SeanceListView.as_view(), name='seance_list'),
     path('seance_base/delete/<int:pk>/', views.SeanceBaseDeleteView.as_view(), name='seance_base_delete'),
     path('seance_base/create/', views.SeanceBaseCreateView.as_view(), name='seance_base_create'),
     path('seance_base/update/<int:pk>/', views.SeanceBaseUpdateView.as_view(), name='seance_base_update'),

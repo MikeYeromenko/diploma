@@ -27,9 +27,17 @@
             <a id="link-main" href="">{% trans 'Create new base seance' %}</a>
     </div>
   </div>
-</div>
 
+  <div class="dropdown">
+    <button class="dropbtn">
+      <i class="fa fa-caret-down">{% trans 'Seances' %}</i>
+    </button>
+    <div class="dropdown-content">
+            <a id="link-main" href="{% url 'myadmin:seance_list' %}">{% trans 'Seance list' %}</a>
+            <a id="link-main" href="{% url 'myadmin:seance_create' %}">{% trans 'Create new seance' %}</a>
+    </div>
+  </div>
     <br>
-
+</div>
 {% endblock admin_links %}
 

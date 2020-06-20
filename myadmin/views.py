@@ -218,4 +218,42 @@ class SeanceBaseDeleteView(IsStaffRequiredMixin, DeleteView):
                                                          'this base seance, but not to delete!')
             return redirect(self.success_url)
         return self.delete(request, *args, **kwargs)
+#
+#
+# class SeanceTemplateView(IsStaffRequiredMixin, TemplateView):
+#     template_name = 'myadmin/seances/seance_list.html'
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         admin = get_object_or_404(AdvUser, pk=self.request.user.pk)
+#         seances = Seance.objects.all()
+#         seance_objects = [(seance, forms.SeanceModelForm(instance=seance,
+#                                                          initial={'admin': admin}))
+#                           for seance in seances]
+#         context['seance_objects'] = seance_objects
+#         return context
 
+
+class SeanceListView(IsStaffRequiredMixin, ListView):
+    model = Seance
+    template_name = 'myadmin/seances/seance_list.html'
+    paginate_by = 10
+
+
+class SeanceUpdateView(IsStaffRequiredMixin, UpdateView):
+    model = Seance
+    success_url = reverse_lazy('myadmin:seance_list')
+    template_name = 'myadmin/seances/seance_update_form.html'
+    form_class = forms.SeanceUpdateForm
+
+
+class SeanceCreateView(IsStaffRequiredMixin, CreateView):
+    model = Seance
+    template_name = 'myadmin/seances/seance_create_form.html'
+    form_class = forms.SeanceCreateForm
+    success_url = reverse_lazy('myadmin:seance_activate')
+
+
+class SeanceActivateView(IsStaffRequiredMixin, DetailView):
+    model = Seance
+    template_name = 'myadmin/seances/seance_activate.html'

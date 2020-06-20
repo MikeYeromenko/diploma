@@ -180,6 +180,8 @@ class Seance(models.Model):
     seance_base = models.ForeignKey(SeanceBase, on_delete=models.PROTECT, related_name='seances',
                                     verbose_name=_('base seance'))
     is_active = models.BooleanField(default=False, verbose_name=_('in run?'))
+    created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('instance created at'))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_('instance updated at'))
     admin = models.ForeignKey(AdvUser, on_delete=models.PROTECT, verbose_name=_('instance created by'),
                               related_name='seances')
 
