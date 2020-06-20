@@ -12,7 +12,7 @@
     {% for seance in seance_list %}
 
         <tr>
-          <div class="seance-search-result">
+
             <td><p>{{ seance.seance_base.film.title }}</p></td>
             <td><p>{{ seance.time_starts|date:"H:i" }} - {{ seance.time_ends|date:"H:i" }}</p></td>
             <td><p>{{ seance.seance_base.date_starts }} - {{ seance.seance_base.date_ends }}</p></td>
@@ -33,13 +33,16 @@
                 <form action="{% url 'myadmin:seance_update' seance.pk %}">
                     <input type="submit" value="{% trans 'Update' %}">
                 </form></td>
+                      <td>
+                <form action="{% url 'myadmin:seance_delete' seance.pk %}">
+                    <input type="submit" value="{% trans 'Delete' %}">
+                </form></td>
           {% if not seance.is_active %}
                <td> <form action="{% url 'myadmin:seance_activate' seance.pk %}">
                     <input type="submit" value="{% trans 'Activate' %}">
                 </form></td>
           {% endif %}
 
-          </div>
         </tr>
 
     {% endfor %}

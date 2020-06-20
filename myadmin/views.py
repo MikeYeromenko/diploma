@@ -6,7 +6,8 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import TemplateView, DetailView, ListView, UpdateView, CreateView, DeleteView, FormView
+from django.views.generic import TemplateView, DetailView, ListView, UpdateView, CreateView, DeleteView, FormView, \
+    RedirectView
 
 from myadmin import forms
 from myadmin.forms import FilmModelForm
@@ -218,20 +219,6 @@ class SeanceBaseDeleteView(IsStaffRequiredMixin, DeleteView):
                                                          'this base seance, but not to delete!')
             return redirect(self.success_url)
         return self.delete(request, *args, **kwargs)
-#
-#
-# class SeanceTemplateView(IsStaffRequiredMixin, TemplateView):
-#     template_name = 'myadmin/seances/seance_list.html'
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         admin = get_object_or_404(AdvUser, pk=self.request.user.pk)
-#         seances = Seance.objects.all()
-#         seance_objects = [(seance, forms.SeanceModelForm(instance=seance,
-#                                                          initial={'admin': admin}))
-#                           for seance in seances]
-#         context['seance_objects'] = seance_objects
-#         return context
 
 
 class SeanceListView(IsStaffRequiredMixin, ListView):
@@ -270,10 +257,60 @@ class SeanceCreateView(IsStaffRequiredMixin, CreateView):
         return redirect(reverse_lazy('myadmin:seance_activate', kwargs={'pk': self.object.pk}))
 
 
-# class SeanceDeleteView(DetailView):
-#     model = Seance
-
-
-class SeanceActivateView(IsStaffRequiredMixin, DetailView):
+class SeanceDeleteView(IsStaffRequiredMixin, DeleteView):
     model = Seance
+    template_name = 'myadmin/seances/seance_confirm_delete.html'
+    success_url = reverse_lazy('myadmin:seance_list')
+
+    def post(self, request, *args, **kwargs):
+        """We can't delete Seance if it is active or there are Ticket or Price objects related to it"""
+        seance = get_object_or_404(Seance, pk=kwargs.get('pk'))
+        if seance.is_active or seance.tickets.all() or seance.prices.all():
+            messages.add_message(request, messages.INFO, f"We can't delete {seance} if it is active or there are "
+                                                         f"Ticket or Price objects related to it. "
+                                                         f"Tickets: {seance.tickets.all()}, "
+                                                         f"prices: {seance.prices.all()}")
+            return redirect(self.success_url)
+        return self.delete(request, *args, **kwargs)
+
+
+class SeanceActivateView(IsStaffRequiredMixin, FormView):
     template_name = 'myadmin/seances/seance_activate.html'
+    form_class = forms.PriceModelForm
+    success_url = reverse_lazy('myadmin:seance_list')
+
+    def dispatch(self, request, *args, **kwargs):
+        """Adds Seance object to self"""
+        self.seance = get_object_or_404(Seance, pk=kwargs.get('pk'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['seance'] = self.seance
+        result_dict = self.seance.activate()
+        if result_dict.get('success'):
+            context['success'] = True
+            return context
+        context['success'] = False
+        context['errors'] = result_dict.get('errors_list')
+        sc = result_dict.get('seat_categories')
+        if sc:
+            context['form'] = self.form_class(initial={
+                'seance': self.seance,
+                'seat_category': sc[0]
+            })
+        else:
+            context['form'] = None
+        return context
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handle POST requests: instantiate a form instance with the passed
+        POST variables and then check if it's valid.
+        """
+        form = self.get_form()
+        if form.is_valid():
+            form.save()
+        return redirect(reverse_lazy('myadmin:seance_activate', kwargs={'pk': self.seance.pk}))
+
+

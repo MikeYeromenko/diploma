@@ -1,5 +1,6 @@
 import datetime
 
+from django.contrib import messages
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Q, F
@@ -80,6 +81,14 @@ class Hall(models.Model):
                 row=row,
                 admin=admin
             )
+
+    def get_seat_categories(self):
+        """Returns queryset of all seat categories, available for seats of hall"""
+        categories_pk_s = set(self.seats.values_list('seat_category', flat=True))
+        categories = SeatCategory.objects.none()
+        for pk in categories_pk_s:
+            categories = categories | SeatCategory.objects.filter(pk=pk)
+        return categories
 
 
 class SeatCategory(models.Model):
@@ -275,6 +284,31 @@ class Seance(models.Model):
         if self.time_starts < datetime.datetime.now().time():
             tickets = tickets.filter(date_seance__gt=date_starts)
         return tickets
+
+    def activate(self):
+        """Validates, that Seance is ready to take part in cinema board.
+        For this purpose we check: is hall active; is film active; aren't dates of seance_base passed;
+        are there tickets for all seat_categories"""
+        errors_list = []
+        if self.seance_base.date_ends < datetime.datetime.now().date():
+            errors_list.append(f'Date_ends of {self.seance_base} has passed.')
+        if not self.seance_base.hall.is_active:
+            errors_list.append(f'Hall has status is_active: False')
+        if not self.seance_base.film.is_active:
+            errors_list.append(f'Film has status is_active: False')
+        seat_categories = self.seance_base.hall.get_seat_categories()
+        sc_with_no_prices = []
+        for sc in seat_categories:
+            if not Price.objects.filter(seat_category=sc, seance_id=self.pk):
+                sc_with_no_prices.append(sc)
+                errors_list.append(f'There is no price for seat category: {sc.name}')
+        if not errors_list and not sc_with_no_prices:
+            self.is_active = True
+            self.save()
+        return {'errors_list': errors_list,
+                'seat_categories': sc_with_no_prices,
+                'success': self.is_active}
+
 
     def __str__(self):
         return f'Seance with {self.seance_base.film.title} in {self.time_starts}-{self.time_ends} o\'clock'

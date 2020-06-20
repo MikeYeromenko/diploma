@@ -68,6 +68,11 @@ ul {
   font-weight: bolder;
 }
 
+li {
+  color: red;
+  font-weight: bolder;
+}
+
 
 table {
   width: 100%; /* Ширина таблицы */
@@ -76,7 +81,7 @@ table {
   text-align: center;
 }
 th {
-  text-align: left; /* Выравнивание по левому краю */
+  text-align: center; /* Выравнивание по center */
   background: #ccc; /* Цвет фона ячеек */
   padding: 5px; /* Поля вокруг содержимого ячеек */
   border: 1px solid black; /* Граница вокруг ячеек */
@@ -84,4 +89,5 @@ th {
 td {
   padding: 5px; /* Поля вокруг содержимого ячеек */
   border: 1px solid black; /* Граница вокруг ячеек */
+  text-align: center;
 }
