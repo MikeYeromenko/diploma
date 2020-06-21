@@ -1,0 +1,50 @@
+{% extends 'myadmin/base.html' %}
+{% load i18n %}
+
+{% block content %}
+    <h2>{% trans 'Hall activation' %}:</h2>
+
+
+
+    <br>
+          <table>
+  <tr><th>Hall</th> <th>quantity seats</th> <th>quantity rows</th> <th>description</th> <th>Updated at</th>
+  <th>Is active?</th><th>Admin</th><th></th><th></th></tr>
+
+        <tr>
+
+            <td><p>{{ hall.name }}</p></td>
+            <td><p>{{ hall.quantity_seats }}</p></td>
+            <td><p>{{ hall.quantity_rows }}</p></td>
+            <td><p>{{ hall.description }}</p></td>
+            <td><p>{{ hall.updated_at }}</p></td>
+            <td><p>{{ hall.is_active }}</p></td>
+            <td><p>{{ hall.admin }}</p></td>
+
+        </tr>
+                </table>
+
+
+
+
+    {% if success %}
+        <h2>{% trans 'Hall activated successfully!' %}</h2>
+        <a href="{% url 'myadmin:hall_list' %}">{% trans 'Look in hall list' %}</a>
+    {% else %}
+        {% if errors %}
+            {% for error in errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        {% endif %}
+        {% if form %}
+            <form action="" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+                <input type="submit" value="Create seats">
+            </form>
+        {% endif %}
+        <a href="{% url 'myadmin:hall_activate' hall.pk %}"><button>Activate</button></a>
+    {% endif %}
+
+
+{% endblock content %}

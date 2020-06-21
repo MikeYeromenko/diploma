@@ -383,3 +383,7 @@ class HallDeleteView(IsStaffRequiredMixin, DeleteView):
         messages.add_message(request, messages.INFO, f'{self.object.name} deleted successfully')
         self.object.delete()
         return redirect(success_url)
+
+
+class HallActivateView(IsStaffRequiredMixin, FormView):
+    pass

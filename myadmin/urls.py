@@ -7,6 +7,7 @@ from myadmin import views
 app_name = 'myadmin'
 
 urlpatterns = [
+    path('hall/activate/<int:pk>/', views.HallActivateView.as_view(), name='hall_activate'),
     path('hall/delete/<int:pk>/', views.HallDeleteView.as_view(), name='hall_delete'),
     path('hall/update/<int:pk>/', views.HallUpdateView.as_view(), name='hall_update'),
     path('hall/create/', views.HallCreateView.as_view(), name='hall_create'),
