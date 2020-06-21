@@ -362,3 +362,8 @@ class HallCreateView(IsStaffRequiredMixin, CreateView):
         self.object.admin = self.request.user
         self.object.asve()
         return super().form_valid(form)
+
+
+class HallDeleteView(IsStaffRequiredMixin, DeleteView):
+    model = Hall
+    template_name = 'myadmin/hall/hall_confirm_delete.html'
