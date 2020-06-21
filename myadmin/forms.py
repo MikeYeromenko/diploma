@@ -3,6 +3,7 @@ import datetime
 from django import forms
 from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
@@ -195,17 +196,16 @@ class HallUpdateForm(HallModelForm):
         Admin can deactivate Hall if there are no active base seances related to it
         """
         super(HallUpdateForm, self).clean()
-        if ('is_active' in self.changed_data or 'quantity_seats' in self.changed_data
-                or 'quantity_rows' in self.changed_data):
+        if ('is_active' in self.changed_data or 'quantity_seats' in self.changed_data or
+                'quantity_rows' in self.changed_data):
             is_active = self.cleaned_data.get('is_active')
-            if is_active:
-                raise ValidationError(f'To activate Hall please use "Activate" button in Hall list'
+            if is_active and 'is_active' in self.changed_data:
+                raise ValidationError(f'To activate Hall please use "Activate" button in Hall list. '
                                       f'Here its possible only to deactivate hall')
-            for sb in self.instance.base_seances:
-                for seance in sb:
-                    tickets = seance.get_sold_but_not_used_tickets()
-                    if tickets:
-                        raise ValidationError(f'You can\'t deactivate or change quantity of seats or rows in '
-                                              f' this hall because there are sold '
-                                              f'tickets on seances in it: {tickets[0]}...')
+            active_base_seances = self.instance.base_seances.filter(Q(date_ends__gte=datetime.date.today()) &
+                                                                    Q(hall=self.instance))
+            if active_base_seances.count():
+                raise ValidationError(f'You can\'t deactivate this hall or change its size because there are active '
+                                      f'base seances in it: {active_base_seances.all()}')
+
 

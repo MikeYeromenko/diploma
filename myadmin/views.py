@@ -346,7 +346,7 @@ class HallUpdateView(IsStaffRequiredMixin, UpdateView):
         """Adds admin to Hall"""
         self.object = form.save(commit=False)
         self.object.admin = self.request.user
-        self.object.asve()
+        self.object.save()
         return super().form_valid(form)
 
 
@@ -360,10 +360,26 @@ class HallCreateView(IsStaffRequiredMixin, CreateView):
         """Adds admin to Hall"""
         self.object = form.save(commit=False)
         self.object.admin = self.request.user
-        self.object.asve()
+        self.object.save()
         return super().form_valid(form)
 
 
 class HallDeleteView(IsStaffRequiredMixin, DeleteView):
     model = Hall
     template_name = 'myadmin/hall/hall_confirm_delete.html'
+    success_url = reverse_lazy('myadmin:hall_list')
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Call the delete() method on the fetched object and then redirect to the
+        success URL.
+        """
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        if self.object.is_active:
+            messages.add_message(request, messages.INFO, f'We can\' delete {self.object.name} hall '
+                                                         f'because its status is_active=True. Deactivate it first')
+            return redirect(success_url)
+        messages.add_message(request, messages.INFO, f'{self.object.name} deleted successfully')
+        self.object.delete()
+        return redirect(success_url)

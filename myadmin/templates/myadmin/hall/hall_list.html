@@ -25,7 +25,7 @@
                     <input type="submit" value="{% trans 'Update' %}">
                 </form></td>
                       <td>
-                <form action="">
+                <form action="{% url 'myadmin:hall_delete' hall.pk %}">
                     <input type="submit" value="{% trans 'Delete' %}">
                 </form></td>
           {% if not hall.is_active %}
