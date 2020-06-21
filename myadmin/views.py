@@ -11,7 +11,7 @@ from django.views.generic import TemplateView, DetailView, ListView, UpdateView,
 
 from myadmin import forms
 from myadmin.forms import FilmModelForm
-from seance.models import Film, AdvUser, SeatCategory, Price, Seance, SeanceBase
+from seance.models import Film, AdvUser, SeatCategory, Price, Seance, SeanceBase, Hall
 
 
 class IsStaffRequiredMixin(AccessMixin):
@@ -330,3 +330,12 @@ class SeanceActivateView(IsStaffRequiredMixin, FormView):
         return redirect(reverse_lazy('myadmin:seance_activate', kwargs={'pk': self.seance.pk}))
 
 
+class HallListView(IsStaffRequiredMixin, ListView):
+    model = Hall
+    template_name = 'myadmin/hall/hall_list.html'
+    queryset = Hall.objects.all()
+
+
+class HallUpdateView(IsStaffRequiredMixin, UpdateView):
+    model = Hall
+    template_name = ''

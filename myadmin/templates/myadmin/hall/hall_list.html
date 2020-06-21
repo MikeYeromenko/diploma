@@ -1,0 +1,42 @@
+{% extends 'myadmin/base.html' %}
+{% load i18n %}
+
+{% block content %}
+    <h2>{% trans 'Halls' %}:</h2>
+
+
+    <br>
+          <table>
+  <tr><th>Hall</th> <th>quantity seats</th> <th>quantity rows</th> <th>description</th> <th>Updated at</th>
+  <th>Is active?</th><th>Admin</th><th></th><th></th></tr>
+    {% for hall in hall_list %}
+
+        <tr>
+
+            <td><p>{{ hall.name }}</p></td>
+            <td><p>{{ hall.quantity_seats }}</p></td>
+            <td><p>{{ hall.quantity_rows }}</p></td>
+            <td><p>{{ hall.description }}</p></td>
+            <td><p>{{ hall.updated_at }}</p></td>
+            <td><p>{{ hall.is_active }}</p></td>
+            <td><p>{{ hall.admin }}</p></td>
+            <td>
+                <form action="">
+                    <input type="submit" value="{% trans 'Update' %}">
+                </form></td>
+                      <td>
+                <form action="">
+                    <input type="submit" value="{% trans 'Delete' %}">
+                </form></td>
+          {% if not hall.is_active %}
+               <td> <form action="">
+                    <input type="submit" value="{% trans 'Activate' %}">
+                </form></td>
+          {% endif %}
+
+        </tr>
+
+    {% endfor %}
+                </table>
+
+{% endblock content %}
