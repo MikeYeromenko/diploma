@@ -177,3 +177,14 @@ class SeanceUpdateForm(SeanceModelForm):
             if tickets:
                 raise ValidationError(f'You can\'t change time_starts because there are sold and not used tickets on '
                                       f'it: {tickets}')
+
+
+class HallModelForm(forms.ModelForm):
+    class Meta:
+        model = Hall
+        fields = ('name', 'quantity_seats', 'quantity_rows', 'description')
+
+
+class HallUpdateForm(HallModelForm):
+    class Meta(HallModelForm.Meta):
+        fields = HallModelForm.Meta.fields + ('is_active', )

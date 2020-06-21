@@ -21,7 +21,7 @@
             <td><p>{{ hall.is_active }}</p></td>
             <td><p>{{ hall.admin }}</p></td>
             <td>
-                <form action="">
+                <form action="{% url 'myadmin:hall_update' hall.pk %}">
                     <input type="submit" value="{% trans 'Update' %}">
                 </form></td>
                       <td>

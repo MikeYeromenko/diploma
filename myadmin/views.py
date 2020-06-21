@@ -338,4 +338,6 @@ class HallListView(IsStaffRequiredMixin, ListView):
 
 class HallUpdateView(IsStaffRequiredMixin, UpdateView):
     model = Hall
-    template_name = ''
+    template_name = 'myadmin/hall/hall_update_form.html'
+    success_url = reverse_lazy('myadmin:hall_list')
+    form_class = forms.HallUpdateForm
