@@ -135,8 +135,8 @@ class Seat(models.Model):
 
 
 class SeanceBase(models.Model):
-    film = models.ForeignKey(Film, on_delete=models.PROTECT, related_name='seances', verbose_name=_('film'))
-    hall = models.ForeignKey(Hall, on_delete=models.PROTECT, related_name='seances', verbose_name=_('hall'))
+    film = models.ForeignKey(Film, on_delete=models.PROTECT, related_name='base_seances', verbose_name=_('film'))
+    hall = models.ForeignKey(Hall, on_delete=models.PROTECT, related_name='base_seances', verbose_name=_('hall'))
     date_starts = models.DateField(verbose_name=_('starts'))
     date_ends = models.DateField(null=True, blank=True, verbose_name=_('ends'))
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('instance created at'))
@@ -295,7 +295,7 @@ class Seance(models.Model):
             date_ends = self.seance_base.date_ends
         tickets = self.tickets.filter(Q(date_seance__gte=date_starts) & Q(date_seance__lte=date_ends))
 
-        # if today seance has begun, we don't put todays ticket to queryset
+        # if today seance has begun, we don't put today's tickets to queryset
         if self.time_starts < datetime.datetime.now().time():
             tickets = tickets.filter(date_seance__gt=date_starts)
         return tickets
@@ -374,6 +374,7 @@ class Ticket(models.Model):
 
     class Meta:
         unique_together = ('seance', 'date_seance', 'seat')
+        ordering = ('-date_seance', )
 
 
 class Return:

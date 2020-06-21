@@ -341,3 +341,24 @@ class HallUpdateView(IsStaffRequiredMixin, UpdateView):
     template_name = 'myadmin/hall/hall_update_form.html'
     success_url = reverse_lazy('myadmin:hall_list')
     form_class = forms.HallUpdateForm
+
+    def form_valid(self, form):
+        """Adds admin to Hall"""
+        self.object = form.save(commit=False)
+        self.object.admin = self.request.user
+        self.object.asve()
+        return super().form_valid(form)
+
+
+class HallCreateView(IsStaffRequiredMixin, CreateView):
+    model = Hall
+    template_name = 'myadmin/hall/hall_create_form.html'
+    success_url = reverse_lazy('myadmin:hall_list')
+    form_class = forms.HallModelForm
+
+    def form_valid(self, form):
+        """Adds admin to Hall"""
+        self.object = form.save(commit=False)
+        self.object.admin = self.request.user
+        self.object.asve()
+        return super().form_valid(form)

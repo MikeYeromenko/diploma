@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
 
-from seance.models import Film, SeatCategory, Price, SeanceBase, Hall, Seance
+from seance.models import Film, SeatCategory, Price, SeanceBase, Hall, Seance, Ticket
 
 
 class FilmModelForm(forms.ModelForm):
@@ -188,3 +188,24 @@ class HallModelForm(forms.ModelForm):
 class HallUpdateForm(HallModelForm):
     class Meta(HallModelForm.Meta):
         fields = HallModelForm.Meta.fields + ('is_active', )
+
+    def clean(self):
+        """
+        If admin decides to update quantity rows or quantity_seats its possible if hall is not active.
+        Admin can deactivate Hall if there are no active base seances related to it
+        """
+        super(HallUpdateForm, self).clean()
+        if ('is_active' in self.changed_data or 'quantity_seats' in self.changed_data
+                or 'quantity_rows' in self.changed_data):
+            is_active = self.cleaned_data.get('is_active')
+            if is_active:
+                raise ValidationError(f'To activate Hall please use "Activate" button in Hall list'
+                                      f'Here its possible only to deactivate hall')
+            for sb in self.instance.base_seances:
+                for seance in sb:
+                    tickets = seance.get_sold_but_not_used_tickets()
+                    if tickets:
+                        raise ValidationError(f'You can\'t deactivate or change quantity of seats or rows in '
+                                              f' this hall because there are sold '
+                                              f'tickets on seances in it: {tickets[0]}...')
+
