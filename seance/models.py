@@ -106,7 +106,7 @@ class SeatCategory(models.Model):
 
 
 class Seat(models.Model):
-    hall = models.ForeignKey(Hall, on_delete=models.PROTECT, related_name='seats', verbose_name=_('hall'))
+    hall = models.ForeignKey(Hall, on_delete=models.CASCADE, related_name='seats', verbose_name=_('hall'))
     seat_category = models.ForeignKey(SeatCategory, on_delete=models.PROTECT,
                                       related_name='seats', verbose_name=_('seat category'))
     number = models.PositiveSmallIntegerField(default=0, verbose_name=_('number of seat'))
@@ -309,12 +309,12 @@ class Seance(models.Model):
                 'seat_categories': sc_with_no_prices,
                 'success': self.is_active}
 
-
     def __str__(self):
         return f'Seance with {self.seance_base.film.title} in {self.time_starts}-{self.time_ends} o\'clock'
 
     def __repr__(self):
         return f'Seance with {self.seance_base.film.title} in {self.time_starts}-{self.time_ends} o\'clock'
+
 
 class Purchase(models.Model):
     user = models.ForeignKey(AdvUser, on_delete=models.PROTECT, related_name='purchases', verbose_name=_('user'))
