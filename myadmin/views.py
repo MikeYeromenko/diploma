@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import TemplateView, DetailView, ListView, UpdateView, CreateView, DeleteView, FormView, \
-    RedirectView
+    RedirectView, View
 
 from myadmin import forms
 from myadmin.forms import FilmModelForm
@@ -385,5 +385,48 @@ class HallDeleteView(IsStaffRequiredMixin, DeleteView):
         return redirect(success_url)
 
 
+def get_categories():
+    categories = SeatCategory.objects.all()
+    return [(c.id, c.name) for c in categories]
+
+
 class HallActivateView(IsStaffRequiredMixin, FormView):
-    pass
+    form_class = forms.SeatsCreateForm
+    template_name = 'myadmin/hall/hall_activate.html'
+    success_url = reverse_lazy('myadmin:hall_list')
+
+    def dispatch(self, request, *args, **kwargs):
+        self.hall = get_object_or_404(Hall, pk=kwargs.get('pk'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_initial(self):
+        return {'hall': self.hall.pk}
+
+    def get_form_kwargs(self):
+        """Return the keyword arguments for instantiating the form."""
+        kwargs = super().get_form_kwargs()
+        kwargs.update({
+            'choices': get_categories()
+        })
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        result = self.hall.activate_hall()
+        context['hall'] = self.hall
+        context.update(result)
+        return context
+
+    def form_valid(self, form):
+        """
+        Handle POST requests: instantiate a form instance with the passed
+        POST variables and then check if it's valid.
+        """
+        if form.is_valid():
+            seat_category = get_object_or_404(SeatCategory, pk=form.cleaned_data.get('seat_category'))
+            self.hall.create_or_update_seats(row=form.cleaned_data.get('row'),
+                                             number_starts=form.cleaned_data.get('seat_starts'),
+                                             number_ends=form.cleaned_data.get('seat_ends'),
+                                             seat_category=seat_category
+                                             )
+        return redirect(reverse_lazy('myadmin:hall_activate', kwargs={'pk': self.hall.pk}))

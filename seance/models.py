@@ -71,16 +71,16 @@ class Hall(models.Model):
         """Validates, that all seats for hall were created. If all seats created - returns True"""
         return not bool(self.quantity_seats-self.seats.count())
 
-    def create_seats(self, row, number_start, number_end, admin, seat_category):
-        """Creates seats in hall corresponding to given by admin info"""
-        for number in range(number_start, number_end + 1):
-            Seat.objects.create(
-                hall=Hall.objects.get(name=self.name),
-                seat_category=seat_category,
-                number=number,
-                row=row,
-                admin=admin
-            )
+    def create_or_update_seats(self, seat_category, row, number_starts, number_ends):
+        """Looks if there are already created seats for that conditions. If there are - updates them.
+        If there isn't - creates"""
+        for num in range(number_starts, number_ends + 1):
+            seat_created = Seat.objects.filter(Q(hall_id=self.pk) & Q(row=row) & Q(number=num))
+            if seat_created:
+                seat_created[0].seat_category = seat_category
+                seat_created[0].save()
+            else:
+                Seat.objects.create(hall_id=self.pk, seat_category=seat_category, number=num, row=row)
 
     def get_seat_categories(self):
         """Returns queryset of all seat categories, available for seats of hall"""
@@ -89,6 +89,17 @@ class Hall(models.Model):
         for pk in categories_pk_s:
             categories = categories | SeatCategory.objects.filter(pk=pk)
         return categories
+
+    def activate_hall(self):
+        """Checks that all seats for hall are created and if True, sets is_active=True"""
+        uncreated_seats_quantity = self.quantity_seats - self.seats.count()
+        if not uncreated_seats_quantity:
+            self.is_active = True
+            self.save()
+        created_seats = [(seat.row, seat.number, seat.seat_category.name) for seat in self.seats.all()]
+        return {'uncreated_seats': uncreated_seats_quantity,
+                'success': self.is_active,
+                'created_seats': created_seats}
 
 
 class SeatCategory(models.Model):
@@ -117,18 +128,6 @@ class Seat(models.Model):
         verbose_name = _('seat')
         verbose_name_plural = _('seats')
         ordering = ('row', 'number')
-
-    @staticmethod
-    def create_or_update_seats(hall, seat_category, row, number_starts, number_ends):
-        """Looks if there are already created seats for that conditions. If there are - updates them.
-        If there isn't - creates"""
-        for num in range(number_starts, number_ends + 1):
-            seat_created = Seat.objects.filter(Q(hall=hall) & Q(row=row) & Q(number=num))
-            if seat_created:
-                seat_created[0].seat_category = seat_category
-                seat_created[0].save()
-            else:
-                Seat.objects.create(hall=hall, seat_category=seat_category, number=num, row=row)
 
     def __str__(self):
         return f'seat number {self.number}, row {self.row} in {self.hall} hall'
@@ -163,7 +162,7 @@ class SeanceBase(models.Model):
         return self.date_starts + datetime.timedelta(days=15)
 
     def __str__(self):
-        return f'Base seance with {self.film.title} in dates: {self.date_starts} - {self.date_ends}'
+        return f'Base seance with {self.film.title}, hall {self.hall} in dates: {self.date_starts} - {self.date_ends}'
 
     @staticmethod
     def validate_seances_base_intersect(date_starts, date_ends, film, hall, sb_pk_exclude=None):

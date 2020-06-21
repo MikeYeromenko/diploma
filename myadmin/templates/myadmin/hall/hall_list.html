@@ -29,7 +29,7 @@
                     <input type="submit" value="{% trans 'Delete' %}">
                 </form></td>
           {% if not hall.is_active %}
-               <td> <form action="">
+               <td> <form action="{% url 'myadmin:hall_activate' hall.pk %}">
                     <input type="submit" value="{% trans 'Activate' %}">
                 </form></td>
           {% endif %}
