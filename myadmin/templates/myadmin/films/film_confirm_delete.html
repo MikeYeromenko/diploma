@@ -1,11 +1,6 @@
-{% extends 'myadmin/base.html' %}
+{% extends 'myadmin/base_confirm_delete.html' %}
 {% load i18n %}
 
-{% block content %}
-    <h2>{% trans 'Are you sure you want to delete film' %} {{ object }}?</h2>
-    <form method="post">{% csrf_token %}
-        <p>Are you sure you want to delete "{{ object }}"?</p>
-        <input type="submit" value="Confirm">
-    </form>
-
-{% endblock content %}
+{% block type_object %}
+    {% trans 'film' %}
+{% endblock type_object %}
