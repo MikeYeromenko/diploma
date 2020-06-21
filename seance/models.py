@@ -107,7 +107,7 @@ class SeatCategory(models.Model):
 
 class Seat(models.Model):
     hall = models.ForeignKey(Hall, on_delete=models.CASCADE, related_name='seats', verbose_name=_('hall'))
-    seat_category = models.ForeignKey(SeatCategory, on_delete=models.PROTECT,
+    seat_category = models.ForeignKey(SeatCategory, on_delete=models.CASCADE,
                                       related_name='seats', verbose_name=_('seat category'))
     number = models.PositiveSmallIntegerField(default=0, verbose_name=_('number of seat'))
     row = models.PositiveSmallIntegerField(default=0, verbose_name=_('number of row'))
@@ -117,6 +117,21 @@ class Seat(models.Model):
         verbose_name = _('seat')
         verbose_name_plural = _('seats')
         ordering = ('row', 'number')
+
+    @staticmethod
+    def create_or_update_seats(hall, seat_category, row, number_starts, number_ends):
+        """Looks if there are already created seats for that conditions. If there are - updates them.
+        If there isn't - creates"""
+        for num in range(number_starts, number_ends + 1):
+            seat_created = Seat.objects.filter(Q(hall=hall) & Q(row=row) & Q(number=num))
+            if seat_created:
+                seat_created[0].seat_category = seat_category
+                seat_created[0].save()
+            else:
+                Seat.objects.create(hall=hall, seat_category=seat_category, number=num, row=row)
+
+    def __str__(self):
+        return f'seat number {self.number}, row {self.row} in {self.hall} hall'
 
 
 class SeanceBase(models.Model):

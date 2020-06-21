@@ -89,8 +89,8 @@ class SeatCategoryCRUDView(IsStaffRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super(SeatCategoryCRUDView, self).get_context_data(**kwargs)
-        categories = SeatCategory.objects.all().values('pk', 'name', 'updated_at', 'admin')
-        object_list = [(category, forms.SeatCategoryModelForm(initial=category)) for category in categories]
+        categories = SeatCategory.objects.all()
+        object_list = [(category, forms.SeatCategoryModelForm(instance=category)) for category in categories]
         context['object_list'] = object_list
         # context['category_forms_list'] = category_forms_list
         # form_create = forms.SeatCategoryCreateForm()
@@ -110,7 +110,8 @@ class SeatCategoryCRUDView(IsStaffRequiredMixin, FormView):
                 seat_category = form_update.save(commit=False)
                 seat_category.admin = admin
                 seat_category.save()
-                messages.add_message(request, messages.SUCCESS, _('Seat category was updated successfully'))
+                messages.add_message(request, messages.SUCCESS, _(f'Seat category {seat_category.name}'
+                                                                  f' was updated successfully'))
                 return redirect(self.success_url)
             else:
                 render(request, reverse_lazy('myadmin:seat_category_crud'), {
@@ -122,7 +123,8 @@ class SeatCategoryCRUDView(IsStaffRequiredMixin, FormView):
                 seat_category = form.save(commit=False)
                 seat_category.admin = admin
                 seat_category.save()
-                messages.add_message(request, messages.SUCCESS, _('Seat category was created successfully'))
+                messages.add_message(request, messages.SUCCESS, _(f'Seat category {seat_category.name}'
+                                                                  f' was created successfully'))
                 return redirect(self.success_url)
             else:
                 return self.form_invalid(form)
@@ -132,6 +134,20 @@ class SeatCategoryDeleteView(IsStaffRequiredMixin, DeleteView):
     model = SeatCategory
     success_url = reverse_lazy('myadmin:seat_category_crud')
     template_name = 'myadmin/seat_category/seat_category_delete.html'
+
+    def delete(self, request, *args, **kwargs):
+        """We can't delete seat category, if there are seats related to it. First we need to delete Hall object"""
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        # check if there are seats related to our SeatCategory
+        if self.object.seats.last():
+            messages.add_message(request, messages.INFO, f"We can't delete seat category: {self.object.name}, "
+                                                         f"because there are seats related to it. First "
+                                                         f"we need to delete all Hall objects with seats, "
+                                                         f"related to this category")
+            return redirect(success_url)
+        self.object.delete()
+        return redirect(success_url)
 
 
 class PriceTemplateView(IsStaffRequiredMixin, TemplateView):
