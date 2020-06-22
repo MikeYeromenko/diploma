@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
 from cinema.settings import DEFAULT_SUM_TO_WALLET
+from seance.utilities import get_timestamp_path
 
 
 class AdvUser(AbstractUser):
@@ -39,6 +40,7 @@ class Film(models.Model):
     director = models.CharField(max_length=100, verbose_name=_('director'))
     duration = models.TimeField(verbose_name=_('duration'))
     description = models.TextField(verbose_name=_('description'))
+    image = models.ImageField(blank=True, upload_to=get_timestamp_path, verbose_name=_('film picture'))
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('instance created at'))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_('instance updated at'))
     is_active = models.BooleanField(default=True, verbose_name=_('in run?'))
@@ -47,8 +49,23 @@ class Film(models.Model):
     def __str__(self):
         return self.title
 
+    def delete(self, *args, **kwargs):
+        """Delete additional images when delete film"""
+        for ai in self.images.all():
+            ai.delete()
+        super().delete(*args, **kwargs)
+
     class Meta:
         ordering = ('-updated_at', )
+
+
+class FilmAdditionalImage(models.Model):
+    film = models.ForeignKey(Film, on_delete=models.CASCADE, related_name='images', verbose_name=_('film'))
+    image = models.ImageField(upload_to=get_timestamp_path, verbose_name=_('picture'))
+
+    class Meta:
+        verbose_name = _('additional image')
+        verbose_name_plural = _('additional images')
 
 
 class Hall(models.Model):
@@ -56,6 +73,7 @@ class Hall(models.Model):
     quantity_seats = models.PositiveSmallIntegerField(default=0, verbose_name=_('how many seats?'))
     quantity_rows = models.PositiveSmallIntegerField(default=0, verbose_name=_('how many rows?'))
     description = models.TextField(verbose_name=_('description'))
+    # image = models.ImageField(upload_to=get_timestamp_path, verbose_name=_('hall'))
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('instance created at'))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_('instance updated at'))
     is_active = models.BooleanField(default=False, verbose_name=_('in run?'))
@@ -104,7 +122,7 @@ class Hall(models.Model):
 
 
 class SeatCategory(models.Model):
-    name = models.CharField(max_length=20, verbose_name=_('category name'))
+    name = models.CharField(max_length=30, verbose_name=_('category name'))
     color = ColorField(default='#FFEFEF')
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('instance created at'))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_('instance updated at'))
