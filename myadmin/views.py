@@ -34,16 +34,26 @@ class FilmUpdateView(IsStaffRequiredMixin, UpdateView):
     form_class = forms.FilmModelForm
     success_url = reverse_lazy('myadmin:film_list')
 
-    def post(self, request, *args, **kwargs):
-        """Adds admin, who edit film, to admin field"""
-        film = get_object_or_404(Film, pk=kwargs.get('pk'))
-        film.admin = get_object_or_404(AdvUser, pk=request.user.pk)
-        form = FilmModelForm(request.POST, instance=film)
-        if form.is_valid():
-            film = form.save()
-            messages.add_message(request, messages.SUCCESS, _('Film was edited successfully'))
-            return redirect(self.success_url)
-        return render(request, 'myadmin/films/film_update_form.html', {'form': form})
+    def get_initial(self):
+        initial = super(FilmUpdateView, self).get_initial()
+        initial.update({'admin': self.request.user})
+        return initial
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        return kwargs
+
+    # def post(self, request, *args, **kwargs):
+    #     """Adds admin, who edit film, to admin field"""
+    #     film = get_object_or_404(Film, pk=kwargs.get('pk'))
+    #     film.admin = get_object_or_404(AdvUser, pk=request.user.pk)
+    #     # form = FilmModelForm(request.POST, request.FILES, instance=film)
+    #     form = FilmModelForm(request.POST, request.FILES)
+    #     if form.is_valid():
+    #         film = form.save()
+    #         messages.add_message(request, messages.SUCCESS, _('Film was edited successfully'))
+    #         return redirect(self.success_url)
+    #     return render(request, 'myadmin/films/film_update_form.html', {'form': form})
 
 
 class FilmListView(IsStaffRequiredMixin, ListView):

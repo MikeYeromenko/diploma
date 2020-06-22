@@ -189,7 +189,9 @@ class BasketCancelView(LoginRequiredMixin, RedirectView):
 
     def dispatch(self, request, *args, **kwargs):
         key = request.GET.get('seance_cancel', None)
-        request.session.get('basket').pop(key, None)
+        pop_element = request.session.get('basket').pop(key, None)
+        total_price = float(request.session.get('total_price')) - float(pop_element.get('price'))
+        request.session['total_price'] = total_price
         request.session.modified = True
         return super(BasketCancelView, self).dispatch(request, *args, **kwargs)
 

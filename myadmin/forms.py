@@ -15,7 +15,8 @@ from seance.models import Film, SeatCategory, Price, SeanceBase, Hall, Seance, T
 class FilmModelForm(forms.ModelForm):
     class Meta:
         model = Film
-        fields = ('title', 'starring', 'director', 'duration', 'description', 'is_active')
+        fields = ('title', 'starring', 'director', 'duration', 'description', 'is_active', 'image', 'admin')
+        widgets = {'admin': forms.HiddenInput}
 
 
 class SeatCategoryModelForm(forms.ModelForm):

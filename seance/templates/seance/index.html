@@ -1,6 +1,8 @@
 {% extends 'layout/base.html' %}
 {% load i18n %}
 {% load mathfilters %}
+{% load thumbnail %}
+{% load static %}
 
 
 {% block content %}
@@ -15,11 +17,19 @@
 
     <br>
           <table>
-  <tr><th>Film</th> <th>Duration</th> <th>Dates</th> <th>Hall</th> <th>Price</th><th></th></tr>
+  <tr><th></th><th>Film</th> <th>Duration</th> <th>Dates</th> <th>Hall</th> <th>Price</th><th></th></tr>
     {% for seance in seance_list %}
 
         <tr>
           <div class="seance-search-result">
+          <td>
+          {% if seance.seance_base.film.image %}
+              <img src="{% thumbnail seance.seance_base.film.image 'default' %}">
+          {% else %}
+              <img src="{% thumbnail 'empty_film' 'default' %}" alt="Image">
+
+          {% endif %}
+          </td>
             <td><p>{{ seance.seance_base.film.title }}</p></td>
             <td><p>{{ seance.time_starts }} - {{ seance.time_ends }}</p></td>
             <td><p>{{ seance.seance_base.date_starts }} - {{ seance.seance_base.date_ends }}</p></td>
