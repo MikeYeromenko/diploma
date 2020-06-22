@@ -1,5 +1,6 @@
 {% extends 'layout/base.html' %}
 {% load my_filters %}
+{% load static %}
 
 
 {% block content %}
@@ -8,47 +9,20 @@
     <p>Dates: {{ seance.seance_base.date_starts }} - {{ seance.seance_base.date_ends }}</p>
     <p>Duration: {{ seance.time_starts }} - {{ seance.time_ends }}</p>
     <p>Description: {{ seance.description }}</p>
-    <p>Ticket price:
-    {% for price in seance.prices.all %}
-        {{ price.price }} hrn.
-    {% endfor %}
-    </p>
+    {% include 'layout/base_price_drawer.html' with seance=seance %}
+
+
+{#    <p>Ticket price:#}
+{#    {% for price in seance.prices.all %}#}
+{#        {{ price.price }} hrn.#}
+{#    {% endfor %}#}
+{#    </p>#}
 
     <h1 style="text-align: center">Choose seats in {{ seance.seance_base.hall.name }} hall
     {% if seance_date %} for {{ seance_date }} {% endif %}</h1>
 
+    <p style="color: #ffefef"></p>
 
-{#{% for row in 1|range:seance.seance_base.hall.quantity_rows %}#}
-
-{% assign 1 as row %}
-    Row: {{ row }}
-    {% for seat in seance.seance_base.hall.seats.all %}
-        {% if seat.row == row %}
-            {% if seat in seats_taken %}
-                <button style="width: 40px; background-color: red">{{ seat.number }}</button>
-{#                <input type="submit" value="" style="width: 40px; color: red">#}
-            {% else %}
-                <form action="{% url 'seance:basket-redirect' %}" style="display: inline-block">
-                    <input type="hidden" name="seat_pk" value="{{ seat.pk }}">
-                    <input type="hidden" name="number" value="{{ seat.number }}">
-                    <input type="hidden" name="row" value="{{ seat.row }}">
-                    <input type="hidden" name="seance" value="{{ seance.pk }}">
-                    <input type="hidden" name="seance_date" value="{{ seance_date }}">
-                    <input type="submit" value="{{ seat.number }}" style="width: 40px">
-                </form>
-            {% endif %}
-        {% else %}
-            <br>
-            {% assign seat.row as row %}
-            Row: {{ row }}
-            <form action="{% url 'seance:basket-redirect' %}" style="display: inline-block">
-                <input type="hidden" name="row" value="{{ row }}">
-                <input type="hidden" name="seat" value="{{ seat.number }}">
-                <input type="hidden" name="seance" value="{{ seance.pk }}">
-                <input type="submit" value="{{ seat.number }}" style="width: 40px">
-            </form>
-        {% endif %}
-    {% endfor %}
-
+    {% include 'layout/base_hall_seats_drawer.html' with hall=seance.seance_base.hall seates_taken=seats_taken %}
 
 {% endblock content %}

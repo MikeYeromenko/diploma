@@ -33,18 +33,32 @@
         <a href="{% url 'myadmin:hall_list' %}">{% trans 'Look in hall list' %}</a>
     {% else %}
             <li>There are {{ uncreated_seats }} uncreated seats</li>
-            {% if created_seats %}
-                Created seats (Row, Number, Category):
-                {% for tuple in created_seats %}
-                    {{ tuple }},
-                {% endfor %}
-            {% endif %}
+{#            {% if created_seats %}#}
+{#                Created seats (Row, Number, Category):#}
+{#                {% for tuple in created_seats %}#}
+{#                    {{ tuple }},#}
+{#                {% endfor %}#}
+{#            {% endif %}#}
+            {% include 'layout/base_hall_seats_drawer.html' with hall=hall seats_taken=seats_created %}
             <form action="" method="post">
             {% csrf_token %}
             {{ form.as_p }}
                 <input type="submit" value="Create seats">
             </form>
         <br>
+            <p>Ticket price:
+        <br>
+    <table style="width: fit-content">
+
+    {% for sc in seat_categories %}
+        <tr>
+        <td>{% trans 'Seat category: ' %}</td> <td>{{ sc.name }}</td>
+        <td><button style="background-color: {{ sc.color }}">{% trans 'Color' %}</button> </td>
+        </tr>
+    {% endfor %}
+
+    </table>
+    </p>
         <a href="{% url 'myadmin:hall_activate' hall.pk %}"><button>Activate</button></a>
     {% endif %}
 

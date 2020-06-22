@@ -406,7 +406,8 @@ class HallActivateView(IsStaffRequiredMixin, FormView):
         """Return the keyword arguments for instantiating the form."""
         kwargs = super().get_form_kwargs()
         kwargs.update({
-            'choices': get_categories()
+            'choices': get_categories(),
+            'row_max_value': self.hall.quantity_rows
         })
         return kwargs
 
@@ -414,6 +415,9 @@ class HallActivateView(IsStaffRequiredMixin, FormView):
         context = super().get_context_data(**kwargs)
         result = self.hall.activate_hall()
         context['hall'] = self.hall
+
+        seat_categories = [sc for sc in SeatCategory.objects.all()]
+        context['seat_categories'] = seat_categories
         context.update(result)
         return context
 
@@ -430,3 +434,5 @@ class HallActivateView(IsStaffRequiredMixin, FormView):
                                              seat_category=seat_category
                                              )
         return redirect(reverse_lazy('myadmin:hall_activate', kwargs={'pk': self.hall.pk}))
+
+

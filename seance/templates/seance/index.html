@@ -5,7 +5,7 @@
 
 {% block content %}
     <br>
-    <h2 class="h2mazafaka"><p>KSNLSKNFLK:SDNG</p></h2>
+    <h2 class="h2mazafaka"><p>Available seances</p></h2>
 
     <form action="{% url 'seance:index' %}" id="ordering-form" method="get">
       {{ ordering_form.as_p }}
@@ -15,7 +15,7 @@
 
     <br>
           <table>
-  <tr><td>Film</td> <td>Duration</td> <td>Dates</td> <td>Hall</td> <td>Price</td></tr>
+  <tr><th>Film</th> <th>Duration</th> <th>Dates</th> <th>Hall</th> <th>Price</th><th></th></tr>
     {% for seance in seance_list %}
 
         <tr>

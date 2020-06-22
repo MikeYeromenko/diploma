@@ -1,0 +1,32 @@
+{% load my_filters %}
+
+{% assign 1 as row %}
+    Row: {{ row }}
+    {% for seat in hall.seats.all %}
+        {% if seat.row == row %}
+            {% if seat in seats_taken %}
+                <button style="width: 40px; background-color: red">{{ seat.number }}</button>
+            {% else %}
+                <form action="{% url 'seance:basket-redirect' %}" style="display: inline-block">
+                    <input type="hidden" name="seat_pk" value="{{ seat.pk }}">
+                    <input type="hidden" name="number" value="{{ seat.number }}">
+                    <input type="hidden" name="row" value="{{ seat.row }}">
+                    <input type="hidden" name="seance" value="{{ seance.pk }}">
+                    <input type="hidden" name="seance_date" value="{{ seance_date }}">
+                    <input type="submit" value="{{ seat.number }}" style="width: 40px;
+                    background-color: {{ seat.seat_category.color }}">
+                </form>
+            {% endif %}
+        {% else %}
+            <br>
+            {% assign seat.row as row %}
+            Row: {{ row }}
+            <form action="{% url 'seance:basket-redirect' %}" style="display: inline-block">
+                <input type="hidden" name="row" value="{{ row }}">
+                <input type="hidden" name="seat" value="{{ seat.number }}">
+                <input type="hidden" name="seance" value="{{ seance.pk }}">
+                <input type="submit" value="{{ seat.number }}" style="width: 40px;
+                    background-color: {{ seat.seat_category.color }}">
+            </form>
+        {% endif %}
+    {% endfor %}

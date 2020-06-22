@@ -1,5 +1,6 @@
 import datetime
 
+from colorfield.widgets import ColorWidget
 from django import forms
 from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
@@ -18,10 +19,11 @@ class FilmModelForm(forms.ModelForm):
 
 
 class SeatCategoryModelForm(forms.ModelForm):
+    color = forms.CharField(widget=ColorWidget())
 
     class Meta:
         model = SeatCategory
-        fields = ('name', )
+        fields = ('name', 'color')
 
 
 class PriceModelForm(forms.ModelForm):
@@ -210,23 +212,21 @@ class HallUpdateForm(HallModelForm):
 
 
 class SeatsCreateForm(forms.Form):
-    row = forms.IntegerField(min_value=1, initial=1, label=_('Row number'), required=True)
     seat_starts = forms.IntegerField(min_value=1, initial=1, label=_('Seats start number'), required=True)
     seat_ends = forms.IntegerField(min_value=1, label=_('Seats end number'), required=True)
-    # seat_category =
     hall = forms.IntegerField(widget=forms.HiddenInput, label=_(Hall), required=True)
 
-    def __init__(self, choices=(), *args, ** kwargs):
+    def __init__(self, choices=(), row_max_value=1000, *args, ** kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['row'] = forms.IntegerField(min_value=1, max_value=row_max_value,
+                                                initial=1, label=_('Row number'), required=True)
         self.fields['seat_category'] = forms.ChoiceField(required=True, label=_('Choice seats category'),
                                                          choices=choices)
-
-
-
 
     def clean(self):
         super().clean()
         hall = get_object_or_404(Hall, pk=self.cleaned_data.get('hall'))
         if not hall:
             raise ValidationError(f'errors with Hall object occurred, please try again')
+
 
