@@ -1,0 +1,47 @@
+{% load i18n %}
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title id="site_title">{% block title %}Broadway cinema{% endblock title %}</title>
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'seance/style.css' %}">
+{% endblock styles %}
+{% block java_script %}
+    <script src="{% static 'colorfield/colorfield.js' %}"></script>
+    <script src="{% static 'colorfield/jscolor/jscolor.js' %}"></script>
+{% endblock java_script %}
+</head>
+<body>
+
+{% if user.is_authenticated %}
+    <a id="link-login" href="{% url 'seance:logout' %}">{% trans 'LogOut' %}</a>
+    <a id="link-main" href="{% url 'seance:my_tickets' %}">{% trans 'My tickets' %}</a>
+{% else %}
+    <a id="link-login" href="{% url 'seance:login' %}">{% trans 'LogIn' %}</a>
+{% endif %}
+<a id="link-register" href="{% url 'seance:register' %}">{% trans 'Registration' %}</a>
+<a id="link-main" href="{% url 'seance:index' %}">{% trans 'Main' %}</a>
+<a id="link-main" href="{% url 'seance:basket' %}">{% trans 'Basket' %}</a>
+{% if user.is_staff %}
+<a id="link-main" href="{% url 'myadmin:main' %}">{% trans 'MyAdmin' %}</a>
+{% endif %}
+{% block admin_links %}
+{% endblock admin_links %}
+
+{% block messages %}
+    {% if messages %}
+        {% for message in messages %}
+            <h3 style="color: red">{{ message }}</h3>
+        {% endfor %}
+    {% endif %}
+{% endblock messages %}
+
+  {% block content %}
+  {% endblock content %}
+
+</body>
+</html>
