@@ -1,6 +1,7 @@
 {% load static %}
 {% load i18n %}
 
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,25 +27,43 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <link href='//fonts.googleapis.com/css?family=Tangerine:400,700' rel='stylesheet' type='text/css'>
 <link href="//fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900" rel="stylesheet">
 <link href='//fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+
+ <!--For modal forms-->
+{#<link rel="stylesheet" href="{% static 'seance/assets/css/bootstrap.min.css' %}">#}
     {% block styles %}
     <link rel="stylesheet" type="text/css" href="{% static 'seance/style.css' %}">
 {% endblock styles %}
 {% block java_script %}
     <script src="{% static 'colorfield/colorfield.js' %}"></script>
     <script src="{% static 'colorfield/jscolor/jscolor.js' %}"></script>
+
+
 {% endblock java_script %}
 <!--//web-fonts-->
 </head>
 <body>
-<!--/main-header-->
-  <!--/banner-section-->
+
 {% block navbar %}
     {% include 'layout/base_navbar.html' %}
 {% endblock navbar %}
-  <!--/banner-section-->
- <!--//main-header-->
 
 
+{% block admin_links %}
+{% endblock admin_links %}
+
+{% block messages %}
+    {% if messages %}
+        {% for message in messages %}
+            <h3 style="color: red">{{ message }}</h3>
+        {% endfor %}
+    {% endif %}
+{% endblock messages %}
+
+{% block content %}
+{% endblock content %}
+
+
+{% block scripts_js %}
   <script src="{% static 'seance/js/jquery-1.11.1.min.js' %}"></script>
 	<!-- Dropdown-Menu-JavaScript -->
 			<script>
@@ -67,27 +86,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <script type="text/javascript" src="{% static 'seance/js/jquery.zoomslider.min.js' %}"></script>
 		<!-- search-jQuery -->
 				<script src="{% static 'seance/js/main.js' %}"></script>
-			<script src="{% static 'seance/js/simplePlayer.js' %}"></script>
-			<script>
-				$("document").ready(function() {
-					$("#video").simplePlayer();
-				});
-			</script>
-			<script>
-				$("document").ready(function() {
-					$("#video1").simplePlayer();
-				});
-			</script>
-			<script>
-				$("document").ready(function() {
-					$("#video2").simplePlayer();
-				});
-			</script>
-				<script>
-				$("document").ready(function() {
-					$("#video3").simplePlayer();
-				});
-			</script>
 
 			<!-- pop-up-box -->
 		<script src="{% static 'seance/js/jquery.magnific-popup.js' %}" type="text/javascript"></script>
@@ -158,6 +156,17 @@ fit: true
 </script>
 
 <!--/script-->
+
+
+    <!--For modal forms-->
+<script src="{% static 'seance/assets/js/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'seance/assets/js/popper.min.js' %}"></script>
+<script src="{% static 'seance/assets/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/jquery.bootstrap.modal.forms.js' %}"></script>
+
+    <!--End for modal forms-->
+
+
 <script type="text/javascript" src="{% static 'seance/js/move-top.js' %}"></script>
 <script type="text/javascript" src="{% static 'seance/js/easing.js' %}"></script>
 
@@ -184,19 +193,11 @@ fit: true
 
 						});
 					</script>
-<!--end-smooth-scrolling-->
+
 	<script src="{% static 'seance/js/bootstrap.js' %}"></script>
-{% block messages %}
-    {% if messages %}
-        {% for message in messages %}
-            <h3 style="color: red">{{ message }}</h3>
-        {% endfor %}
-    {% endif %}
-{% endblock messages %}
-
-{% block content %}
-{% endblock content %}
+{% endblock scripts_js %}
 
 
+{% block extrascripts %}{% endblock extrascripts %}
 </body>
 </html>

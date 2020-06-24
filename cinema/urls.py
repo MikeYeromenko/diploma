@@ -23,6 +23,7 @@ urlpatterns = [
     path('', include('seance.urls')),
     path('admin/', admin.site.urls),
     path('myadmin/', include('myadmin.urls')),
+    path('modal/', include('seance.modal.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

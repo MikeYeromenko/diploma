@@ -2,7 +2,7 @@
 {% load thumbnail %}
 {% load i18n %}
 
-<h3 class="agile_w3_title"> Latest <span>Movies</span></h3>
+<h3 class="agile_w3_title"> Available <span>Seances</span></h3>
 			<!--/movies-->
 			<div class="w3_agile_latest_movies">
 
@@ -10,7 +10,7 @@
                     {% for seance in seance_list %}
 					<div class="item">
 						<div class="w3l-movie-gride-agile w3l-movie-gride-slider ">
-
+                    <p>Some text</p>
                     <a href="" class="hvr-sweep-to-bottom">
                         {% if seance.seance_base.film.image %}
                         <img src="{% thumbnail seance.seance_base.film.image 'default' %}" title="Movies Pro"

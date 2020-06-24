@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_cleanup',
     'easy_thumbnails',
     'bootstrap_modal_forms',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -144,7 +145,7 @@ THUMBNAIL_ALIASES = {
             'crop': 'scale'
         },
         'custom': {
-            'size': (96, 64),
+            'size': (170, 170),
             'crop': 'scale'
         }
     },

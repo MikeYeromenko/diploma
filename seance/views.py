@@ -94,6 +94,7 @@ class RegisterUserView(CreateView):
 
 
 class UserLoginView(LoginView):
+    success_url = reverse_lazy('seance:index')
 
     def form_valid(self, form):
         """
