@@ -1,0 +1,13 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+
+
+{% block navbar %}
+    	<div id="demo-1" data-zs-src='["{% static 'seance/images/joker.png' %}",
+	                                "{% static 'seance/images/james_bond_royal.jpg' %}",
+	                                "{% static 'seance/images/the_gentelmen.jpeg' %}"
+	]' data-zs-overlay="dots">
+        {% include 'layout/base_navbar.html' %}
+
+		</div>
+{% endblock navbar %}

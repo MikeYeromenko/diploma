@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'colorfield',
     'django_cleanup',
     'easy_thumbnails',
+    'bootstrap_modal_forms',
 ]
 
 MIDDLEWARE = [
@@ -139,7 +140,7 @@ MEDIA_URL = '/media/'
 THUMBNAIL_ALIASES = {
     '': {
         'default': {
-            'size': (96, 96),
+            'size': (170, 170),
             'crop': 'scale'
         },
         'custom': {

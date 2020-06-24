@@ -1,0 +1,47 @@
+{% load static %}
+{% load thumbnail %}
+{% load i18n %}
+
+<h3 class="agile_w3_title"> Latest <span>Movies</span></h3>
+			<!--/movies-->
+			<div class="w3_agile_latest_movies">
+
+				<div id="owl-demo" class="owl-carousel owl-theme">
+                    {% for seance in seance_list %}
+					<div class="item">
+						<div class="w3l-movie-gride-agile w3l-movie-gride-slider ">
+
+                    <a href="" class="hvr-sweep-to-bottom">
+                        {% if seance.seance_base.film.image %}
+                        <img src="{% thumbnail seance.seance_base.film.image 'default' %}" title="Movies Pro"
+                             class="img-responsive" alt=" " />
+                        {% else %}
+                            <img src="{% thumbnail 'empty_film' 'default' %}" title="Movies Pro"
+                             class="img-responsive" alt=" " />
+                        {% endif %}
+
+                    </a>
+
+
+
+							<div class="mid-1 agileits_w3layouts_mid_1_home">
+								<div class="w3l-movie-text">
+									<h6><a href="">{{ seance.seance_base.film.title }}</a></h6>
+								</div>
+								<div class="mid-2 agile_mid_2_home">
+                                    <p>Time: {{ seance.time_starts }} - {{ seance.time_ends }}</p></td>
+                                    <p>Hall: {{ seance.seance_base.hall.name }}</p>
+                                    <form action="{% url 'seance:seance_detail' seance.pk %}" method="get" id="show-seance-details-form">
+                                        <input type="submit" id="show-details" value="{% trans 'Details...' %}">
+                                    </form>
+									<div class="clearfix"></div>
+								</div>
+							</div>
+							<div class="ribben one">
+								<p>Welcome)</p>
+							</div>
+						</div>
+					</div>
+                    {% endfor %}
+                </div>
+            </div>

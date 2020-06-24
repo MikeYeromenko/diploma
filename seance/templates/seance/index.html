@@ -1,4 +1,4 @@
-{% extends 'layout/base.html' %}
+{% extends 'layout/base_with_demo.html' %}
 {% load i18n %}
 {% load mathfilters %}
 {% load thumbnail %}
@@ -7,49 +7,48 @@
 
 {% block content %}
     <br>
-    <h2 class="h2mazafaka"><p>Available seances</p></h2>
+    <h2><p>Available seances</p></h2>
 
     <form action="{% url 'seance:index' %}" id="ordering-form" method="get">
       {{ ordering_form.as_p }}
        <input type="submit" value="{% trans 'Submit' %}" id="submit-ordering">
     </form>
 
-
-    <br>
-          <table>
-  <tr><th></th><th>Film</th> <th>Duration</th> <th>Dates</th> <th>Hall</th> <th>Price</th><th></th></tr>
-    {% for seance in seance_list %}
-
-        <tr>
-          <div class="seance-search-result">
-          <td>
-          {% if seance.seance_base.film.image %}
-              <img src="{% thumbnail seance.seance_base.film.image 'default' %}">
-          {% else %}
-              <img src="{% thumbnail 'empty_film' 'default' %}" alt="Image">
-
-          {% endif %}
-          </td>
-            <td><p>{{ seance.seance_base.film.title }}</p></td>
-            <td><p>{{ seance.time_starts }} - {{ seance.time_ends }}</p></td>
-            <td><p>{{ seance.seance_base.date_starts }} - {{ seance.seance_base.date_ends }}</p></td>
-            <td><p>{{ seance.seance_base.hall.name }}</p></td>
-            <td><p>Ticket price:
-            {% spaceless %}
-            {% for price in seance.prices.all %}
-                {{ price.price }} hrn.
-            {% endfor %}
-            {% endspaceless %}
-            </p></td>
-            <td>
-                <form action="{% url 'seance:seance_detail' seance.pk %}" method="get" id="show-seance-details-form">
-                    <input type="submit" id="show-details" value="{% trans 'Show details' %}">
-                </form>
-            </td>
+        {% include 'layout/base_seance_list.html' with seance_list=seance_list %}
+{#          <table>#}
+{#  <tr><th></th><th>Film</th> <th>Duration</th> <th>Dates</th> <th>Hall</th> <th>Price</th><th></th></tr>#}
+{#    {% for seance in seance_list %}#}
+{##}
+{#        <tr>#}
+{#          <div class="seance-search-result">#}
+{#          <td>#}
+{#          {% if seance.seance_base.film.image %}#}
+{#              <img src="{% thumbnail seance.seance_base.film.image 'default' %}">#}
+{#          {% else %}#}
+{#              <img src="{% thumbnail 'empty_film' 'default' %}" alt="Image">#}
+{##}
+{#          {% endif %}#}
+{#          </td>#}
+{#            <td><p>{{ seance.seance_base.film.title }}</p></td>#}
+{#            <td><p>{{ seance.time_starts }} - {{ seance.time_ends }}</p></td>#}
+{#            <td><p>{{ seance.seance_base.date_starts }} - {{ seance.seance_base.date_ends }}</p></td>#}
+{#            <td><p>{{ seance.seance_base.hall.name }}</p></td>#}
+{#            <td><p>Ticket price:#}
+{#            {% spaceless %}#}
+{#            {% for price in seance.prices.all %}#}
+{#                {{ price.price }} hrn.#}
+{#            {% endfor %}#}
+{#            {% endspaceless %}#}
+{#            </p></td>#}
+{#            <td>#}
+{#                <form action="{% url 'seance:seance_detail' seance.pk %}" method="get" id="show-seance-details-form">#}
+{#                    <input type="submit" id="show-details" value="{% trans 'Show details' %}">#}
+{#                </form>#}
+{#            </td>#}
 {#            <td><input type="submit"></td>#}
-          </div>
-        </tr>
-
-    {% endfor %}
-                </table>
+{#          </div>#}
+{#        </tr>#}
+{##}
+{#    {% endfor %}#}
+{#                </table>#}
 {% endblock content %}

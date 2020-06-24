@@ -12,12 +12,6 @@
     {% include 'layout/base_price_drawer.html' with seance=seance %}
 
 
-{#    <p>Ticket price:#}
-{#    {% for price in seance.prices.all %}#}
-{#        {{ price.price }} hrn.#}
-{#    {% endfor %}#}
-{#    </p>#}
-
     <h1 style="text-align: center">Choose seats in {{ seance.seance_base.hall.name }} hall
     {% if seance_date %} for {{ seance_date }} {% endif %}</h1>
 

@@ -1,7 +1,9 @@
 {% load my_filters %}
 
+
+<table>
 {% assign 1 as row %}
-    Row: {{ row }}
+    Row: {{ row }}&nbsp;&nbsp;&nbsp;
     {% for seat in hall.seats.all %}
         {% if seat.row == row %}
             {% if seat in seats_taken %}
@@ -21,6 +23,9 @@
             <br>
             {% assign seat.row as row %}
             Row: {{ row }}
+            {% if row < 10 %}
+                &nbsp;&nbsp;
+            {% endif %}
             <form action="{% url 'seance:basket-redirect' %}" style="display: inline-block">
                 <input type="hidden" name="row" value="{{ row }}">
                 <input type="hidden" name="seat" value="{{ seat.number }}">
