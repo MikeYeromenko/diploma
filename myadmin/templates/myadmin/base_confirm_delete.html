@@ -8,7 +8,7 @@
          {{ object }}?</h2>
     <form method="post">{% csrf_token %}
         <p>Are you sure you want to delete "{{ object }}"?</p>
-        <input type="submit" value="Confirm">
+        <input type="submit" value="Confirm" class="input-submit">
     </form>
 
 {% endblock content %}

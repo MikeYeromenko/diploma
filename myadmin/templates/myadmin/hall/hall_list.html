@@ -1,38 +1,42 @@
 {% extends 'myadmin/base.html' %}
 {% load i18n %}
 
+{#{% block body_class %}#}
+{#    ' class="body_custom" style="color: orangered"'#}
+{#{% endblock body_class %}#}
+
 {% block content %}
     <h2>{% trans 'Halls' %}:</h2>
-
-
+{#    <p class="body_custom" style="color: orangered"></p>#}
     <br>
           <table>
-  <tr><th>Hall</th> <th>quantity seats</th> <th>quantity rows</th> <th>description</th> <th>Updated at</th>
-  <th>Is active?</th><th>Admin</th><th></th><th></th></tr>
+  <tr><th>Hall</th> <th>seats</th><th>rows</th>
+  <th>Is active?</th><th></th></tr>
     {% for hall in hall_list %}
 
+{#        <th>quantity rows</th> <th>description</th><th>Updated at</th>#}
         <tr>
 
             <td><p>{{ hall.name }}</p></td>
             <td><p>{{ hall.quantity_seats }}</p></td>
             <td><p>{{ hall.quantity_rows }}</p></td>
-            <td><p>{{ hall.description }}</p></td>
-            <td><p>{{ hall.updated_at }}</p></td>
+{#            <td><p>{{ hall.description }}</p></td>#}
+{#            <td><p>{{ hall.updated_at }}</p></td>#}
             <td><p>{{ hall.is_active }}</p></td>
-            <td><p>{{ hall.admin }}</p></td>
+{#            <td><p>{{ hall.admin }}</p></td>#}
             <td>
                 <form action="{% url 'myadmin:hall_update' hall.pk %}">
-                    <input type="submit" value="{% trans 'Update' %}">
-                </form></td>
-                      <td>
+                    <input type="submit" value="{% trans 'Update' %}" class="input-submit">
+                </form>
                 <form action="{% url 'myadmin:hall_delete' hall.pk %}">
-                    <input type="submit" value="{% trans 'Delete' %}">
-                </form></td>
+                    <input type="submit" value="{% trans 'Delete' %}" class="input-submit">
+                </form>
           {% if not hall.is_active %}
-               <td> <form action="{% url 'myadmin:hall_activate' hall.pk %}">
-                    <input type="submit" value="{% trans 'Activate' %}">
-                </form></td>
+                <form action="{% url 'myadmin:hall_activate' hall.pk %}">
+                    <input type="submit" value="{% trans 'Activate' %}" class="input-submit">
+                </form>
           {% endif %}
+                      </td>
 
         </tr>
 

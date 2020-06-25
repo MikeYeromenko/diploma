@@ -50,18 +50,6 @@ class PriceModelForm(forms.ModelForm):
                                                    'style': 'color: black'})}
 
 
-# class PriceSeanceActivateForm(forms.ModelForm):
-#     seance = forms.ChoiceField(disabled=True, widget=forms.TextInput(attrs={'class': 'form-control',
-#                                                                             'style': 'color: black'}))
-#     seat_category = forms.ChoiceField(disabled=True, widget=forms.TextInput(attrs={'class': 'form-control',
-#                                                                             'style': 'color: black'}))
-#
-#     class Meta:
-#         model = Price
-#         fields = PriceModelForm.Meta.fields
-#         widgets = {'price': forms.TextInput(attrs={'class': 'form-control', 'style': 'color: black'})}
-
-
 class SeanceBaseCreateForm(forms.ModelForm):
 
     class Meta:
@@ -229,7 +217,13 @@ class SeanceUpdateForm(SeanceModelForm):
 class HallModelForm(forms.ModelForm):
     class Meta:
         model = Hall
-        fields = ('name', 'quantity_seats', 'quantity_rows', 'description')
+        fields = ('name', 'quantity_seats', 'quantity_rows', 'description', 'admin')
+        widgets = {'admin': forms.HiddenInput,
+                   'name': forms.TextInput(attrs={'class': 'form-control', 'style': 'color: black'}),
+                   'quantity_seats': forms.TextInput(attrs={'class': 'form-control', 'style': 'color: black'}),
+                   'quantity_rows': forms.TextInput(attrs={'class': 'form-control', 'style': 'color: black'}),
+                   'description': forms.Textarea(attrs={'class': 'form-control', 'style': 'color: black'}),
+                   }
 
 
 class HallUpdateForm(HallModelForm):
@@ -256,16 +250,21 @@ class HallUpdateForm(HallModelForm):
 
 
 class SeatsCreateForm(forms.Form):
-    seat_starts = forms.IntegerField(min_value=1, initial=1, label=_('Seats start number'), required=True)
-    seat_ends = forms.IntegerField(min_value=1, label=_('Seats end number'), required=True)
+    seat_starts = forms.IntegerField(min_value=1, initial=1, label=_('Seats start number'), required=True,
+                                     widget=forms.TextInput(attrs={'class': 'form-control'}))
+    seat_ends = forms.IntegerField(min_value=1, label=_('Seats end number'), required=True,
+                                   widget=forms.TextInput(attrs={'class': 'form-control'}))
     hall = forms.IntegerField(widget=forms.HiddenInput, label=_(Hall), required=True)
 
     def __init__(self, choices=(), row_max_value=1000, *args, ** kwargs):
         super().__init__(*args, **kwargs)
         self.fields['row'] = forms.IntegerField(min_value=1, max_value=row_max_value,
-                                                initial=1, label=_('Row number'), required=True)
+                                                initial=1, label=_('Row number'), required=True,
+                                                widget=forms.TextInput(attrs={'class': 'form-control'}))
         self.fields['seat_category'] = forms.ChoiceField(required=True, label=_('Choice seats category'),
-                                                         choices=choices)
+                                                         choices=choices,
+                                                         widget=forms.Select(attrs={'class': 'form-control',
+                                                                                    'style': 'color: black'}))
 
     def clean(self):
         super().clean()

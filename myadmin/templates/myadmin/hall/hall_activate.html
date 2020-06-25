@@ -8,8 +8,7 @@
 
     <br>
           <table>
-  <tr><th>Hall</th> <th>quantity seats</th> <th>quantity rows</th> <th>description</th> <th>Updated at</th>
-  <th>Is active?</th><th>Admin</th><th></th></tr>
+  <tr><th>Hall</th> <th>quantity seats</th> <th>quantity rows</th> <th>description</th> </tr>
 
         <tr>
 
@@ -17,12 +16,16 @@
             <td><p>{{ hall.quantity_seats }}</p></td>
             <td><p>{{ hall.quantity_rows }}</p></td>
             <td><p>{{ hall.description }}</p></td>
+            </tr>
+            <tr><th>Updated at</th>
+  <th>Is active?</th><th>Admin</th><th></th></tr>
+                <tr>
             <td><p>{{ hall.updated_at }}</p></td>
             <td><p>{{ hall.is_active }}</p></td>
             <td><p>{{ hall.admin }}</p></td>
             <td>
                 <form action="{% url 'myadmin:hall_update' hall.pk %}">
-                    <input type="submit" value="{% trans 'Update' %}">
+                    <input type="submit" value="{% trans 'Update' %}" class="input-submit">
                 </form>
                       </td>
         </tr>
@@ -33,33 +36,37 @@
         <a href="{% url 'myadmin:hall_list' %}">{% trans 'Look in hall list' %}</a>
     {% else %}
             <li>There are {{ uncreated_seats }} uncreated seats</li>
-{#            {% if created_seats %}#}
-{#                Created seats (Row, Number, Category):#}
-{#                {% for tuple in created_seats %}#}
-{#                    {{ tuple }},#}
-{#                {% endfor %}#}
-{#            {% endif %}#}
             {% include 'layout/base_hall_seats_drawer.html' with hall=hall seats_taken=seats_created %}
+        <div class="div-table">
+        
             <form action="" method="post">
             {% csrf_token %}
             {{ form.as_p }}
-                <input type="submit" value="Create seats">
+                <input type="submit" value="Create seats" class="input-submit">
             </form>
+        </div>
         <br>
-            <p>Ticket price:
-        <br>
-    <table style="width: fit-content">
 
+        <br>
+    <table style="width: fit-content; margin: auto;">
+<tr><td></td><td>Ticket prices</td><td></td></tr>
     {% for sc in seat_categories %}
         <tr>
         <td>{% trans 'Seat category: ' %}</td> <td>{{ sc.name }}</td>
-        <td><button style="background-color: {{ sc.color }}">{% trans 'Color' %}</button> </td>
+        <td><button style="background-color: {{ sc.color }}; color: black">{% trans 'Color' %}</button> </td>
         </tr>
     {% endfor %}
-
+{#    <tr><td></td>#}
+{#        <td><a href="{% url 'myadmin:hall_activate' hall.pk %}"><button class="button-submit">Activate</button></a>#}
+{#        </td><td></td>#}
+{#    </tr>#}
     </table>
-    </p>
-        <a href="{% url 'myadmin:hall_activate' hall.pk %}"><button>Activate</button></a>
+        <div class="div-table">
+        <a href="{% url 'myadmin:hall_activate' hall.pk %}"><button class="button-submit"
+        style="width: 200px; align-self: center; margin: 20px">Activate</button></a>
+        </div>
+
+
     {% endif %}
 
 

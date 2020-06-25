@@ -366,12 +366,11 @@ class HallCreateView(IsStaffRequiredMixin, CreateView):
     success_url = reverse_lazy('myadmin:hall_list')
     form_class = forms.HallModelForm
 
-    def form_valid(self, form):
-        """Adds admin to Hall"""
-        self.object = form.save(commit=False)
-        self.object.admin = self.request.user
-        self.object.save()
-        return super().form_valid(form)
+    def get_initial(self):
+        """Return the initial data to use for forms on this view."""
+        initial = super().get_initial()
+        initial.update({'admin': self.request.user})
+        return initial.copy()
 
 
 class HallDeleteView(IsStaffRequiredMixin, DeleteView):

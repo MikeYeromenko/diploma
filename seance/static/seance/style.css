@@ -87,7 +87,13 @@ form {
 
 #id_image {
   background-color: orangered;
+  background-attachment: scroll;
   border-radius: 10px;
+  color: black;
+}
+
+.input-number {
+  width: 150px;
   color: black;
 }
 
