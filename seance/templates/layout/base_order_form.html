@@ -1,28 +1,18 @@
 {% load i18n %}
 
-<div class="w3_content_agilleinfo_inner">
-    <div class="agile_featured_movies">
-        <div class="w3_mail_grids">
-            <form method="get" action="{% url 'seance:index' %}" >
-              {% csrf_token %}
-
-            <div class="col-md-6 w3_agile_mail_grid">
-
-                {% for field in form %}
-                  <span class="select">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                  {{ field }}
-                  </span>
-                {% endfor %}
-
-
-<div class="col-md-6 w3_agile_mail_grid two">
-    <input type="submit" value="Submit">
-</div>
-              </div>
+<form method="get" action="{% url 'seance:index' %}" >
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            {% for field in form %}
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+            {% endfor %}
+            <div class="form-row">
+                <input type="submit" value="Submit" class="btn btn-primary" style="margin-top: 10px">
+            </div>
+        </div>
+    </div>
 </form>
-</ul>
-</div>
-</div></div>
+
 
 

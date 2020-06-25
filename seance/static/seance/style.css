@@ -64,12 +64,13 @@
 }
 
 ul {
-  color: red;
+  color: orange;
   font-weight: bolder;
 }
 
 li {
-  color: red;
+  margin-left: 10px;
+  color: darkorange;
   font-weight: bolder;
 }
 
@@ -93,10 +94,21 @@ td {
 }
 
 .body_custom {
-  background-color: #767474;
-  color: wheat;
+  background-color: black;
+  color: whitesmoke;
   width: 100vw;
   height: 100vh;
+}
+
+input {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  color: black;
+}
+
+form {
+  display: table;
+  margin: auto;
 }
 
     /*.select {*/

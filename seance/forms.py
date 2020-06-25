@@ -7,17 +7,23 @@ from seance.models import AdvUser, Ticket
 
 
 class RegistrationForm(forms.ModelForm):
-    username = forms.CharField(required=True, widget=forms.TextInput(attrs={'placeholder': _('username')}))
+    username = forms.CharField(required=True, widget=forms.TextInput(attrs={'placeholder': _('username'),
+                                                                            'class': 'form-control'}))
     password1 = forms.CharField(required=True, min_length=8,
-                                widget=forms.PasswordInput(attrs={'placeholder': _('password')}),
+                                widget=forms.PasswordInput(attrs={'placeholder': _('password'),
+                                                                  'class': 'form-control'}),
                                 help_text=password_validation.password_validators_help_text_html())
     password2 = forms.CharField(required=True, min_length=8,
-                                widget=forms.PasswordInput(attrs={'placeholder': _('repeat password')}),
+                                widget=forms.PasswordInput(attrs={'placeholder': _('repeat password'),
+                                                                  'class': 'form-control'}),
                                 help_text=_('Enter the same password for check please'))
+    email = forms.EmailField(min_length=8, widget=forms.TextInput(attrs={'placeholder': _('email'),
+                                                                         'class': 'form-control'}),
+                             help_text=_('We recommend to put email to get tickets on it'))
 
     class Meta:
         model = AdvUser
-        fields = ('username', 'password1', 'password2')
+        fields = ('username', 'password1', 'password2', 'email')
 
     def clean_password1(self):
         """
@@ -64,8 +70,10 @@ DAY_CHOICES = (
 
 
 class OrderingForm(forms.Form):
-    ordering = forms.ChoiceField(choices=ORDERING_CHOICES, label=_('Order by: '), required=False)
-    days = forms.ChoiceField(choices=DAY_CHOICES, label=_('When? '), required=False)
+    ordering = forms.ChoiceField(choices=ORDERING_CHOICES, label=_('Order by: '), required=False, widget=
+                                 forms.Select(attrs={'class': 'form-control'}))
+    days = forms.ChoiceField(choices=DAY_CHOICES, label=_('When? '), required=False, widget=
+                                 forms.Select(attrs={'class': 'form-control'}))
 
 
 # class TicketForm(forms.Form):

@@ -3,8 +3,12 @@
 
 {% block content %}
     <form method="post" id="registration-form" action="{% url 'seance:register' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" id="form-submit" value="{% trans 'Submit' %}">
+        <div class="form-row">
+            <div class="form-group col-md-8">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" id="form-submit" value="{% trans 'Submit' %}">
+            </div>
+        </div>
     </form>
 {% endblock content %}
