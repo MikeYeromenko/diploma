@@ -7,7 +7,7 @@
             <div class="form-group col-md-8">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <input type="submit" id="form-submit" value="{% trans 'Submit' %}">
+                <input type="submit" class="input-submit" value="{% trans 'Submit' %}">
             </div>
         </div>
     </form>

@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import password_validation
+from django.contrib.auth.forms import AuthenticationForm, UsernameField
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -73,7 +74,16 @@ class OrderingForm(forms.Form):
     ordering = forms.ChoiceField(choices=ORDERING_CHOICES, label=_('Order by: '), required=False, widget=
                                  forms.Select(attrs={'class': 'form-control'}))
     days = forms.ChoiceField(choices=DAY_CHOICES, label=_('When? '), required=False, widget=
-                                 forms.Select(attrs={'class': 'form-control'}))
+                             forms.Select(attrs={'class': 'form-control'}))
+
+
+class UserAuthenticationForm(AuthenticationForm):
+    username = UsernameField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
+    password = forms.CharField(
+        label=_("Password"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={'autocomplete': 'current-password', 'class': 'form-control'}),
+    )
 
 
 # class TicketForm(forms.Form):

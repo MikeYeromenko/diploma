@@ -11,7 +11,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone, dateformat
 from django.views.generic import ListView, CreateView, TemplateView, FormView, DetailView, RedirectView, View
 
-from seance.forms import RegistrationForm, OrderingForm
+from seance.forms import RegistrationForm, OrderingForm, UserAuthenticationForm
 from seance.models import Seance, AdvUser, Hall, Seat, Purchase, Ticket
 
 
@@ -94,6 +94,7 @@ class RegisterUserView(CreateView):
 
 
 class UserLoginView(LoginView):
+    form_class = UserAuthenticationForm
     success_url = reverse_lazy('seance:index')
 
     def form_valid(self, form):

@@ -106,9 +106,25 @@ input {
   color: black;
 }
 
+.input-submit{
+  background-color: orangered;
+  border-radius: 10px;
+}
+
+.input-submit-order{
+  background-color: black;
+  border-radius: 10px;
+  padding: 10px;
+}
+
 form {
   display: table;
   margin: auto;
+}
+
+.form-login {
+  margin: auto;
+  width: 350px;
 }
 
     /*.select {*/
