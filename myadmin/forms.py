@@ -20,11 +20,14 @@ class FilmModelForm(forms.ModelForm):
 
 
 class SeatCategoryModelForm(forms.ModelForm):
-    color = forms.CharField(widget=ColorWidget())
+    color = forms.CharField(widget=ColorWidget(attrs={'class': 'form-control',
+                                               'style': 'color: black'}))
 
     class Meta:
         model = SeatCategory
         fields = ('name', 'color')
+        widgets = {'name': forms.TextInput(attrs={'class': 'form-control',
+                                                  'style': 'color: black'})}
 
 
 class PriceModelForm(forms.ModelForm):

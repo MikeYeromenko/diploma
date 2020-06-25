@@ -3,31 +3,29 @@
 
 {% block content %}
 
-    <h4>{% trans 'Create new category' %}:</h4>
+    <h2>{% trans 'Create new category' %}:</h2>
     <form action="" method="post">
     {% csrf_token %}
     {{ form.as_p }}
-        <input type="submit" value="{% trans 'Create' %}">
+        <input type="submit" value="{% trans 'Create' %}" class="input-submit">
     </form>
 
     <h2>{% trans 'Seat categories:' %}</h2>
     {% for category, form in object_list %}
-{#        <div style="border-style: ridge; border-width: 1px; border-color: grey; width: max-content">#}
         <br>
-        Updated last: {{ category.updated_at }};
-        Last editor: {{ category.admin }};
-{#            <div style="display: compact">#}
-        <form action="{% url 'myadmin:seat_category_update' category.pk %}" method="post">
-            {% csrf_token %}
-        {{ form.as_p }}
-            <input type="submit" value="{% trans 'Update' %} ">
-        </form>
-        <a href="{% url 'myadmin:seat_category_delete' category.pk %}">
-            <button>{% trans 'Delete' %}</button>
-        </a>
-{#</div>#}
+        <div style="display: table; margin: auto">
+            <form action="{% url 'myadmin:seat_category_update' category.pk %}" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="{% trans 'Update' %}" class="input-submit">
+            </form>
+            <p>Updated last: {{ category.updated_at }};</p>
+            Last editor: {{ category.admin }};
+            <a href="{% url 'myadmin:seat_category_delete' category.pk %}">
+                <button class="input-submit" style="color: black">{% trans 'Delete' %}</button>
+            </a>
 
-{#        </div>#}
+        </div>
                 <br>
     {% endfor %}
 
