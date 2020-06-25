@@ -2,50 +2,52 @@
 {% load i18n %}
 
 {% block content %}
-    <h2>{% trans 'Seances' %}:</h2>
+{% include 'layout/base_seance_list.html' with seance_list=seance_list style='"color: whitesmoke; text-align: center"' detail='False' %}
 
-
-    <br>
-          <table>
-  <tr><th>Film</th> <th>Duration</th> <th>Dates</th> <th>Hall</th> <th>Price</th><th>Updated at</th>
-  <th>Advertisement  duration: </th><th>Cleaning for: </th><th>Is active?</th><th>Admin</th><th></th></tr>
-    {% for seance in seance_list %}
-
-        <tr>
-
-            <td><p>{{ seance.seance_base.film.title }}</p></td>
-            <td><p>{{ seance.time_starts|date:"H:i" }} - {{ seance.time_ends|date:"H:i" }}</p></td>
-            <td><p>{{ seance.seance_base.date_starts }} - {{ seance.seance_base.date_ends }}</p></td>
-            <td><p>{{ seance.seance_base.hall.name }}</p></td>
-            <td><p>
-            {% spaceless %}
-            {% for price in seance.prices.all %}
-                {{ price.price }} hrn.
-            {% endfor %}
-            {% endspaceless %}
-            </p></td>
-            <td><p>{{ seance.updated_at }}</p></td>
-            <td><p>{{ seance.advertisements_duration|time:"i" }} min</p></td>
-            <td><p>{{ seance.cleaning_duration|time:"i" }} min</p></td>
-            <td><p>{{ seance.is_active }}</p></td>
-            <td><p>{{ seance.admin }}</p></td>
-            <td>
-                <form action="{% url 'myadmin:seance_update' seance.pk %}">
-                    <input type="submit" value="{% trans 'Update' %}">
-                </form></td>
-                      <td>
-                <form action="{% url 'myadmin:seance_delete' seance.pk %}">
-                    <input type="submit" value="{% trans 'Delete' %}">
-                </form></td>
-          {% if not seance.is_active %}
-               <td> <form action="{% url 'myadmin:seance_activate' seance.pk %}">
-                    <input type="submit" value="{% trans 'Activate' %}">
-                </form></td>
-          {% endif %}
-
-        </tr>
-
-    {% endfor %}
-                </table>
+{#    <h2>{% trans 'Seances' %}:</h2>#}
+{##}
+{##}
+{#    <br>#}
+{#          <table>#}
+{#  <tr><th>Film</th> <th>Duration</th> <th>Dates</th> <th>Hall</th> <th>Price</th><th>Updated at</th>#}
+{#  <th>Advertisement  duration: </th><th>Cleaning for: </th><th>Is active?</th><th>Admin</th><th></th></tr>#}
+{#    {% for seance in seance_list %}#}
+{##}
+{#        <tr>#}
+{##}
+{#            <td><p>{{ seance.seance_base.film.title }}</p></td>#}
+{#            <td><p>{{ seance.time_starts|date:"H:i" }} - {{ seance.time_ends|date:"H:i" }}</p></td>#}
+{#            <td><p>{{ seance.seance_base.date_starts }} - {{ seance.seance_base.date_ends }}</p></td>#}
+{#            <td><p>{{ seance.seance_base.hall.name }}</p></td>#}
+{#            <td><p>#}
+{#            {% spaceless %}#}
+{#            {% for price in seance.prices.all %}#}
+{#                {{ price.price }} hrn.#}
+{#            {% endfor %}#}
+{#            {% endspaceless %}#}
+{#            </p></td>#}
+{#            <td><p>{{ seance.updated_at }}</p></td>#}
+{#            <td><p>{{ seance.advertisements_duration|time:"i" }} min</p></td>#}
+{#            <td><p>{{ seance.cleaning_duration|time:"i" }} min</p></td>#}
+{#            <td><p>{{ seance.is_active }}</p></td>#}
+{#            <td><p>{{ seance.admin }}</p></td>#}
+{#            <td>#}
+{#                <form action="{% url 'myadmin:seance_update' seance.pk %}">#}
+{#                    <input type="submit" value="{% trans 'Update' %}">#}
+{#                </form></td>#}
+{#                      <td>#}
+{#                <form action="{% url 'myadmin:seance_delete' seance.pk %}">#}
+{#                    <input type="submit" value="{% trans 'Delete' %}">#}
+{#                </form></td>#}
+{#          {% if not seance.is_active %}#}
+{#               <td> <form action="{% url 'myadmin:seance_activate' seance.pk %}">#}
+{#                    <input type="submit" value="{% trans 'Activate' %}">#}
+{#                </form></td>#}
+{#          {% endif %}#}
+{##}
+{#        </tr>#}
+{##}
+{#    {% endfor %}#}
+{#                </table>#}
 
 {% endblock content %}

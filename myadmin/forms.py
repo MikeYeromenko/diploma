@@ -16,7 +16,14 @@ class FilmModelForm(forms.ModelForm):
     class Meta:
         model = Film
         fields = ('title', 'starring', 'director', 'duration', 'description', 'is_active', 'image', 'admin')
-        widgets = {'admin': forms.HiddenInput}
+        widgets = {'admin': forms.HiddenInput,
+                   'title': forms.TextInput(attrs={'class': 'form-control', 'style': 'color: black'}),
+                   'starring': forms.TextInput(attrs={'class': 'form-control', 'style': 'color: black'}),
+                   'director': forms.TextInput(attrs={'class': 'form-control', 'style': 'color: black'}),
+                   'duration': forms.TextInput(attrs={'class': 'form-control', 'style': 'color: black'}),
+                   'description': forms.Textarea(attrs={'class': 'form-control', 'style': 'color: black'}),
+                   'is_active': forms.TextInput(attrs={'class': 'form-control', 'style': 'color: black'}),
+                   }
 
 
 class SeatCategoryModelForm(forms.ModelForm):
@@ -43,11 +50,28 @@ class PriceModelForm(forms.ModelForm):
                                                    'style': 'color: black'})}
 
 
+# class PriceSeanceActivateForm(forms.ModelForm):
+#     seance = forms.ChoiceField(disabled=True, widget=forms.TextInput(attrs={'class': 'form-control',
+#                                                                             'style': 'color: black'}))
+#     seat_category = forms.ChoiceField(disabled=True, widget=forms.TextInput(attrs={'class': 'form-control',
+#                                                                             'style': 'color: black'}))
+#
+#     class Meta:
+#         model = Price
+#         fields = PriceModelForm.Meta.fields
+#         widgets = {'price': forms.TextInput(attrs={'class': 'form-control', 'style': 'color: black'})}
+
+
 class SeanceBaseCreateForm(forms.ModelForm):
 
     class Meta:
         model = SeanceBase
         exclude = ('created_at', 'updated_at')
+        widgets = {'film': forms.Select(attrs={'class': 'form-control', 'style': 'color: black'}),
+                   'hall': forms.Select(attrs={'class': 'form-control', 'style': 'color: black'}),
+                   'date_starts': forms.TextInput(attrs={'class': 'form-control', 'style': 'color: black'}),
+                   'date_ends': forms.TextInput(attrs={'class': 'form-control', 'style': 'color: black'})
+                   }
 
     def clean_date_ends(self):
         """Validates, that date_ends is more or equal date.today()"""
@@ -142,7 +166,14 @@ class SeanceModelForm(forms.ModelForm):
     class Meta:
         model = Seance
         fields = ('time_starts', 'advertisements_duration', 'cleaning_duration',
-                  'description', 'seance_base')
+                  'description', 'seance_base', 'admin')
+        widgets = {'admin': forms.HiddenInput,
+                   'time_starts': forms.TextInput(attrs={'class': 'form-control', 'style': 'color: black'}),
+                   'advertisements_duration': forms.TextInput(attrs={'class': 'form-control', 'style': 'color: black'}),
+                   'cleaning_duration': forms.TextInput(attrs={'class': 'form-control', 'style': 'color: black'}),
+                   'description': forms.Textarea(attrs={'class': 'form-control', 'style': 'color: black'}),
+                   'seance_base': forms.Select(attrs={'class': 'form-control', 'style': 'color: black'}),
+                   }
 
     def clean(self, seance_exclude_pk=None):
         """Validates that Seance object doesn't intersect with other seances in current hall"""
@@ -171,6 +202,9 @@ class SeanceModelForm(forms.ModelForm):
 class SeanceUpdateForm(SeanceModelForm):
     class Meta(SeanceModelForm.Meta):
         fields = SeanceModelForm.Meta.fields + ('is_active', )
+        widgets = {**SeanceModelForm.Meta.widgets,
+                   'is_active': forms.TextInput(attrs={'class': 'form-control', 'style': 'color: black'})
+        }
 
     def clean(self):
         super().clean(seance_exclude_pk=self.instance.pk)

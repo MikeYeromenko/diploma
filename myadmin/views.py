@@ -198,7 +198,6 @@ class PriceDeleteView(IsStaffRequiredMixin, DeleteView):
 
 class PriceCreateView(IsStaffRequiredMixin, CreateView):
     model = Price
-    form_class = forms.PriceModelForm
     success_url = reverse_lazy('myadmin:price_list')
     template_name = 'myadmin/price/price_list.html'
 
@@ -210,7 +209,8 @@ class SeanceBaseTemplateView(IsStaffRequiredMixin, TemplateView):
         """Adds list of prices to context"""
         context = super().get_context_data(**kwargs)
         form = forms.SeanceBaseCreateForm(initial={'date_starts': datetime.date.today(),
-                                                  'date_ends': datetime.date.today() + datetime.timedelta(days=15)})
+                                                   'date_ends': datetime.date.today() + datetime.timedelta(days=15),
+                                                   })
         sb_list = SeanceBase.objects.filter(date_ends__gte=datetime.date.today())
         context['sb_objects'] = [(sb, forms.SeanceBaseCreateForm(instance=sb)) for sb in sb_list]
         context['form'] = form
@@ -262,25 +262,24 @@ class SeanceUpdateView(IsStaffRequiredMixin, UpdateView):
     template_name = 'myadmin/seances/seance_update_form.html'
     form_class = forms.SeanceUpdateForm
 
-    def form_valid(self, form):
-        """Adds admin field to Seance instance"""
-        self.object = form.save(commit=False)
-        self.object.admin = self.request.user
-        self.object.save()
-        return redirect(self.success_url)
+    def get_initial(self):
+        """Return the initial data to use for forms on this view."""
+        initial = super().get_initial()
+        initial.update({'admin': self.request.user})
+        return initial.copy()
 
 
 class SeanceCreateView(IsStaffRequiredMixin, CreateView):
     model = Seance
     template_name = 'myadmin/seances/seance_create_form.html'
     form_class = forms.SeanceModelForm
+    success_url = reverse_lazy('myadmin:seance_list')
 
-    def form_valid(self, form):
-        """Adds admin field to Seance instance"""
-        self.object = form.save(commit=False)
-        self.object.admin = self.request.user
-        self.object.save()
-        return redirect(reverse_lazy('myadmin:seance_activate', kwargs={'pk': self.object.pk}))
+    def get_initial(self):
+        """Return the initial data to use for forms on this view."""
+        initial = super().get_initial()
+        initial.update({'admin': self.request.user})
+        return initial.copy()
 
 
 class SeanceDeleteView(IsStaffRequiredMixin, DeleteView):
@@ -321,6 +320,7 @@ class SeanceActivateView(IsStaffRequiredMixin, FormView):
         context['errors'] = result_dict.get('errors_list')
         sc = result_dict.get('seat_categories')
         if sc:
+            pass
             context['form'] = self.form_class(initial={
                 'seance': self.seance,
                 'seat_category': sc[0]

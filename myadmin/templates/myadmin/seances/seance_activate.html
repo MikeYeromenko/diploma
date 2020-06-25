@@ -3,29 +3,24 @@
 
 {% block content %}
     <h2>{% trans 'Seance activation' %}:</h2>
-
-    <table>
-      <tr><th>Film</th> <th>Duration</th> <th>Dates</th> <th>Hall</th> <th>Price</th><th>Updated at</th>
-  <th>Advertisement  duration: </th><th>Cleaning for: </th><th>Is active?</th><th>Admin</th><th></th></tr>
-        <tr>
-            <td><p>{{ seance.seance_base.film.title }}</p></td>
-            <td><p>{{ seance.time_starts|date:"H:i" }} - {{ seance.time_ends|date:"H:i" }}</p></td>
-            <td><p>{{ seance.seance_base.date_starts }} - {{ seance.seance_base.date_ends }}</p></td>
-            <td><p>{{ seance.seance_base.hall.name }}</p></td>
-            <td><p>
+    <div style="text-align: center">
+            <p>Film: {{ seance.seance_base.film.title }}</p>
+            <p>Duration: {{ seance.time_starts|date:"H:i" }} - {{ seance.time_ends|date:"H:i" }}</p>
+            <p>Dates: {{ seance.seance_base.date_starts }} - {{ seance.seance_base.date_ends }}</p>
+            <p>Hall: {{ seance.seance_base.hall.name }}</p>
+            <p>
             {% spaceless %}
+                Prices:
             {% for price in seance.prices.all %}
-                {{ price.price }} hrn.
+                 {{ price.price }} hrn.
             {% endfor %}
             {% endspaceless %}
-            </p></td>
-            <td><p>{{ seance.updated_at }}</p></td>
-            <td><p>{{ seance.advertisements_duration|time:"i" }} min</p></td>
-            <td><p>{{ seance.cleaning_duration|time:"i" }} min</p></td>
-            <td><p>{{ seance.is_active }}</p></td>
-            <td><p>{{ seance.admin }}</p></td>
-        </tr>
-    </table>
+            </p>
+            <p>Updated at {{ seance.updated_at }}</p>
+            <p>Advertisement  duration: {{ seance.advertisements_duration|time:"i" }} min</p>
+            <p>Cleaning for: {{ seance.cleaning_duration|time:"i" }} min</p>
+            <p>Is active? {{ seance.is_active }}</p>
+            <p>Admin {{ seance.admin }}</p>
 
     {% if success %}
         <h2>{% trans 'Seance activated successfully' %}</h2>
@@ -35,16 +30,63 @@
             {% for error in errors %}
             <li>{{ error }}</li>
             {% endfor %}
+            </div>
         {% endif %}
+        <div class="div-table">
         {% if form %}
             <form action="" method="post">
             {% csrf_token %}
             {{ form.as_p }}
-                <input type="submit" value="Create price">
+                <input type="submit" value="Create price" class="input-submit">
             </form>
         {% endif %}
-        <a href="{% url 'myadmin:seance_activate' seance.pk %}"><button>Activate</button></a>
+
+        <a href="{% url 'myadmin:seance_activate' seance.pk %}"><button class="button-submit">Activate</button></a>
+        </div>
+
     {% endif %}
 
 
 {% endblock content %}
+
+{#    <table>#}
+{#      <tr><th>Film</th> <th>Duration</th> <th>Dates</th> <th>Hall</th> <th>Price</th><th>Updated at</th>#}
+{#  <th>Advertisement  duration: </th><th>Cleaning for: </th><th>Is active?</th><th>Admin</th><th></th></tr>#}
+{#        <tr>#}
+{#            <td><p>{{ seance.seance_base.film.title }}</p></td>#}
+{#            <td><p>{{ seance.time_starts|date:"H:i" }} - {{ seance.time_ends|date:"H:i" }}</p></td>#}
+{#            <td><p>{{ seance.seance_base.date_starts }} - {{ seance.seance_base.date_ends }}</p></td>#}
+{#            <td><p>{{ seance.seance_base.hall.name }}</p></td>#}
+{#            <td><p style="background-color: black; color: whitesmoke; width: max-content; min-height: 100vh">#}
+{#            {% spaceless %}#}
+{#            {% for price in seance.prices.all %}#}
+{#                {{ price.price }} hrn.#}
+{#            {% endfor %}#}
+{#            {% endspaceless %}#}
+{#            </p></td>#}
+{#            <td><p>{{ seance.updated_at }}</p></td>#}
+{#            <td><p>{{ seance.advertisements_duration|time:"i" }} min</p></td>#}
+{#            <td><p>{{ seance.cleaning_duration|time:"i" }} min</p></td>#}
+{#            <td><p>{{ seance.is_active }}</p></td>#}
+{#            <td><p>{{ seance.admin }}</p></td>#}
+{#        </tr>#}
+{#    </table>#}
+{##}
+{#    {% if success %}#}
+{#        <h2>{% trans 'Seance activated successfully' %}</h2>#}
+{#        <a href="{% url 'myadmin:seance_list' %}">{% trans 'Look in seance list' %}</a>#}
+{#    {% else %}#}
+{#        {% if errors %}#}
+{#            {% for error in errors %}#}
+{#            <li>{{ error }}</li>#}
+{#            {% endfor %}#}
+{#        {% endif %}#}
+{#        {% if form %}#}
+{#            <form action="" method="post">#}
+{#            {% csrf_token %}#}
+{#            {{ form.as_p }}#}
+{#                <input type="submit" value="Create price">#}
+{#            </form>#}
+{#        {% endif %}#}
+{#        <a href="{% url 'myadmin:seance_activate' seance.pk %}"><button>Activate</button></a>#}
+{#    {% endif %}#}

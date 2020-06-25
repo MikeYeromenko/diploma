@@ -3,44 +3,43 @@
 
 {% block content %}
     <h2>{% trans 'Create new base seance' %}:</h2>
-    <form action="{% url 'myadmin:seance_base_create' %}" method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-        <input type="submit" value="{% trans 'Create' %}">
-    </form>
-
+    <div style="display: table; margin: auto">
+        <form action="{% url 'myadmin:seance_base_create' %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+            <input type="submit" value="{% trans 'Create' %}" class="input-submit">
+        </form>
+    </div>
 
     <h2>{% trans 'Seance bases' %}:</h2>
+    {% if sb_objects %}
+        {% for seancebase, form in sb_objects %}
+            <div style="display: table; margin: auto">
 
-{% if sb_objects %}
+                {{ forloop.counter }}:
+                <form action="{% url 'myadmin:seance_base_update' seancebase.pk %}" method="post" style="margin: 10px">
+                    {% csrf_token %}
+                     {{ form.as_p }}
+                    Updated last: {{ seancebase.updated_at }}; <br>
+                    <h4>{% trans 'Seances' %}</h4>
+                    {% for seance in seancebase.seances.all %}
+                        {{ forloop.counter }}: {{ seance }}; in run? {{ seance.is_active }}
+                        <br>
+                    {% endfor %}
+                    <input type="submit" value="{% trans 'Update' %}" class="input-submit">
+                </form>
+                    <a href="{% url 'myadmin:seance_base_delete' seancebase.pk %}" style="margin: 10px">
+                        <button class="input-submit" style="color: black">{% trans 'Delete' %}</button>
+                    </a>
+            <br><br><br>
 
-    <table>
-
-    {% for seancebase, form in sb_objects %}
-        <tr>
-<td>{{ forloop.counter }}:</td>
-        <td><form action="{% url 'myadmin:seance_base_update' seancebase.pk %}" method="post">
-        {% csrf_token %}
-         {{ form.as_p }}
-        Updated last: {{ seancebase.updated_at }}; <br>
-        {% for seance in seancebase.seances.all %}
-            {{ forloop.counter }}: {{ seance }}; in run? {{ seance.is_active }}
-            <br>
         {% endfor %}
-            <input type="submit" value="{% trans 'Update' %}">
-        </form>
-        <a href="{% url 'myadmin:seance_base_delete' seancebase.pk %}">
-            <button>{% trans 'Delete' %}</button>
-        </a>
-        <br><br><br></td>
-        </tr>
-    {% endfor %}
 
-</table>
+    </div>
 
 
 
-{% endif %}
+    {% endif %}
 {% endblock content %}
 
 

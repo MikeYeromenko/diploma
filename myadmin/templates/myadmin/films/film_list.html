@@ -1,35 +1,105 @@
 {% extends 'myadmin/base.html' %}
 {% load i18n %}
+{% load thumbnail %}
 
 {% block content %}
-    <h2>{% trans 'Films' %}</h2>
+    <h3 class="agile_w3_title" style="color: whitesmoke; text-align: center">
+        Available <span style="color: black">Films</span></h3>
 
-<a href="{% url 'myadmin:film_list' %}">
-    <button>{% trans 'Show all' %}</button>
-</a>
-<form action="" method="get">
-    <input type="hidden" name="active" value="True">
-    <input type="submit" value="{% trans 'Show only active' %}">
-</form>
-
-
-    {% for film in film_list %}
-        <br>
-        Title: {{ film.title }}
-        Starring: {{ film.starring }}
-        Director: {{ film.director }}
-        Duration: {{ film.duration }}
-        Description: {{ film.description }}
-        Has active status? {{ film.is_active }}
-        Film added to this site: {{ film.created_at }}
-        Updated last: {{ film.updated_at }}
-        Last editor: {{ film.admin }}
-        <a href="{% url 'myadmin:film_update' film.pk %}">
-            <button>{% trans 'Update' %}</button>
+    <div style="display: table; margin: auto">
+        <a href="{% url 'myadmin:film_list' %}">
+            <button class="input-submit" style="color: black">{% trans 'Show all' %}</button>
         </a>
-        <a href="{% url 'myadmin:film_delete' film.pk %}">
-            <button>{% trans 'Delete' %}</button>
-        </a>
-        <br>
-    {% endfor %}
+        <form action="" method="get">
+            <input type="hidden" name="active" value="True">
+            <input type="submit" value="{% trans 'Show only active' %}" class="input-submit">
+        </form>
+    </div>
+			<!--/movies-->
+			<div class="w3_agile_latest_movies">
+
+				<div id="owl-demo" class="owl-carousel owl-theme" style="background-color: black">
+                    {% for film in film_list %}
+					<div class="item">
+						<div class="w3l-movie-gride-agile w3l-movie-gride-slider ">
+                    <strong>{{ film.title }}<br></strong>
+                    <a href="" class="hvr-sweep-to-bottom">
+                        {% if film.image %}
+                        <img src="{% thumbnail film.image 'default' %}" title="Movies Pro"
+                             class="img-responsive" alt=" " />
+                        {% else %}
+                            <img src="{% thumbnail 'empty_film' 'default' %}" title="Movies Pro"
+                             class="img-responsive" alt=" " />
+                        {% endif %}
+
+                    </a>
+
+							<div class="mid-1 agileits_w3layouts_mid_1_home" style="background-color: black;
+color: orangered">
+								<div class="w3l-movie-text">
+									<p>{{ film.title }}</p>
+								</div>
+								<div class="mid-2 agile_mid_2_home" style="display: flex; flex-direction: column">
+                                    <div class="div-p">
+                                    <p>Starring: {{ film.starring }}</p>
+                                    <p>Director: {{ film.director }}</p>
+                                    <p>Description: {{ film.description }}</p>
+                                    <p>Last updated: {{ film.updated_at }}</p>
+                                    <p>In run? {{ film.is_active }}</p>
+                                    <p>Admin: {{ film.admin }}</p>
+                                        </div>
+
+                                    <a href="{% url 'myadmin:film_update' film.pk %}">
+                                        <button class="input-submit" style="color: black">{% trans 'Update' %}</button>
+                                    </a>
+                                    <a href="{% url 'myadmin:film_delete' film.pk %}">
+                                        <button class="input-submit" style="color: black">{% trans 'Delete' %}</button>
+                                    </a>
+
+									<div class="clearfix"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+
+{##}
+{##}
+{#<table>#}
+{#<tr>#}
+{#    <th></th><th>Title</th><th>Starring</th><th>Director</th><th>Duration</th><th>Description</th><th>Has active status?</th>#}
+{#    <th>Film added to this site</th><th>Updated last</th><th>Last editor</th><th></th><th></th>#}
+{#</tr>#}
+{#    {% for film in film_list %}#}
+{#        <tr>#}
+{#        {% if film.image %}#}
+{#            <td>       <img src="{% thumbnail film.image 'default' %}" title="Movies Pro"#}
+{#                             class="img-responsive" alt=" " /></td>#}
+{#        {% else %}#}
+{#            <td></td>#}
+{#        {% endif %}#}
+{#        <td>{{ film.title }}</td>#}
+{#        <td>{{ film.starring }}</td>#}
+{#        <td>{{ film.director }}</td>#}
+{#        <td>{{ film.duration }}</td>#}
+{#        <td>{{ film.description }}</td>#}
+{#        <td>{{ film.is_active }}</td>#}
+{#        <td>{{ film.created_at }}</td>#}
+{#        <td>{{ film.updated_at }}</td>#}
+{#        <td>{{ film.admin }}</td>#}
+{#        <td>#}
+{#        <a href="{% url 'myadmin:film_update' film.pk %}">#}
+{#            <button class="input-submit" style="color: black">{% trans 'Update' %}</button>#}
+{#        </a>#}
+{#        </td>#}
+{#        <td>#}
+{#        <a href="{% url 'myadmin:film_delete' film.pk %}">#}
+{#            <button class="input-submit" style="color: black">{% trans 'Delete' %}</button>#}
+{#        </a></td>#}
+{#        </tr>#}
+{#    {% endfor %}#}
+{#</table>#}
 {% endblock content %}

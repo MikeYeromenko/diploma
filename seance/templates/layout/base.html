@@ -41,7 +41,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 {% endblock java_script %}
 <!--//web-fonts-->
 </head>
-<body class="body_custom">
+<body {% block body_class %}class="body_custom"{% endblock body_class %}>
 
 {% block navbar %}
     {% include 'layout/base_navbar.html' %}

@@ -4,6 +4,10 @@ h1, h2, h3, h4 {
   color: orangered;
 }
 
+.div-p p {
+  color: whitesmoke;
+}
+
 ul {
   color: orangered;
   font-weight: bolder;
@@ -18,26 +22,26 @@ li {
 
 table {
   width: 100%; /* Ширина таблицы */
-  border: 4px black; /* Рамка вокруг таблицы */
+  border: 4px whitesmoke; /* Рамка вокруг таблицы */
   border-collapse: collapse; /* Отображать только одинарные линии */
   text-align: center;
 }
 th {
   text-align: center; /* Выравнивание по center */
-  background: #ccc; /* Цвет фона ячеек */
+  background: orangered; /* Цвет фона ячеек */
   padding: 5px; /* Поля вокруг содержимого ячеек */
-  border: 1px solid black; /* Граница вокруг ячеек */
+  border: 1px solid whitesmoke; /* Граница вокруг ячеек */
 }
 td {
   padding: 5px; /* Поля вокруг содержимого ячеек */
-  border: 1px solid black; /* Граница вокруг ячеек */
+  border: 1px solid whitesmoke; /* Граница вокруг ячеек */
   text-align: center;
 }
 
 .body_custom {
   background-color: black;
   color: whitesmoke;
-  width: 100vw;
+  min-width: 100vw;
   min-height: 100vh;
 }
 
@@ -50,6 +54,19 @@ input {
 .input-submit{
   background-color: orangered;
   border-radius: 10px;
+  color: black;
+}
+
+.button-submit{
+  background-color: orangered;
+  border-radius: 10px;
+  color: black;
+  /*margin: 5px;*/
+}
+
+.div-table {
+  display: table;
+  margin: auto
 }
 
 .input-submit-order{
@@ -66,6 +83,12 @@ form {
 .form-login {
   margin: auto;
   width: 350px;
+}
+
+#id_image {
+  background-color: orangered;
+  border-radius: 10px;
+  color: black;
 }
 
     /*.select {*/
