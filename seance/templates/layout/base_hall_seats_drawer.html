@@ -7,7 +7,7 @@
     {% for seat in hall.seats.all %}
         {% if seat.row == row %}
             {% if seat in seats_taken %}
-                <button style="width: 40px; background-color: red">{{ seat.number }}</button>
+                <button style="width: 40px; background-color: red; color: black">{{ seat.number }}</button>
             {% else %}
                 <form action="{% url 'seance:basket-redirect' %}" style="display: inline-block">
                     <input type="hidden" name="seat_pk" value="{{ seat.pk }}">

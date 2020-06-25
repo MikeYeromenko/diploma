@@ -8,7 +8,8 @@
     {% for price in seance.prices.all %}
         <tr>
         <td>{% trans 'Seat category: ' %}</td> <td>{{ price.seat_category }}</td>
-        <td><button style="background-color: {{ price.seat_category.color }}">{% trans 'Choose' %}</button> </td>
+        <td><button style="background-color: {{ price.seat_category.color }};
+                color: black">{% trans 'Choose' %}</button> </td>
         <td>{{ price.price }} hrn. </td>
         </tr>
     {% endfor %}

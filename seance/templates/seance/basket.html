@@ -17,7 +17,7 @@
               Created at: {% get_item my_dict 'created' %}
             <form action="{% url 'seance:basket-cancel' %}" style="display: inline-block" method="get">
               <input type="hidden" name="seance_cancel" value="{{ datetime }}">
-              <input type="submit" value="{% trans 'Cancel' %}" style="width: min-content">
+              <input type="submit" value="{% trans 'Cancel' %}" style="width: min-content" class="input-submit">
             </form>
 
             <br>
@@ -26,13 +26,13 @@
          <strong>Total price: {{ total_price }} hrn.</strong>
             {% if last_seance %}
                 <form action="{% url 'seance:seance_detail' last_seance %}" method="get">
-                    <input type="submit" value="{% trans 'Add one more tickets' %}">
+                    <input type="submit" value="{% trans 'Add one more tickets' %}" class="input-submit">
                 </form>
             {% endif %}
         {% if basket %}
             <form action="{% url 'seance:buy' %}" method="post">
                 {% csrf_token %}
-                <input type="submit" value="{% trans 'Buy' %}" style="width: 90px; height: 50px">
+                <input type="submit" value="{% trans 'Buy' %}" style="width: 90px; height: 50px" class="input-submit">
             </form>
         {% endif %}
         </div>
