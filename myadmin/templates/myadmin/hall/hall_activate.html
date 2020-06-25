@@ -38,7 +38,7 @@
             <li>There are {{ uncreated_seats }} uncreated seats</li>
             {% include 'layout/base_hall_seats_drawer.html' with hall=hall seats_taken=seats_created %}
         <div class="div-table">
-        
+
             <form action="" method="post">
             {% csrf_token %}
             {{ form.as_p }}

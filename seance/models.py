@@ -394,9 +394,10 @@ class Ticket(models.Model):
 
     @property
     def is_active(self):
-        if self.date_seance >= datetime.date.today():
-            if self.seance.time_starts >= timezone.now().time():
-                return True
+        if (self.date_seance > datetime.date.today()
+                or self.date_seance > datetime.date.today()
+                and self.seance.time_starts >= timezone.now().time()):
+            return True
         return False
 
     class Meta:
