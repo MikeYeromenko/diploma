@@ -2,6 +2,7 @@
 
 {% block content %}
     {% if purchase_list %}
+        <div style=" padding: 10px">
         <br>
         <h2>You have made purchases:</h2>
         {% for purchase in purchase_list %}
@@ -10,6 +11,11 @@
             total price: {{ purchase.total_price }} hrn.</strong>
             <br>
             {% for ticket in purchase.tickets.all %}
+                {% if ticket.is_active %}
+                    <div style="color: orange">
+                {% else %}
+                    <div style="color: whitesmoke">
+                {% endif %}
               Film: {{ ticket.seance.seance_base.film.title }}
               Hall: {{ ticket.seance.seance_base.hall.name }}
               Date of seance: {{ ticket.date_seance }}
@@ -17,9 +23,11 @@
               Row: {{ ticket.seat.row }}
               Seat: {{ ticket.seat.number }}
               Price: {{ ticket.price }} hrn.
-                <br>
+                </div>
+
             {% endfor %}
         {% endfor %}
+        </div>
     {% else %}
         You have not any purchases yet
     {% endif %}

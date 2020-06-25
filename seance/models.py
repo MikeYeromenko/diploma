@@ -6,6 +6,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Q, F
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from cinema.settings import DEFAULT_SUM_TO_WALLET
@@ -390,6 +391,13 @@ class Ticket(models.Model):
             if not self.date_seance:
                 self.date_seance = datetime.date.today()
         return super().save(*args, **kwargs)
+
+    @property
+    def is_active(self):
+        if self.date_seance >= datetime.date.today():
+            if self.seance.time_starts >= timezone.now().time():
+                return True
+        return False
 
     class Meta:
         unique_together = ('seance', 'date_seance', 'seat')
