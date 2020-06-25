@@ -32,6 +32,12 @@ class PriceModelForm(forms.ModelForm):
     class Meta:
         model = Price
         fields = ('seance', 'seat_category', 'price')
+        widgets = {'seance': forms.Select(attrs={'class': 'form-control',
+                                                 'style': 'color: black'}),
+                   'seat_category': forms.Select(attrs={'class': 'form-control',
+                                                 'style': 'color: black'}),
+                   'price': forms.TextInput(attrs={'class': 'form-control',
+                                                   'style': 'color: black'})}
 
 
 class SeanceBaseCreateForm(forms.ModelForm):
