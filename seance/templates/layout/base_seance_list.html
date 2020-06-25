@@ -10,7 +10,7 @@
                     {% for seance in seance_list %}
 					<div class="item">
 						<div class="w3l-movie-gride-agile w3l-movie-gride-slider ">
-                    <p>Some text</p>
+                    <strong>{{ seance.time_starts }} - {{ seance.time_ends }}<br></strong>
                     <a href="" class="hvr-sweep-to-bottom">
                         {% if seance.seance_base.film.image %}
                         <img src="{% thumbnail seance.seance_base.film.image 'default' %}" title="Movies Pro"
@@ -22,24 +22,24 @@
 
                     </a>
 
-
-
 							<div class="mid-1 agileits_w3layouts_mid_1_home">
 								<div class="w3l-movie-text">
 									<h6><a href="">{{ seance.seance_base.film.title }}</a></h6>
 								</div>
-								<div class="mid-2 agile_mid_2_home">
-                                    <p>Time: {{ seance.time_starts }} - {{ seance.time_ends }}</p></td>
+								<div class="mid-2 agile_mid_2_home" style="display: flex; flex-direction: column">
                                     <p>Hall: {{ seance.seance_base.hall.name }}</p>
+                                    {% with seance.prices.all|first as price %}
+                                    <p>Price from: {{ price.price }} hrn.</p>
+                                    {% endwith %}
                                     <form action="{% url 'seance:seance_detail' seance.pk %}" method="get" id="show-seance-details-form">
                                         <input type="submit" id="show-details" value="{% trans 'Details...' %}">
                                     </form>
 									<div class="clearfix"></div>
 								</div>
 							</div>
-							<div class="ribben one">
-								<p>Welcome)</p>
-							</div>
+{#							<div class="ribben one">#}
+{#								<p>Welcome)</p>#}
+{#							</div>#}
 						</div>
 					</div>
                     {% endfor %}

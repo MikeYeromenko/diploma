@@ -27,11 +27,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <link href='//fonts.googleapis.com/css?family=Tangerine:400,700' rel='stylesheet' type='text/css'>
 <link href="//fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900" rel="stylesheet">
 <link href='//fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
-
+<!--/web-fonts-->
  <!--For modal forms-->
 {#<link rel="stylesheet" href="{% static 'seance/assets/css/bootstrap.min.css' %}">#}
     {% block styles %}
     <link rel="stylesheet" type="text/css" href="{% static 'seance/style.css' %}">
+{#        <link rel="stylesheet" type="text/css" href="{% static 'seance/invalid_modal.css' %}">#}
 {% endblock styles %}
 {% block java_script %}
     <script src="{% static 'colorfield/colorfield.js' %}"></script>
@@ -41,7 +42,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 {% endblock java_script %}
 <!--//web-fonts-->
 </head>
-<body>
+<body class="body_custom">
 
 {% block navbar %}
     {% include 'layout/base_navbar.html' %}
@@ -97,22 +98,22 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	<div id="small-dialog2" class="mfp-hide">
 		<iframe src="https://player.vimeo.com/video/165197924?color=ffffff&title=0&byline=0&portrait=0"></iframe>
 	</div>
-	<script>
-		$(document).ready(function() {
-		$('.w3_play_icon,.w3_play_icon1,.w3_play_icon2').magnificPopup({
-			type: 'inline',
-			fixedContentPos: false,
-			fixedBgPos: true,
-			overflowY: 'auto',
-			closeBtnInside: true,
-			preloader: false,
-			midClick: true,
-			removalDelay: 300,
-			mainClass: 'my-mfp-zoom-in'
-		});
-
-		});
-	</script>
+{#	<script>#}
+{#		$(document).ready(function() {#}
+{#		$('.w3_play_icon,.w3_play_icon1,.w3_play_icon2').magnificPopup({#}
+{#			type: 'inline',#}
+{#			fixedContentPos: false,#}
+{#			fixedBgPos: true,#}
+{#			overflowY: 'auto',#}
+{#			closeBtnInside: true,#}
+{#			preloader: false,#}
+{#			midClick: true,#}
+{#			removalDelay: 300,#}
+{#			mainClass: 'my-mfp-zoom-in'#}
+{#		});#}
+{##}
+{#		});#}
+{#	</script>#}
 <script src="{% static 'seance/js/easy-responsive-tabs.js' %}"></script>
 <script>
 $(document).ready(function () {
@@ -142,7 +143,7 @@ fit: true
 	$(document).ready(function() {
 		$("#owl-demo").owlCarousel({
 
-		 autoPlay: 3000, //Set AutoPlay to 3 seconds
+		 autoPlay: 5000, //Set AutoPlay to 5 seconds
 		  autoPlay : true,
 		   navigation :true,
 
@@ -159,10 +160,10 @@ fit: true
 
 
     <!--For modal forms-->
-<script src="{% static 'seance/assets/js/jquery-3.2.1.min.js' %}"></script>
-<script src="{% static 'seance/assets/js/popper.min.js' %}"></script>
-<script src="{% static 'seance/assets/js/bootstrap.min.js' %}"></script>
-<script src="{% static 'js/jquery.bootstrap.modal.forms.js' %}"></script>
+{#<script src="{% static 'seance/assets/js/jquery-3.2.1.min.js' %}"></script>#}
+{#<script src="{% static 'seance/assets/js/popper.min.js' %}"></script>#}
+{#<script src="{% static 'seance/assets/js/bootstrap.min.js' %}"></script>#}
+{#<script src="{% static 'js/jquery.bootstrap.modal.forms.js' %}"></script>#}
 
     <!--End for modal forms-->
 

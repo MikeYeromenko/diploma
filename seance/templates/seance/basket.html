@@ -17,7 +17,7 @@
               Created at: {% get_item my_dict 'created' %}
             <form action="{% url 'seance:basket-cancel' %}" style="display: inline-block" method="get">
               <input type="hidden" name="seance_cancel" value="{{ datetime }}">
-              <input type="submit" value="{% trans 'Cancel' %}" style="width: 60px">
+              <input type="submit" value="{% trans 'Cancel' %}" style="width: min-content">
             </form>
 
             <br>

@@ -64,8 +64,8 @@ DAY_CHOICES = (
 
 
 class OrderingForm(forms.Form):
-    ordering = forms.ChoiceField(choices=ORDERING_CHOICES, label=_('Order by'), required=False)
-    days = forms.ChoiceField(choices=DAY_CHOICES, label=_('When?'), required=False)
+    ordering = forms.ChoiceField(choices=ORDERING_CHOICES, label=_('Order by: '), required=False)
+    days = forms.ChoiceField(choices=DAY_CHOICES, label=_('When? '), required=False)
 
 
 # class TicketForm(forms.Form):

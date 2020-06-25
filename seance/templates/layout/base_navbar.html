@@ -13,48 +13,36 @@
 						<h1><a  href=""><span>M</span>ovies <span>P</span>ro</a></h1>
 					</div>
 					<!-- navbar-header -->
-					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"
+                         style="background-color: {{ color }}; width: -moz-fit-content">
 							<ul class="nav navbar-nav">
-							<li class="active"><a href="">Home</a></li>
-							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Genre <b class="caret"></b></a>
-								<ul class="dropdown-menu multi-column columns-3">
-									<li>
-									<div class="col-sm-4">
-										<ul class="multi-column-dropdown">
-											<li><a href="">Action</a></li>
-											<li><a href="">Biography</a></li>
-											<li><a href="">Crime</a></li>
-											<li><a href="">Family</a></li>
-											<li><a href="">Horror</a></li>
-											<li><a href="">Romance</a></li>
-											<li><a href="">Sports</a></li>
-											<li><a href="">War</a></li>
-										</ul>
-									</div>
-									<div class="col-sm-4">
-										<ul class="multi-column-dropdown">
-											<li><a href="">Adventure</a></li>
-											<li><a href="">Comedy</a></li>
-											<li><a href="">Documentary</a></li>
-											<li><a href="">Fantasy</a></li>
-											<li><a href="">Thriller</a></li>
-										</ul>
-									</div>
-									<div class="col-sm-4">
-										<ul class="multi-column-dropdown">
-											<li><a href="">Animation</a></li>
-											<li><a href="">Costume</a></li>
-											<li><a href="">Drama</a></li>
-											<li><a href="">History</a></li>
-											<li><a href="">Musical</a></li>
-											<li><a href="">Psychological</a></li>
-										</ul>
-									</div>
-									<div class="clearfix"></div>
-									</li>
-								</ul>
-							</li>
+							<li><a href="{% url 'seance:index' %}">Home</a></li>
+                            <li><a href="{% url 'seance:register' %}">Registration</a></li>
+                            {% if user.is_authenticated %}
+                                <li><a href="{% url 'seance:logout' %}">Logout</a></li>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Profile <b class="caret"></b></a>
+                                    <ul class="dropdown-menu multi-column columns-3">
+                                        <li>
+                                        <div class="col-sm-4">
+                                            <ul class="multi-column-dropdown">
+                                                <li><a href="{% url 'seance:profile' %}">Watch profile info</a></li>
+                                                <li><a href="">Change profile info</a></li>
+                                                <li><a href="{% url 'seance:basket' %}">Basket</a></li>
+                                                <li><a href="{% url 'seance:my_tickets' %}">Purchases</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            {% else %}
+                                <li><a href="{% url 'seance:login' %}">Login</a></li>
+                            {% endif %}
+                            {% if user.is_staff %}
+                                <li><a href="{% url 'myadmin:seance_base_list' %}">To admin page</a></li>
+                            {% endif %}
+                            <li><a href="">Contacts</a></li>
 
 						</ul>
 

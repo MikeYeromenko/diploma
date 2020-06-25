@@ -2,51 +2,53 @@
 {% load i18n %}
 
 
-{% block admin_links %}
-    <br>
-    <br>
 
-<div class="navbar">
+
+{% block navbar %}
+
+<div class="navbar_adm">
+    <a href="{% url 'seance:index' %}">{% trans 'Main' %}</a>
   <a href="{% url 'myadmin:price_list' %}">{% trans 'Prices' %}</a>
   <a href="{% url 'myadmin:seat_category_crud' %}">{% trans 'Seat categories' %}</a>
-  <div class="dropdown">
-    <button class="dropbtn">
+  <div class="dropdown_adm">
+    <button class="dropbtn_adm">
       <i class="fa fa-caret-down">{% trans 'Films' %}</i>
     </button>
-    <div class="dropdown-content">
+    <div class="dropdown-content_adm">
             <a id="link-main" href="{% url 'myadmin:film_list' %}">{% trans 'Films list' %}</a>
             <a id="link-main" href="{% url 'myadmin:film_create' %}">{% trans 'Create new film' %}</a>
     </div>
   </div>
-  <div class="dropdown">
-    <button class="dropbtn">
+  <div class="dropdown_adm">
+    <button class="dropbtn_adm">
       <i class="fa fa-caret-down">{% trans 'SeanceBases' %}</i>
     </button>
-    <div class="dropdown-content">
+    <div class="dropdown-content_adm">
             <a id="link-main" href="{% url 'myadmin:seance_base_list' %}">{% trans 'SeanceBases list' %}</a>
             <a id="link-main" href="">{% trans 'Create new base seance' %}</a>
     </div>
   </div>
 
-  <div class="dropdown">
-    <button class="dropbtn">
+  <div class="dropdown_adm">
+    <button class="dropbtn_adm">
       <i class="fa fa-caret-down">{% trans 'Seances' %}</i>
     </button>
-    <div class="dropdown-content">
+    <div class="dropdown-content_adm">
             <a id="link-main" href="{% url 'myadmin:seance_list' %}">{% trans 'Seance list' %}</a>
             <a id="link-main" href="{% url 'myadmin:seance_create' %}">{% trans 'Create new seance' %}</a>
     </div>
   </div>
-      <div class="dropdown">
-    <button class="dropbtn">
+      <div class="dropdown_adm">
+    <button class="dropbtn_adm">
       <i class="fa fa-caret-down">{% trans 'Halls' %}</i>
     </button>
-    <div class="dropdown-content">
+    <div class="dropdown-content_adm">
             <a id="link-main" href="{% url 'myadmin:hall_list' %}">{% trans 'Hall list' %}</a>
             <a id="link-main" href="{% url 'myadmin:hall_create' %}">{% trans 'Create new hall' %}</a>
     </div>
   </div>
     <br>
 </div>
-{% endblock admin_links %}
+    {% endblock navbar %}
+
 

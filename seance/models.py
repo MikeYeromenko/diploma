@@ -204,7 +204,7 @@ class Price(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_('instance updated at'))
 
     class Meta:
-        ordering = ('-updated_at', )
+        ordering = ('price', )
         unique_together = ('seance', 'seat_category')
 
     def __str__(self):

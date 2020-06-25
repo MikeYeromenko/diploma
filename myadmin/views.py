@@ -167,7 +167,7 @@ class PriceTemplateView(IsStaffRequiredMixin, TemplateView):
         """Adds list of prices to context"""
         context = super().get_context_data(**kwargs)
         form = forms.PriceModelForm()
-        price_list = Price.objects.all()
+        price_list = Price.objects.all().order_by('-updated_at')
         context['price_objects'] = [(price, forms.PriceModelForm(instance=price)) for price in price_list]
         context['form'] = form
         return context

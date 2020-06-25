@@ -6,58 +6,11 @@
 
 
 {% block content %}
-    {% include 'modal/_modal.html' %}
-    <div class="col-12 mb-3">
-        <button class="ordering-form btn btn-primary" type="button" name="button">
-        <span class="fa mr-2"></span>Ordering</button>
-    </div>
-{#            <h4>#}
-{#          <strong>2. Login form</strong>#}
-{#        </h4>#}
-{#        <p>Log in via Bootstrap modal. Sign up first.</p>#}
-{#        <div class="row">#}
-{#          <div class="col-12 mb-3">#}
-{#            {% if not user.is_anonymous %}#}
-{#              <span>#}
-{#                Your are logged in as#}
-{#                <strong>{{ user }}</strong>.#}
-{#              </span>#}
-{#              <a href="{% url 'seance:logout' %}" class="logout-btn btn btn-danger" role="button">Log out</a>#}
-{#            {% else %}#}
-{#              <button class="login-btn btn btn-primary" type="button" name="button">Log in</button>#}
-{#            {% endif %}#}
-{#          </div>#}
-{##}
-{#        </div>#}
 
-<div class="modal fade" tabindex="-1" role="dialog" id="modal">
-<div class="modal-dialog" role="document">
-<div class="modal-content"></div>
-</div>
-</div>
-
-<button class="login-btn btn btn-primary" type="button" name="button">Login</button>
-
-
-    <form action="{% url 'seance:index' %}" id="ordering-form" method="get">
-      {{ ordering_form.as_p }}
-       <input type="submit" value="{% trans 'Submit' %}" id="submit-ordering">
-    </form>
+    {% include 'layout/base_order_form.html' with form=ordering_form %}
 
     {% include 'layout/base_seance_list.html' with seance_list=seance_list %}
 
 
 
-         // Ordering form button
-
 {% endblock content %}
-
-{% block extrascripts %}
-<script type="text/javascript">
-  $(function () {
-    // Log in button
-    $(".login-btn").modalForm({formURL: "{% url 'modal:login' %}"});
-
-  });
-</script>
-{% endblock extrascripts %}
