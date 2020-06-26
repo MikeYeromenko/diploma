@@ -305,4 +305,9 @@ class PurchaseListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Purchase.objects.filter(user_id=self.request.user.pk)
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['money_spent'] = self.request.user.sum_money_spent
+        return context
+
 

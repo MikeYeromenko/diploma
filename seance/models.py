@@ -31,6 +31,12 @@ class AdvUser(AbstractUser):
             self.wallet = DEFAULT_SUM_TO_WALLET
         return super().save(*args, **kwargs)
 
+    @property
+    def sum_money_spent(self):
+        """Returns how much money user has spent"""
+        purchases = Purchase.objects.filter(user_id=self.pk)
+        return sum([p.total_price for p in purchases])
+
     def __str__(self):
         return self.username
 

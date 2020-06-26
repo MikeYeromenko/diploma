@@ -23,6 +23,7 @@ urlpatterns = [
     path('', include('seance.urls')),
     path('admin/', admin.site.urls),
     path('myadmin/', include('myadmin.urls')),
+    path('api/', include('seance.API.urls')),
     # path('modal/', include('seance.modal.urls')),
 ]
 

@@ -1,6 +1,10 @@
 {% extends 'layout/base.html' %}
+{% load i18n %}
 
 {% block content %}
+    {% if money_spent %}
+        <p style="padding: 10px">{% trans 'Total sum of money spent' %}: {{ money_spent }} hrn.</p>
+    {% endif %}
     {% if purchase_list %}
         <div style=" padding: 10px">
         <br>

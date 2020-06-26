@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'easy_thumbnails',
     'bootstrap_modal_forms',
     'widget_tweaks',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
