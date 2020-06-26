@@ -18,6 +18,7 @@ from seance.models import Seance, AdvUser, Hall, Seat, Purchase, Ticket
 class SeanceListView(ListView):
     model = Seance
     template_name = 'seance/index.html'
+    context_object_name = 'seance_list'
 
     def get_queryset(self):
         query = Q(is_active=True)
@@ -47,9 +48,11 @@ class SeanceListView(ListView):
         orders seances queryset by users ordering
         """
         if ordering_param == 'cheap':
-            return seances.order_by('prices__price')
+            # return seances.order_by('prices__price')
+            return Seance.order_by_cheap_first(seances)
         if ordering_param == 'expensive':
-            return seances.order_by('-prices__price')
+            # return seances.order_by('-prices__price')
+            return Seance.order_by_expensive_first(seances)
         elif ordering_param == 'latest':
             return seances.order_by('-time_starts')
         elif ordering_param == 'closest':
