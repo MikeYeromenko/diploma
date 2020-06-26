@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.shortcuts import get_object_or_404
@@ -15,13 +17,11 @@ class LogoutIfInActiveMiddleware(MiddlewareMixin):
         assert hasattr(request, 'user'), (
             'The LogoutIfNotActiveMiddleware middleware requires authentication middleware to be installed.'
         )
-        if request.user.is_authenticated:
-            if request.user.is_superuser or (request.user.last_activity >
-                                             timezone.now() - timezone.timedelta(minutes=5)):
-                user = get_object_or_404(AdvUser, pk=request.user.pk)
-                user.last_activity = timezone.now()
-                user.save()
-                request.user.last_activity = user.last_activity
+        if request.user.is_authenticated and not request.user.is_superuser:
+            last_activity = request.session.get('last_activity')        # we got it in type "str"
+            last_activity = datetime.datetime.strptime(last_activity, '%Y-%m-%d %H:%M:%S.%f')
+            if last_activity > datetime.datetime.now() - datetime.timedelta(minutes=5):
+                request.session['last_activity'] = str(datetime.datetime.now())
             else:
                 logout(request)
                 messages.add_message(request, messages.INFO, _('More than 5 minutes inactive. '

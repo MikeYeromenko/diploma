@@ -20,7 +20,7 @@ class RegistrationForm(forms.ModelForm):
                                 help_text=_('Enter the same password for check please'))
     email = forms.EmailField(min_length=8, widget=forms.TextInput(attrs={'placeholder': _('email'),
                                                                          'class': 'form-control'}),
-                             help_text=_('We recommend to fill email to get tickets on it'))
+                             help_text=_('We recommend to fill email to get tickets on it'), required=False)
 
     class Meta:
         model = AdvUser

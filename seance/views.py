@@ -103,13 +103,14 @@ class UserLoginView(LoginView):
     def form_valid(self, form):
         """
         Security check complete. Log the user in.
-        Updates last_activity field
+        Updates last_activity field in sessions
         """
-        user = get_object_or_404(AdvUser, pk=form.get_user().pk)
-        user.last_activity = timezone.now()
-        user.save()
-        login(self.request, user)
-        return HttpResponseRedirect(self.get_success_url())
+        # user = get_object_or_404(AdvUser, pk=form.get_user().pk)
+        # user.last_activity = timezone.now()
+        # user.save()
+        if not self.request.user.is_superuser:
+            self.request.session['last_activity'] = str(datetime.datetime.now())
+        return super().form_valid(form)
 
 
 class UserLogoutView(LogoutView):
