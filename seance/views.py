@@ -21,21 +21,16 @@ class SeanceListView(ListView):
     context_object_name = 'seance_list'
 
     def get_queryset(self):
-        query = Q(is_active=True)
-
-        # if user wants to watch seances for tomorrow this key will be in GET
+        # if user wants to watch seances for tomorrow 'days' will be in GET
 
         if self.request.GET.get('days', None):
-            tomorrow = datetime.date.today() + datetime.timedelta(days=1)
-            query &= Q(seance_base__date_starts__lte=tomorrow) & Q(seance_base__date_ends__gte=tomorrow)
+            date = datetime.date.today() + datetime.timedelta(days=1)
             self.request.session['seance_date'] = str(datetime.date.today() + datetime.timedelta(days=1))
         else:
-            query &= (Q(seance_base__date_starts__lte=datetime.date.today()) &
-                      Q(seance_base__date_ends__gte=datetime.date.today()) &
-                      Q(time_starts__gt=timezone.now()))
+            date = None
             self.request.session['seance_date'] = str(datetime.date.today())
-
-        seances = Seance.objects.filter(query)
+            
+        seances = Seance.get_active_seances_for_day(date)
 
         # if user selected type of ordering
         ordering_param = self.request.GET.get('ordering', None)

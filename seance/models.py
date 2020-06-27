@@ -387,6 +387,21 @@ class Seance(models.Model):
             result.append(seances[min_index])
         return result
 
+    @staticmethod
+    def get_active_seances_for_day(date=None):
+        """
+        Returns queryset of active seances for some day, which comes in 'date'.
+        If date is none, returns active seances for today, considering current time
+        """
+        query = Q(is_active=True)
+        if date:
+            query &= Q(seance_base__date_starts__lte=date) & Q(seance_base__date_ends__gte=date)
+        else:
+            query &= (Q(seance_base__date_starts__lte=datetime.date.today()) &
+                      Q(seance_base__date_ends__gte=datetime.date.today()) &
+                      Q(time_starts__gt=timezone.now()))
+        return Seance.objects.filter(query)
+
     def __str__(self):
         return f'Seance with {self.seance_base.film.title} in {self.time_starts}-{self.time_ends} o\'clock'
 
