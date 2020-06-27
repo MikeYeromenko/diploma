@@ -72,6 +72,12 @@ class FilmCreateView(IsStaffRequiredMixin, CreateView):
     form_class = forms.FilmModelForm
     success_url = reverse_lazy('myadmin:film_list')
     template_name = 'myadmin/films/film_create_form.html'
+    #
+    # def get_initial(self):
+    #     """Return the initial data to use for forms on this view."""
+    #     initial = super().get_initial()
+    #     initial.update({'admin': self.request.user})
+    #     return initial.copy()
 
     def post(self, request, *args, **kwargs):
         """Adds admin, who creates film, to admin field"""

@@ -77,8 +77,8 @@ class SeanceBaseCreateForm(forms.ModelForm):
         super().clean()
         date_starts = self.cleaned_data.get('date_starts')
         date_ends = self.cleaned_data.get('date_ends')
-        film = Film.objects.get(title=self.cleaned_data.get('film'))
-        hall = Hall.objects.get(name=self.cleaned_data.get('hall'))
+        film = self.cleaned_data.get('film')
+        hall = self.cleaned_data.get('hall')
 
         if not film:
             raise ValidationError('You have to specify valid film')
@@ -86,11 +86,17 @@ class SeanceBaseCreateForm(forms.ModelForm):
         if not hall:
             raise ValidationError('You have to specify valid hall')
 
-        if not film.is_active:
-            raise ValidationError('Film must have is_active status set in True')
+        if not isinstance(film, Film):
+            raise ValidationError('Specified film is not valid')
+        else:
+            if not film.is_active:
+                raise ValidationError('Film must have is_active status set in True')
 
-        if not hall.is_active:
-            raise ValidationError('Hall must have is_active status set in True')
+        if not isinstance(hall, Hall):
+            raise ValidationError('Specified hall is not valid')
+        else:
+            if not hall.is_active:
+                raise ValidationError('Hall must have is_active status set in True')
 
         if date_starts > date_ends:
             raise ValidationError('date_starts must be less or equal to date_ends')
@@ -102,7 +108,6 @@ class SeanceBaseCreateForm(forms.ModelForm):
         if seances_base:
             raise ValidationError(f'There are intersections in dates with other Base Seances on this film '
                                   f'in this hall: {seances_base}')
-
 
 class SeanceBaseUpdateForm(SeanceBaseCreateForm):
 

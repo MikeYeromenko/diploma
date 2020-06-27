@@ -29,29 +29,14 @@ class SeanceListView(ListView):
         else:
             date = None
             self.request.session['seance_date'] = str(datetime.date.today())
-            
+
         seances = Seance.get_active_seances_for_day(date)
 
         # if user selected type of ordering
         ordering_param = self.request.GET.get('ordering', None)
         if ordering_param:
-            seances = self.order_queryset(ordering_param, seances)
+            seances = Seance.order_queryset(ordering_param, seances)
         return seances
-
-    def order_queryset(self, ordering_param, seances):
-        """
-        orders seances queryset by users ordering
-        """
-        if ordering_param == 'cheap':
-            # return seances.order_by('prices__price')
-            return Seance.order_by_cheap_first(seances)
-        if ordering_param == 'expensive':
-            # return seances.order_by('-prices__price')
-            return Seance.order_by_expensive_first(seances)
-        elif ordering_param == 'latest':
-            return seances.order_by('-time_starts')
-        elif ordering_param == 'closest':
-            return seances.order_by('time_starts')
 
     def get_context_data(self, *args, **kwargs):
         """

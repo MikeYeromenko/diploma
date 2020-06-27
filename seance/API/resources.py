@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework import mixins
 from rest_framework import viewsets
 
@@ -6,9 +8,25 @@ from seance.models import Seance, SeanceBase, Hall, Film, AdvUser
 
 
 class SeanceViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-# class SeanceViewSet(viewsets.ModelViewSet):
-    queryset = Seance.objects.filter(is_active=True)
     serializer_class = serializers.SeanceModelSerializer
+
+    def get_queryset(self):
+        """
+        Creates queryset depending upon the asked date and ordering params
+        """
+        if self.request.GET.get('days', None):
+            date = datetime.date.today() + datetime.timedelta(days=1)
+            # self.request.session['seance_date'] = str(datetime.date.today() + datetime.timedelta(days=1))
+        else:
+            date = None
+            # self.request.session['seance_date'] = str(datetime.date.today())
+        seances = Seance.get_active_seances_for_day(date)
+
+        # if client selected type of ordering
+        ordering_param = self.request.GET.get('ordering', None)
+        if ordering_param:
+            seances = Seance.order_queryset(ordering_param, seances)
+        return seances
 
 
 class SeanceBaseViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):

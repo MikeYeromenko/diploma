@@ -402,6 +402,22 @@ class Seance(models.Model):
                       Q(time_starts__gt=timezone.now()))
         return Seance.objects.filter(query)
 
+    @staticmethod
+    def order_queryset(ordering_param, seances):
+        """
+        orders seances queryset by users ordering
+        """
+        if ordering_param == 'cheap':
+            # return seances.order_by('prices__price')
+            return Seance.order_by_cheap_first(seances)
+        if ordering_param == 'expensive':
+            # return seances.order_by('-prices__price')
+            return Seance.order_by_expensive_first(seances)
+        elif ordering_param == 'latest':
+            return seances.order_by('-time_starts')
+        elif ordering_param == 'closest':
+            return seances.order_by('time_starts')
+
     def __str__(self):
         return f'Seance with {self.seance_base.film.title} in {self.time_starts}-{self.time_ends} o\'clock'
 
