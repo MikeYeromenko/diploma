@@ -4,7 +4,7 @@ from colorfield.fields import ColorField
 from django.contrib import messages
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models import Q, F
+from django.db.models import Q, F, Min
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -376,6 +376,7 @@ class Seance(models.Model):
         """
         # create list of tuples, where on first position is price of the most expensive seat in seance,
         # and on the second - number of that seance in seances
+
         prices_min = [seance.prices.all().order_by('price')[0].price for seance in seances]
         max_price = max(prices_min) + 1
         result = []
