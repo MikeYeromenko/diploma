@@ -13,6 +13,12 @@ class DatePassedError(APIException):
     default_code = 'date_in_request_passed'
 
 
+class DateEssential(APIException):
+    status_code = 400
+    default_detail = 'GET-parameter "date" must be to get full info about seance and free seats.'
+    default_code = 'date_essential'
+
+
 class OrderingFormatError(APIException):
     status_code = 400
     default_detail = 'GET-parameter "ordering" has wrong value not in [expensive, cheap].'

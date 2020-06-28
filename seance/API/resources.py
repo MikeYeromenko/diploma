@@ -2,10 +2,11 @@ import datetime
 
 from rest_framework import mixins
 from rest_framework import viewsets
+from rest_framework.response import Response
 
 from seance.API import serializers
-from seance.API.exceptions import DateFormatError, OrderingFormatError, DatePassedError
-from seance.models import Seance, SeanceBase, Hall, Film, AdvUser
+from seance.API.exceptions import DateFormatError, OrderingFormatError, DatePassedError, DateEssential
+from seance.models import Seance, SeanceBase, Hall, Film, AdvUser, Price, SeatCategory
 
 
 class SeanceViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -24,13 +25,15 @@ class SeanceViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.G
 
         seances = Seance.get_active_seances_for_day(date)
 
-        if ordering not in ['', 'cheap', 'expensive', 'latest', 'closest']:
-            raise OrderingFormatError()
-
         # if client selected type of ordering
-        ordering_param = self.request.GET.get('ordering', None)
-        if ordering_param:
-            seances = Seance.order_queryset(ordering_param, seances)
+        if ordering:
+            if ordering.endswith('/'):
+                ordering = ordering[0: -1]
+
+            if ordering not in ['', 'cheap', 'expensive', 'latest', 'closest']:
+                raise OrderingFormatError()
+            seances = Seance.order_queryset(ordering, seances)
+
         return seances
 
     @staticmethod
@@ -46,10 +49,35 @@ class SeanceViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.G
 
         return date
 
+    def retrieve(self, request, *args, **kwargs):
+        """Includes into response info about all seats of the hall and info about taken seats"""
+        date = self.request.GET.get('date', None)
+        if date:
+            date = self.get_date(date)              # convert date to datetime format from string
+            if date < datetime.date.today():        # if date has passed - raise error
+                raise DatePassedError()
+        else:
+            raise DateEssential()
+
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+
+        # get all seats
+        seats = instance.seance_base.hall.seats
+        seats = serializers.SeatModelSerializer(seats, many=True)
+
+        # get taken seats
+        tickets = instance.tickets.filter(date_seance=date)
+        seats_taken = serializers.SeatModelSerializer([ticket.seat for ticket in tickets], many=True)
+        return Response({'seance': serializer.data,
+                         'seats': seats.data,
+                         'seats_taken': seats_taken.data
+                         })
 
 
-# class SeanceViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-#     serializer_class = serializers.SeanceModelSerializer
+class PriceViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+    serializer_class = serializers.PriceModelSerializer
+    queryset = Price.objects.all()
 
 
 class SeanceBaseViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -67,6 +95,11 @@ class FilmViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Gen
     serializer_class = serializers.FilmModelSerializer
 
 
-class AdvUserViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class AdvUserViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = AdvUser.objects.all()
     serializer_class = serializers.AdvUserModelSerializer
+
+
+class SeatCategoryViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    serializer_class = serializers.SeatCategoryModelSerializer
+    queryset = SeatCategory.objects.all()
