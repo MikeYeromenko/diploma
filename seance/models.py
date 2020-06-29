@@ -419,6 +419,14 @@ class Seance(models.Model):
         elif ordering_param == 'closest':
             return seances.order_by('time_starts')
 
+    @property
+    def in_run(self):
+        """If seance is_active = True and seance.seance_base has active dates (not passed), returns True"""
+        if self.seance_base.date_ends >= timezone.now().date() and self.is_active:
+            return True
+        return False
+
+
     def __str__(self):
         return f'Seance with {self.seance_base.film.title} in {self.time_starts}-{self.time_ends} o\'clock'
 

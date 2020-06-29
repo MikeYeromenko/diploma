@@ -2,12 +2,14 @@ import datetime
 
 from rest_framework import mixins, status
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.utils import json
 from rest_framework.views import APIView
 
 from seance.API import serializers
 from seance.API.exceptions import DateFormatError, OrderingFormatError, DatePassedError, DateEssential
-from seance.models import Seance, SeanceBase, Hall, Film, AdvUser, Price, SeatCategory
+from seance.models import Seance, SeanceBase, Hall, Film, AdvUser, Price, SeatCategory, Purchase
 
 
 class SeanceViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -108,12 +110,59 @@ class SeatCategoryViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
 class BasketAPIView(APIView):
 
-    def post(self, request, format=None):
+    def get(self, request, *args, **kwargs):
+        basket = request.session.get('basket')
+        return Response(basket)
+
+
+class BasketCancelAPIView(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, *args, **kwargs):
+        serializer = serializers.BasketSerializer(data=request.data)
+        if serializer.is_valid():
+            basket = request.session.get('basket', {})
+            key = f'{serializer.data["seat_pk"]}_{serializer.data["seance_pk"]}_{serializer.data["seance_date"]}'
+            if key in basket:
+                del basket[key]
+                request.session['basket'] = basket
+                request.session.modified = True
+                return Response({'basket': basket,
+                                 'detail': 'Object was removed from basket',
+                                 'object': serializer.data
+                                 }, status=status.HTTP_200_OK)
+            return Response({
+                'basket': basket,
+                'detail': f'There is no such object in basket',
+                'object': serializer.data
+            }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class BasketAddAPIView(APIView):
+
+    def get(self, request, *args, **kwargs):
         """
         Validates given data, adds it to existing or creates new basket object in session
         """
-        serializer = serializers.BasketSerializer(data=request.data, many=True)
+        serializer = serializers.BasketSerializer(data=request.data)
         if serializer.is_valid():
             basket = request.session.get('basket', {})
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            key = f'{serializer.data["seat_pk"]}_{serializer.data["seance_pk"]}_{serializer.data["seance_date"]}'
+            if key in basket:
+                return Response({'data': serializer.data,
+                                 'detail': 'Object with such data is already in basket'
+                                 }, status=status.HTTP_201_CREATED)
+            basket.update({key: serializer.data})
+            request.session['basket'] = basket
+            request.session.modified = True
+            return Response(basket, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PurchaseViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    serializer_class = serializers.PurchaseModelSerializer
+    permission_classes = (IsAuthenticated, )
+
+    def get_queryset(self):
+        return Purchase.objects.filter(user_id=self.request.user.pk)
