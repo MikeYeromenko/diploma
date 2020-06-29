@@ -16,5 +16,6 @@ router.register('price', resources.PriceViewSet, basename='price')
 router.register('seat_category', resources.SeatCategoryViewSet, basename='seat_category')
 
 urlpatterns = [
+    path('basket/', resources.BasketAPIView.as_view, name='basket-add'),
     path('', include(router.urls)),
 ]

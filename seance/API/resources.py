@@ -1,8 +1,9 @@
 import datetime
 
-from rest_framework import mixins
+from rest_framework import mixins, status
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from seance.API import serializers
 from seance.API.exceptions import DateFormatError, OrderingFormatError, DatePassedError, DateEssential
@@ -103,3 +104,16 @@ class AdvUserViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 class SeatCategoryViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = serializers.SeatCategoryModelSerializer
     queryset = SeatCategory.objects.all()
+
+
+class BasketAPIView(APIView):
+
+    def post(self, request, format=None):
+        """
+        Validates given data, adds it to existing or creates new basket object in session
+        """
+        serializer = serializers.BasketSerializer(data=request.data, many=True)
+        if serializer.is_valid():
+            basket = request.session.get('basket', {})
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

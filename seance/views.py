@@ -85,9 +85,6 @@ class UserLoginView(LoginView):
         Security check complete. Log the user in.
         Updates last_activity field in sessions
         """
-        # user = get_object_or_404(AdvUser, pk=form.get_user().pk)
-        # user.last_activity = timezone.now()
-        # user.save()
         if not self.request.user.is_superuser:
             self.request.session['last_activity'] = str(datetime.datetime.now())
         return super().form_valid(form)
