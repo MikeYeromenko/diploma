@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_auth',
 ]
 
 MIDDLEWARE = [
@@ -157,6 +158,7 @@ THUMBNAIL_BASEDIR = 'thumbnails'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-    ]
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication'
+    ],
 }
