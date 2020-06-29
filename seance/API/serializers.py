@@ -125,6 +125,14 @@ class BasketSerializer(serializers.Serializer):
         if seance.time_starts <= timezone.now().time() and seance_date == timezone.now().date():
             raise serializers.ValidationError(f'That seance had already started at {seance.time_starts}. '
                                               f'You can\'t book ticket on it')
+
+        tickets = Ticket.objects.filter(seance_id=seance_pk, date_seance=seance_date, seat_id=seat_pk)
+        if tickets:
+            raise serializers.ValidationError(f'The ticket on that seat was already sold')
+        price = Price.objects.filter(seance_id=seance_pk, seat_category_id=seat.seat_category.pk)
+        data.update({'price': price[0].price})
+                     #    , 'date_starts': seance.seance_base.date_starts,
+                     # 'time_starts': seance.time_starts})
         return data
 
 
