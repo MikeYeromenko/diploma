@@ -130,7 +130,7 @@ class Hall(models.Model):
 
 class SeatCategory(models.Model):
     name = models.CharField(max_length=30, verbose_name=_('category name'))
-    color = ColorField(default='#FFEFEF')
+    color = ColorField()
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('instance created at'))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_('instance updated at'))
     admin = models.ForeignKey(AdvUser, on_delete=models.PROTECT, verbose_name=_('instance created by'),

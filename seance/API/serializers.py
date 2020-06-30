@@ -12,7 +12,7 @@ class AdvUserModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AdvUser
-        fields = ('username', )
+        fields = ('username', 'id')
 
 
 class SeatCategoryModelSerializer(serializers.ModelSerializer):

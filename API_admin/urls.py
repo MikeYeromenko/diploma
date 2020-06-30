@@ -8,6 +8,7 @@ app_name = 'api_admin'
 
 router = routers.DefaultRouter()
 router.register('seat_category', resources.SeatCategoryViewSet, basename='seat_category')
+router.register('price', resources.SeatCategoryViewSet, basename='price')
 
 
 urlpatterns = [

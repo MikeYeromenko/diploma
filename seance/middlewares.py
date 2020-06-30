@@ -19,13 +19,16 @@ class LogoutIfInActiveMiddleware(MiddlewareMixin):
         )
         if request.user.is_authenticated and not request.user.is_superuser:
             last_activity = request.session.get('last_activity')        # we got it in type "str"
-            last_activity = datetime.datetime.strptime(last_activity, '%Y-%m-%d %H:%M:%S.%f')
-            if last_activity > datetime.datetime.now() - datetime.timedelta(minutes=5):
-                request.session['last_activity'] = str(datetime.datetime.now())
+            if last_activity:
+                last_activity = datetime.datetime.strptime(last_activity, '%Y-%m-%d %H:%M:%S.%f')
+                if last_activity > datetime.datetime.now() - datetime.timedelta(minutes=5):
+                    request.session['last_activity'] = str(datetime.datetime.now())
+                else:
+                    logout(request)
+                    messages.add_message(request, messages.INFO, _('More than 5 minutes inactive. '
+                                                                   'Please login again'))
             else:
-                logout(request)
-                messages.add_message(request, messages.INFO, _('More than 5 minutes inactive. '
-                                                               'Please login again'))
+                request.session['last_activity'] = str(datetime.datetime.now())
 
 
 def seance_context_processor(request):
