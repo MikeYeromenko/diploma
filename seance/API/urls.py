@@ -18,6 +18,7 @@ router.register('seat_category', resources.SeatCategoryViewSet, basename='seat_c
 router.register('purchase', resources.PurchaseViewSet, basename='purchase')
 
 urlpatterns = [
+    path('rest-auth/registration/', include('rest_auth.registration.urls')),
     path('rest-auth/', include('rest_auth.urls')),
     path('basket/cancel/', resources.BasketCancelAPIView.as_view(), name='basket-cancel'),
     path('basket/add/', resources.BasketAddAPIView.as_view(), name='basket-add'),
