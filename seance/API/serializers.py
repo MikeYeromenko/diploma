@@ -7,12 +7,12 @@ from rest_framework import serializers
 from seance.models import Seance, AdvUser, Hall, Film, SeanceBase, Price, SeatCategory, Seat, Purchase, Ticket
 
 
-class AdvUserModelSerializer(serializers.HyperlinkedModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='api:user-detail')
+class AdvUserModelSerializer(serializers.ModelSerializer):
+    # url = serializers.HyperlinkedIdentityField(view_name='api:user-detail')
 
     class Meta:
         model = AdvUser
-        fields = ('username', 'url')
+        fields = ('username', )
 
 
 class SeatCategoryModelSerializer(serializers.ModelSerializer):

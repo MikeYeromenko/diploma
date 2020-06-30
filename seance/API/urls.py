@@ -23,6 +23,6 @@ urlpatterns = [
     path('basket/cancel/', resources.BasketCancelAPIView.as_view(), name='basket-cancel'),
     path('basket/add/', resources.BasketAddAPIView.as_view(), name='basket-add'),
     path('basket/', resources.BasketAPIView.as_view(), name='basket'),
-    path('myadmin/', include('seance.API.API_admin.urls')),
+    # path('myadmin/', include('seance.API.API_admin.urls')),
     path('', include(router.urls)),
 ]
