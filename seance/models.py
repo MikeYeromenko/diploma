@@ -77,8 +77,8 @@ class FilmAdditionalImage(models.Model):
 
 class Hall(models.Model):
     name = models.CharField(max_length=20, verbose_name=_('name'))
-    quantity_seats = models.PositiveSmallIntegerField(default=0, verbose_name=_('how many seats?'))
-    quantity_rows = models.PositiveSmallIntegerField(default=0, verbose_name=_('how many rows?'))
+    quantity_seats = models.PositiveSmallIntegerField(verbose_name=_('how many seats?'))
+    quantity_rows = models.PositiveSmallIntegerField(verbose_name=_('how many rows?'))
     description = models.TextField(verbose_name=_('description'))
     # image = models.ImageField(upload_to=get_timestamp_path, verbose_name=_('hall'))
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('instance created at'))
@@ -126,6 +126,11 @@ class Hall(models.Model):
         return {'uncreated_seats': uncreated_seats_quantity,
                 'success': self.is_active,
                 'created_seats': created_seats}
+
+    @property
+    def can_deactivate(self):
+        """If hall is not used in seance_base objects, we can set its parameter is_active to False"""
+        return not bool(self.base_seances.count())
 
 
 class SeatCategory(models.Model):
@@ -422,10 +427,7 @@ class Seance(models.Model):
     @property
     def in_run(self):
         """If seance is_active = True and seance.seance_base has active dates (not passed), returns True"""
-        if self.seance_base.date_ends >= timezone.now().date() and self.is_active:
-            return True
-        return False
-
+        return self.seance_base.date_ends >= timezone.now().date() and self.is_active
 
     def __str__(self):
         return f'Seance with {self.seance_base.film.title} in {self.time_starts}-{self.time_ends} o\'clock'
