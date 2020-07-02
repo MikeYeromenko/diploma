@@ -41,25 +41,26 @@ class CinemaUrlsTestCase(TestCase):
         """
         Test that url accounts/profile/ exists, resolves to the correct cbv and has expected name
         """
-        registration = resolve('/accounts/profile/')
-        self.assertEqual(registration.func.__name__, 'UserProfileView')
-        self.assertEqual(registration.url_name, 'profile')
+        profile = resolve('/accounts/profile/')
+        self.assertEqual(profile.func.__name__, 'UserProfileView')
+        self.assertEqual(profile.url_name, 'profile')
 
     def test_url_for_basket(self):
         """
         Test that url accounts/profile/ exists, resolves to the correct cbv and has expected name
         """
-        registration = resolve('/basket/')
-        self.assertEqual(registration.func.__name__, 'BasketView')
-        self.assertEqual(registration.url_name, 'basket')
+        basket = resolve('/basket/')
+        self.assertEqual(basket.func.__name__, 'BasketView')
+        self.assertEqual(basket.url_name, 'basket')
 
     def test_url_for_seance_detail(self):
         """
         Test that url seance/<int:pk>/ exists, resolves to the correct cbv and has expected name
         """
-        registration = resolve(f'/seance/{1}/')
-        self.assertEqual(registration.func.__name__, 'SeanceDetailView')
-        self.assertEqual(registration.url_name, 'seance_detail')
+        detail = resolve(f'/seance/{1}/')
+        self.assertEqual(detail.func.__name__, 'SeanceDetailView')
+        self.assertEqual(detail.url_name, 'seance_detail')
+        self.assertEqual(detail.kwargs.get('pk'), 1)
 
     def test_url_for_basket_redirect(self):
         """
@@ -68,3 +69,10 @@ class CinemaUrlsTestCase(TestCase):
         registration = resolve('/basket/redirect/')
         self.assertEqual(registration.func.__name__, 'BasketRedirectView')
         self.assertEqual(registration.url_name, 'basket-redirect')
+
+
+    # path('buy/', PurchaseCreateView.as_view(), name='buy'),
+    # path('my_tickets/', PurchaseListView.as_view(), name='my_tickets'),
+    # path('basket/cancel/', BasketCancelView.as_view(), name='basket-cancel'),
+    # path('seance/<int:pk>/', SeanceDetailView.as_view(), name='seance_detail'),
+

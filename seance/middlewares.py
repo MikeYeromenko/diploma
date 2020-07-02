@@ -1,22 +1,17 @@
 import datetime
-
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.shortcuts import get_object_or_404
-from django.utils import timezone
-from django.utils.deprecation import MiddlewareMixin
 from django.utils.translation import gettext_lazy as _
 
 
-from seance.models import AdvUser
+class LogoutIfInActiveMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+        # One-time configuration and initialization.
 
-
-class LogoutIfInActiveMiddleware(MiddlewareMixin):
-    @staticmethod
-    def process_request(request):
-        assert hasattr(request, 'user'), (
-            'The LogoutIfNotActiveMiddleware middleware requires authentication middleware to be installed.'
-        )
+    def __call__(self, request):
+        # Code to be executed for each request before
+        # the view (and later middleware) are called.
         if request.user.is_authenticated and not request.user.is_superuser:
             last_activity = request.session.get('last_activity')        # we got it in type "str"
             if last_activity:
@@ -27,8 +22,14 @@ class LogoutIfInActiveMiddleware(MiddlewareMixin):
                     logout(request)
                     messages.add_message(request, messages.INFO, _('More than 5 minutes inactive. '
                                                                    'Please login again'))
-            else:
-                request.session['last_activity'] = str(datetime.datetime.now())
+
+        response = self.get_response(request)
+
+        # Code to be executed for each request/response after
+        # the view is called.
+        if request.user.is_authenticated and not request.user.is_superuser:
+            request.session['last_activity'] = str(datetime.datetime.now())
+        return response
 
 
 def seance_context_processor(request):
