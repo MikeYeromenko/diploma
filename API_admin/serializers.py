@@ -1,10 +1,12 @@
+import datetime
+
 from django.core.validators import RegexValidator
 from django.urls import reverse_lazy
 from rest_framework import serializers as serial
 from rest_framework.generics import get_object_or_404
 
 from seance.API.serializers import AdvUserModelSerializer
-from seance.models import SeatCategory, AdvUser, Price, Film, Hall, Seat
+from seance.models import SeatCategory, AdvUser, Price, Film, Hall, Seat, SeanceBase
 from seance.utilities import HexColorField
 
 
@@ -70,9 +72,9 @@ class HallCUDSerializer(serial.ModelSerializer):
     def validate_is_active(self, value):
         if type(value).__name__ != 'bool':
             raise serial.ValidationError(f'is_active must be true or false')
-        if value:
-            raise serial.ValidationError(f'You can only change is_active to False. If you '
-                                         f'want to set it True, please make activation of hall')
+        if value and not self.instance.validate_all_seats_created():
+            raise serial.ValidationError(f'You can not set is_active "true" because not all seats for hall'
+                                         f'were created')
         elif self.instance:
             if not self.instance.can_deactivate:
                 raise serial.ValidationError(f'You can\'t deactivate hall, because there are related '
@@ -121,15 +123,92 @@ class CreateSeatsSerializer(serial.Serializer):
         row = attrs.get('row')
         if hall.quantity_rows < row:
             raise serial.ValidationError(f'Row with {row} number doesn\'t exist in current hall')
-        # seat_categories = hall.get_seat_categories().values('pk')
-        # if attrs.get('seat_category') not in seat_categories:
-        #     raise serial.ValidationError(f'Current hall has no seats with this seat_category')
         return attrs
 
 
-class SeatsCreatedSerializer(serial.Serializer):
-    created_seats = SeatModelSerializer(many=True)
-    detail = serial.CharField()
+class SeanceBaseHyperSerializer(serial.HyperlinkedModelSerializer):
+    url = serial.HyperlinkedIdentityField(view_name='api_admin:seance_base-detail')
+    film = FilmHyperSerializer()
+    hall = HallHyperSerializer()
+
+    class Meta:
+        model = SeanceBase
+        exclude = ('created_at', )
+
+
+class SeanceBaseCUDSerializer(serial.ModelSerializer):
+
+    class Meta:
+        model = SeanceBase
+        fields = '__all__'
+        read_only_fields = ('id', 'created_at', 'updated_at')
+
+    def validate_hall(self, value):
+        """Checks for hall is_active attr to be True"""
+        hall = Hall.objects.filter(id=value.pk)
+        if hall:
+            if not hall[0].is_active:
+                raise serial.ValidationError(f'Hall is_active must be True to create SeanceBase with it')
+        else:
+            raise serial.ValidationError(f'There is no hall with given id')
+        return value
+
+    def validate_film(self, value):
+        """Checks for film to exist and its is_active attr to be True"""
+        film = Film.objects.filter(id=value.pk)
+        if film:
+            if not film[0].is_active:
+                raise serial.ValidationError(f'Film is_active must be True to create SeanceBase with it')
+        else:
+            raise serial.ValidationError(f'There is no film with given id')
+        return value
+
+    def validate_date_starts(self, value):
+        """Check for date starts not to be set in the past"""
+        if value < datetime.date.today():
+            raise serial.ValidationError(f'date_starts can\'t be less, then today')
+        return value
+
+    def validate(self, attrs):
+        attrs_valid = super().validate(attrs)
+        date_starts = attrs_valid.get('date_starts') or self.instance.date_starts
+
+        date_ends = attrs_valid.get('date_ends') or SeanceBase.get_date_ends(attrs_valid.get('date_starts'))
+
+        if date_ends < date_starts:
+            raise serial.ValidationError(f'date_ends can\'t be less, then date_starts')
+
+        if attrs_valid:
+            if self.instance:
+                seances_base_intersections = SeanceBase.validate_seances_base_intersect(
+                    date_starts=date_starts,
+                    date_ends=date_ends,
+                    film=attrs_valid.get('film'),
+                    hall=attrs_valid.get('hall'),
+                    sb_pk_exclude=self.instance.pk
+                )
+                if seances_base_intersections:
+                    raise serial.ValidationError(f'There are intersections with other base seances: '
+                                                 f'{seances_base_intersections.values()}')
+                seances = self.instance.seances.all()
+                tickets = [seance.get_sold_but_not_used_tickets() for seance in seances]
+                if tickets:
+                    raise serial.ValidationError(f'You can\'t update SeanceBase, because there are sold but not'
+                                                 f'used tickets on it')
+                # get_sold_but_not_used_tickets
+            else:
+                seances_base_intersections = SeanceBase.validate_seances_base_intersect(
+                    date_starts=date_starts,
+                    date_ends=date_ends,
+                    film=attrs_valid.get('film'),
+                    hall=attrs_valid.get('hall')
+                )
+                if seances_base_intersections:
+                    raise serial.ValidationError(f'There are intersections with other base seances: '
+                                                 f'{seances_base_intersections.values()}')
+        return attrs_valid
+
+
 
 # class ImageSerializer(serial.Serializer):
 #     image = serial.ImageField()

@@ -183,15 +183,16 @@ class SeanceBase(models.Model):
         """
         if not self.id:
             if not self.date_ends:
-                self.date_ends = self.get_date_ends()
+                self.date_ends = self.get_date_ends(self.date_starts)
         super().save(*args, **kwargs)
 
-    def get_date_ends(self):
+    @staticmethod
+    def get_date_ends(date_starts):
         """
         Counts the date of seance ending, adding 15 days to its start
         :return: date_ends of seance
         """
-        return self.date_starts + datetime.timedelta(days=15)
+        return date_starts + datetime.timedelta(days=15)
 
     def __str__(self):
         return f'Base seance with {self.film.title}, hall {self.hall} in dates: {self.date_starts} - {self.date_ends}'

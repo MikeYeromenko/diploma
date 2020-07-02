@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from API_admin import serializers as serial
-from seance.models import SeatCategory, Price, Film, Hall
+from seance.models import SeatCategory, Price, Film, Hall, SeanceBase
 
 
 class ViewSetInsert:
@@ -85,18 +85,30 @@ class CreateSeatsAPIView(CreateAPIView):
                 'created_seats': serial.SeatModelSerializer(hall.seats.all(), many=True).data,
                 'detail': f'Hall is successfully activated'
             }, status=status.HTTP_200_OK)
-            # return Response(serial.SeatsCreatedSerializer({
-            #     'created_seats': hall.seats.all(),
-            #     'detail': f'Hall is successfully activated'
-            # }).data, status=status.HTTP_200_OK)
-        # return Response({
-        #         'created_seats': serial.SeatModelSerializer(hall.seats.all(), many=True),
-        #         'detail': f'There leaved {result["uncreated_seats"]} uncreated seats'
-        #     }, status=status.HTTP_200_OK)
-        return Response(serial.SeatsCreatedSerializer({
-            'created_seats': hall.seats.all(),
-            'detail': f'There leaved {result["uncreated_seats"]} uncreated seats'
-        }).data, status=status.HTTP_201_CREATED)
+        return Response({
+                'created_seats': serial.SeatModelSerializer(hall.seats.all(), many=True).data,
+                'detail': f'There leaved {result["uncreated_seats"]} uncreated seats'
+            }, status=status.HTTP_201_CREATED)
+
+
+class SeanceBaseViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.CreateModelMixin,
+                        mixins.DestroyModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
+    queryset = SeanceBase.objects.all()
+    permission_classes = (IsAdminUser, )
+
+    def get_serializer_class(self):
+        if self.request.method.lower() == 'get':
+            return serial.SeanceBaseHyperSerializer
+        else:
+            return serial.SeanceBaseCUDSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.seances.count():
+            return Response({'detail': f'Can\'t delete. '
+                                       f'There are related seances to this s_base'}, status=status.HTTP_200_OK)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # class ImageUploadAPIView(UpdateAPIView):

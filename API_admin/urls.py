@@ -11,6 +11,7 @@ router.register('seat_category', resources.SeatCategoryViewSet, basename='seat_c
 router.register('price', resources.PriceViewSet, basename='price')
 router.register('film', resources.FilmViewSet, basename='film')
 router.register('hall', resources.HallViewSet, basename='hall')
+router.register('seance_base', resources.SeanceBaseViewSet, basename='seance_base')
 
 
 urlpatterns = [
