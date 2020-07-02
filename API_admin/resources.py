@@ -30,11 +30,23 @@ class SeatCategoryViewSetMixin(ViewSetInsertMixin, viewsets.ModelViewSet):
             return serial.SeatCategoryCUDSerializer
 
 
-class PriceViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.CreateModelMixin,
-                   viewsets.GenericViewSet):
+class PriceViewSet(viewsets.ModelViewSet):
     serializer_class = serial.PriceHyperSerializer
     queryset = Price.objects.all()
     permission_classes = (IsAdminUser,)
+
+    def get_serializer_class(self):
+        if self.request.method.lower() == 'get':
+            return serial.PriceHyperSerializer
+        else:
+            return serial.PriceCUDSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.seance.is_active:
+            return Response({'detail': f'Can\'t delete, it relates to active seance'}, status=status.HTTP_200_OK)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class FilmViewSetMixin(ViewSetInsertMixin, viewsets.ModelViewSet):

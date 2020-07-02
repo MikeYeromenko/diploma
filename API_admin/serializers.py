@@ -29,15 +29,6 @@ class SeatCategoryCUDSerializer(serial.ModelSerializer):
         # read_only_fields = ('admin', )
 
 
-class PriceHyperSerializer(serial.HyperlinkedModelSerializer):
-    url = serial.HyperlinkedIdentityField(view_name='api_admin:price-detail')
-    seat_category = SeatCategoryHyperSerializer()
-
-    class Meta:
-        model = Price
-        exclude = ('created_at', 'seance')
-
-
 class FilmHyperSerializer(serial.HyperlinkedModelSerializer):
     url = serial.HyperlinkedIdentityField(view_name='api_admin:film-detail')
     admin = AdvUserModelSerializer()
@@ -251,7 +242,31 @@ class SeanceCUDSerializer(serial.ModelSerializer):
                                                  f'{seances_intersect.values()}')
         return attrs_valid
 
-    # def validate_seances_intersect(self, seance_exclude_pk=None):
+
+class PriceHyperSerializer(serial.HyperlinkedModelSerializer):
+    url = serial.HyperlinkedIdentityField(view_name='api_admin:price-detail')
+    seat_category = SeatCategoryHyperSerializer()
+    seance = SeanceHyperSerializer()
+
+    class Meta:
+        model = Price
+        exclude = ('created_at', )
+
+
+class PriceCUDSerializer(serial.ModelSerializer):
+    price = serial.DecimalField(min_value=0, required=True, max_digits=10, decimal_places=2)
+
+    class Meta:
+        model = Price
+        exclude = ('created_at', 'updated_at')
+
+    def validate(self, attrs):
+        attrs_valid = super().validate(attrs)
+        if attrs_valid:
+            if self.instance:
+                if 'seance' in attrs_valid or 'seat_category' in attrs_valid:
+                    raise serial.ValidationError(f'You can update only price.')
+        return attrs_valid
 
 # class ImageSerializer(serial.Serializer):
 #     image = serial.ImageField()
