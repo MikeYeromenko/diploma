@@ -96,7 +96,7 @@ class CreateSeatsSerializer(serial.Serializer):
 
     def validate_hall(self, value):
         """Validates, of given hall exists"""
-        _ = super(CreateSeatsSerializer, self).validate_hall(value)
+        # _ = super(CreateSeatsSerializer, self).validate_hall(value)
         hall = Hall.objects.filter(id=value)
         if hall:
             if hall[0].is_active:
@@ -108,13 +108,15 @@ class CreateSeatsSerializer(serial.Serializer):
 
     def validate_seat_category(self, value):
         """Validates, of given seat_category exists"""
-        _ = super(CreateSeatsSerializer, self).validate_seat_category(value)
-        if not Hall.objects.filter(id=value):
-            raise serial.ValidationError(f'There is no hall with given id')
+        # _ = super(CreateSeatsSerializer, self).validate_seat_category(value)
+        s_k = SeatCategory.objects.filter(id=value)
+        if not SeatCategory.objects.filter(id=value):
+            raise serial.ValidationError(f'There is no seat category with given id')
         return value
 
     def validate(self, attrs):
         """Validates specified row is not greater then quantity_rows in hall"""
+        attrs = super(CreateSeatsSerializer, self).validate(attrs)
         hall = get_object_or_404(Hall, pk=attrs.get('hall'))
         row = attrs.get('row')
         if hall.quantity_rows < row:
@@ -124,6 +126,10 @@ class CreateSeatsSerializer(serial.Serializer):
         #     raise serial.ValidationError(f'Current hall has no seats with this seat_category')
         return attrs
 
+
+class SeatsCreatedSerializer(serial.Serializer):
+    created_seats = SeatModelSerializer(many=True)
+    detail = serial.CharField()
 
 # class ImageSerializer(serial.Serializer):
 #     image = serial.ImageField()

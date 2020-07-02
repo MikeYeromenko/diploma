@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import mixins, viewsets, status
 from rest_framework.generics import CreateAPIView, UpdateAPIView
 from rest_framework.parsers import FileUploadParser
@@ -72,8 +73,30 @@ class CreateSeatsAPIView(CreateAPIView):
         serializer = serial.CreateSeatsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         # self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        hall = get_object_or_404(Hall, pk=kwargs.get('pk'))
+        seat_category = get_object_or_404(SeatCategory, pk=serializer['seat_category'].value)
+        hall.create_or_update_seats(seat_category=seat_category,
+                                    row=serializer['row'].value,
+                                    number_starts=serializer['seat_starts'].value,
+                                    number_ends=serializer['seat_ends'].value)
+        result = hall.activate_hall()
+        if result['success']:
+            return Response({
+                'created_seats': serial.SeatModelSerializer(hall.seats.all(), many=True).data,
+                'detail': f'Hall is successfully activated'
+            }, status=status.HTTP_200_OK)
+            # return Response(serial.SeatsCreatedSerializer({
+            #     'created_seats': hall.seats.all(),
+            #     'detail': f'Hall is successfully activated'
+            # }).data, status=status.HTTP_200_OK)
+        # return Response({
+        #         'created_seats': serial.SeatModelSerializer(hall.seats.all(), many=True),
+        #         'detail': f'There leaved {result["uncreated_seats"]} uncreated seats'
+        #     }, status=status.HTTP_200_OK)
+        return Response(serial.SeatsCreatedSerializer({
+            'created_seats': hall.seats.all(),
+            'detail': f'There leaved {result["uncreated_seats"]} uncreated seats'
+        }).data, status=status.HTTP_201_CREATED)
 
 
 # class ImageUploadAPIView(UpdateAPIView):
