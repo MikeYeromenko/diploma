@@ -182,6 +182,20 @@ class PurchaseViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.G
     def get_queryset(self):
         return Purchase.objects.filter(user_id=self.request.user.pk)
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        money_spent = request.user.sum_money_spent
+        return Response({
+            'money_spent': money_spent,
+            'purchases': serializer.data})
+
     def create(self, request, *args, **kwargs):
         """Creates purchase with tickets for it
         If some of the tickets was sold, we cancel purchase and make basket empty"""

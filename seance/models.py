@@ -4,7 +4,7 @@ from colorfield.fields import ColorField
 from django.contrib import messages
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models import Q, F, Min
+from django.db.models import Q, F, Min, Sum, Count
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -34,8 +34,8 @@ class AdvUser(AbstractUser):
     @property
     def sum_money_spent(self):
         """Returns how much money user has spent"""
-        purchases = Purchase.objects.filter(user_id=self.pk)
-        return sum([p.total_price for p in purchases])
+        # purchases = Purchase.objects.filter(user_id=self.pk)
+        return sum([p.total_price for p in self.purchases.all()])
 
     def __str__(self):
         return self.username
@@ -437,6 +437,11 @@ class Seance(models.Model):
         return f'Seance with {self.seance_base.film.title} in {self.time_starts}-{self.time_ends} o\'clock'
 
 
+class PurchaseManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().annotate(total_price=Sum('tickets__price'))
+
+
 class Purchase(models.Model):
     user = models.ForeignKey(AdvUser, on_delete=models.PROTECT, related_name='purchases', verbose_name=_('user'))
 
@@ -445,19 +450,21 @@ class Purchase(models.Model):
     was_returned = models.BooleanField(default=False, verbose_name=_('was returned?'))
     returned_at = models.DateTimeField(blank=True, null=True, verbose_name=_('returned at'))
 
+    objects = PurchaseManager()
+
     def __str__(self):
         return f'{self.user.username} at {self.created_at}'
 
     class Meta:
         ordering = ('-created_at', )
 
-    @property
-    def total_price(self):
-        """Counts total price of purchase"""
-        total_price = 0
-        for price in self.tickets.values('price'):
-            total_price += price.get('price')
-        return total_price
+    # @property
+    # def total_price(self):
+    #     """Counts total price of purchase"""
+    #     total_price = 0
+    #     for price in self.tickets.values('price'):
+    #         total_price += price.get('price')
+    #     return total_price
 
 
 class Ticket(models.Model):
