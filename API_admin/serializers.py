@@ -6,7 +6,7 @@ from rest_framework import serializers as serial
 from rest_framework.generics import get_object_or_404
 
 from seance.API.serializers import AdvUserModelSerializer
-from seance.models import SeatCategory, AdvUser, Price, Film, Hall, Seat, SeanceBase
+from seance.models import SeatCategory, AdvUser, Price, Film, Hall, Seat, SeanceBase, Seance
 from seance.utilities import HexColorField
 
 
@@ -209,6 +209,49 @@ class SeanceBaseCUDSerializer(serial.ModelSerializer):
         return attrs_valid
 
 
+class SeanceHyperSerializer(serial.HyperlinkedModelSerializer):
+    url = serial.HyperlinkedIdentityField(view_name='api_admin:seance-detail')
+    seance_base = SeanceBaseHyperSerializer()
+    admin = AdvUserModelSerializer()
+
+    class Meta:
+        model = Seance
+        exclude = ('created_at', )
+
+
+class SeanceCUDSerializer(serial.ModelSerializer):
+
+    class Meta:
+        model = Seance
+        fields = '__all__'
+        read_only_fields = ('id', 'updated_at', 'created_at', 'admin', 'time_ends', 'time_hall_free', 'is_active')
+
+    def validate(self, attrs):
+        attrs_valid = super().validate(attrs)
+        if attrs_valid:
+            if self.instance:
+                seances_intersect = self.instance.validate_seances_intersect(seance_exclude_pk=self.instance.pk)
+                if seances_intersect:
+                    raise serial.ValidationError(f'Can\'t update. There are intersections with seances: '
+                                                 f'{seances_intersect.values()}')
+                if self.instance.get_sold_but_not_used_tickets().count():
+                    raise serial.ValidationError(f'Can\'t update. There are sold but not used tickets.')
+            else:
+                seance = Seance(time_starts=attrs_valid.get('time_starts'),
+                                advertisements_duration=attrs_valid.get('advertisements_duration', None),
+                                cleaning_duration=attrs_valid.get('cleaning_duration', None),
+                                description=attrs_valid.get('description'),
+                                seance_base=attrs_valid.get('seance_base')
+                                )
+                # for auto generated fields to be created
+                seance.save(commit=False)
+                seances_intersect = seance.validate_seances_intersect()
+                if seances_intersect:
+                    raise serial.ValidationError(f'Can\'t create. There are intersections with seances: '
+                                                 f'{seances_intersect.values()}')
+        return attrs_valid
+
+    # def validate_seances_intersect(self, seance_exclude_pk=None):
 
 # class ImageSerializer(serial.Serializer):
 #     image = serial.ImageField()

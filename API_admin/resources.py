@@ -7,10 +7,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from API_admin import serializers as serial
-from seance.models import SeatCategory, Price, Film, Hall, SeanceBase
+from seance.models import SeatCategory, Price, Film, Hall, SeanceBase, Seance
 
 
-class ViewSetInsert:
+class ViewSetInsertMixin:
     permission_classes = (IsAdminUser,)
 
     def perform_create(self, serializer):
@@ -20,7 +20,7 @@ class ViewSetInsert:
         serializer.save(admin=self.request.user)
 
 
-class SeatCategoryViewSet(ViewSetInsert, viewsets.ModelViewSet):
+class SeatCategoryViewSetMixin(ViewSetInsertMixin, viewsets.ModelViewSet):
     queryset = SeatCategory.objects.all()
 
     def get_serializer_class(self):
@@ -37,7 +37,7 @@ class PriceViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.Crea
     permission_classes = (IsAdminUser,)
 
 
-class FilmViewSet(ViewSetInsert, viewsets.ModelViewSet):
+class FilmViewSetMixin(ViewSetInsertMixin, viewsets.ModelViewSet):
     queryset = Film.objects.all()
 
     def get_serializer_class(self):
@@ -47,7 +47,7 @@ class FilmViewSet(ViewSetInsert, viewsets.ModelViewSet):
             return serial.FilmCUDSerializer
 
 
-class HallViewSet(ViewSetInsert, viewsets.ModelViewSet):
+class HallViewSetMixin(ViewSetInsertMixin, viewsets.ModelViewSet):
     serializer_class = serial.HallHyperSerializer
     queryset = Hall.objects.all()
 
@@ -91,8 +91,7 @@ class CreateSeatsAPIView(CreateAPIView):
             }, status=status.HTTP_201_CREATED)
 
 
-class SeanceBaseViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.CreateModelMixin,
-                        mixins.DestroyModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
+class SeanceBaseViewSet(viewsets.ModelViewSet):
     queryset = SeanceBase.objects.all()
     permission_classes = (IsAdminUser, )
 
@@ -110,6 +109,38 @@ class SeanceBaseViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class SeanceViewSetMixin(ViewSetInsertMixin, viewsets.ModelViewSet):
+    queryset = Seance.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.method.lower() == 'get':
+            return serial.SeanceHyperSerializer
+        else:
+            return serial.SeanceCUDSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.tickets.all().count() or instance.prices.all().count():
+            return Response({'detail': f'Can\'t delete. '
+                                       f'There are related objects to this seance'}, status=status.HTTP_200_OK)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class SeanceActivateView(UpdateAPIView):
+    queryset = Seance.objects.all()
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        result = instance.activate()
+        if result['success']:
+            return Response(f'Seance was successfully activated.', status=status.HTTP_200_OK)
+        return Response({'errors': result['errors_list'],
+                         'seat_categories_with_no_price:':
+                             serial.SeatCategoryHyperSerializer(result['seat_categories'], many=True,
+                                                                context={'request': request}).data
+                         }, status=status.HTTP_200_OK)
 
 # class ImageUploadAPIView(UpdateAPIView):
 #     permission_classes = (IsAdminUser, )
