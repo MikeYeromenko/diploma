@@ -4,7 +4,7 @@ from colorfield.fields import ColorField
 from django.contrib import messages
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models import Q, F, Min, Sum, Count
+from django.db.models import Q, F, Min, Sum, Count, Max
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -415,10 +415,12 @@ class Seance(models.Model):
         """
         if ordering_param == 'cheap':
             # return seances.order_by('prices__price')
-            return Seance.order_by_cheap_first(seances)
+            # return Seance.order_by_cheap_first(seances)
+            return seances.annotate(min_price=Min('prices__price')).order_by('min_price')
         if ordering_param == 'expensive':
             # return seances.order_by('-prices__price')
-            return Seance.order_by_expensive_first(seances)
+            return seances.annotate(max_price=Max('prices__price')).order_by('-max_price')
+            # return Seance.order_by_expensive_first(seances)
         elif ordering_param == 'latest':
             return seances.order_by('-time_starts')
         elif ordering_param == 'closest':
