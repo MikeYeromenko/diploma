@@ -340,6 +340,7 @@ class Seance(models.Model):
             errors_list.append(f'Hall has status is_active: False')
         if not self.seance_base.film.is_active:
             errors_list.append(f'Film has status is_active: False')
+
         seat_categories = self.seance_base.hall.get_seat_categories()
         sc_with_no_prices = []
         for sc in seat_categories:

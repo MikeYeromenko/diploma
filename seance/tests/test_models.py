@@ -4,7 +4,7 @@ from django.db.models import ProtectedError
 from django.test import TestCase
 from django.utils import timezone
 
-from seance.models import Film, Hall, Seance, AdvUser, Purchase, Ticket, SeanceBase, SeatCategory, Seat
+from seance.models import Film, Hall, Seance, AdvUser, Purchase, Ticket, SeanceBase, SeatCategory, Seat, Price
 
 
 class BaseInitial:
@@ -17,7 +17,9 @@ class BaseInitial:
         self.hall_red = Hall.objects.get(name='Red')
         self.seance_base_bond = SeanceBase.objects.get(film=self.film_bond)
         self.seance_bond_12 = Seance.objects.get(time_starts=datetime.time(12), seance_base=self.seance_base_bond)
-        self.seance_bond_18 = Seance.objects.get(time_starts=datetime.time(19), seance_base=self.seance_base_bond)
+        self.seance_bond_evening = Seance.objects.get(time_starts=datetime.time(19), seance_base=self.seance_base_bond)
+        self.seance_bond_night = Seance.objects.get(time_starts=datetime.time(23, 50),
+                                                    seance_base=self.seance_base_bond)
 
         self.admin = get_user_model().objects.create_superuser(
             username='admin', email='admin@somesite.com'
@@ -35,26 +37,6 @@ class BaseInitial:
             is_active=False,
         )
 
-        self.seance_base_365 = SeanceBase.objects.create(
-            film=self.film_365,
-            hall=self.hall_red,
-            date_starts=datetime.date.today()
-        )
-
-        self.seance_365_12 = Seance.objects.create(
-            time_starts=datetime.time(12),
-            description='Some text about why this seance is the best',
-            seance_base=self.seance_base_365,
-            admin=self.admin,
-        )
-
-        self.seance_365_14 = Seance.objects.create(
-            time_starts=datetime.time(14, 30),
-            description='Some text about why this seance is the best',
-            seance_base=self.seance_base_365,
-            admin=self.admin,
-        )
-
         self.user = AdvUser.objects.create(
             username='test_user',
         )
@@ -66,19 +48,19 @@ class BaseInitial:
         )
 
         self.ticket1 = Ticket.objects.create(
-            seance=self.seance_bond_12,
+            seance=self.seance_bond_night,
             date_seance=datetime.date.today() + datetime.timedelta(days=3),
             purchase=self.purchase,
             seat=self.hall_yellow.seats.all()[0],
-            price=100
+            price=120
         )
 
         self.ticket2 = Ticket.objects.create(
-            seance=self.seance_bond_18,
+            seance=self.seance_bond_night,
             date_seance=datetime.date.today() + datetime.timedelta(days=3),
             purchase=self.purchase,
             seat=self.hall_yellow.seats.all()[1],
-            price=180
+            price=120
         )
 
         self.admin2 = get_user_model().objects.create_superuser(
@@ -101,7 +83,7 @@ class GeneralModelsTestCase(TestCase, BaseInitial):
         self.assertEqual(self.user.wallet, 10000)
 
         # sum_money_spent property works correctly
-        self.assertEqual(self.user.sum_money_spent, 280)
+        self.assertEqual(self.user.sum_money_spent, 240)
 
         # checks that user deleted softly
         user2 = AdvUser(
@@ -191,19 +173,95 @@ class GeneralModelsTestCase(TestCase, BaseInitial):
         self.assertTrue(result['success'])
         self.assertTrue(hall_test.is_active)
 
-
     def test_seance_model_basic(self):
         """
         Tests that Seance object was created correctly
         """
-        self.assertEqual(self.seance_bond_12.time_starts, datetime.time(12))
-        self.assertEqual(self.seance_bond_12.time_ends, datetime.time(14))
-        self.assertEqual(self.seance_bond_12.time_hall_free, datetime.time(14, 10))
-        self.assertEqual(self.seance_bond_12.advertisements_duration, datetime.time(minute=10))
-        self.assertEqual(self.seance_bond_12.cleaning_duration, datetime.time(minute=10))
-        self.assertEqual(self.seance_bond_12.description, 'For those who have long dinner time)')
-        self.assertTrue(self.seance_bond_12.is_active)
-        self.assertEqual(self.seance_bond_12.admin.username, 'initial_admin')
+        seance_test = Seance.objects.create(
+            time_starts=datetime.time(8),
+            description='some text',
+            seance_base=self.seance_base_bond,
+            admin=self.admin2
+        )
+        self.assertEqual(seance_test.time_starts, datetime.time(8))
+        self.assertEqual(seance_test.time_ends, datetime.time(9, 50))
+        self.assertEqual(seance_test.time_hall_free, datetime.time(10))
+        self.assertEqual(seance_test.advertisements_duration, datetime.time(minute=10))
+        self.assertEqual(seance_test.cleaning_duration, datetime.time(minute=10))
+        self.assertEqual(seance_test.description, 'some text')
+        self.assertFalse(seance_test.is_active)
+        self.assertEqual(seance_test.seance_base.film.title, 'James Bond')
+        self.assertEqual(seance_test.admin.username, 'admin2')
 
         # seance was created no more then 2 minutes ago
-        self.assertTrue(timezone.now() - datetime.timedelta(minutes=2) < self.seance_bond_12.created_at < timezone.now())
+        self.assertTrue(timezone.now() - datetime.timedelta(minutes=2) < seance_test.created_at < timezone.now())
+
+        self.assertFalse(seance_test.in_run)
+
+        self.assertEqual(Seance.get_active_seances_for_day(datetime.date.today()), 6)
+
+    def test_validate_seance_intersect(self):
+        """
+        Tests that Seance object was created correctly
+        """
+        seance_morning = Seance.objects.create(
+            time_starts=datetime.time(1),
+            description='some text',
+            seance_base=self.seance_base_bond,
+            admin=self.admin2
+        )
+
+        seance_day = Seance.objects.create(
+            time_starts=datetime.time(20),
+            description='some text',
+            seance_base=self.seance_base_bond,
+            admin=self.admin2
+        )
+
+        seance_night = Seance.objects.create(
+            time_starts=datetime.time(22),
+            cleaning_duration=datetime.time(minute=10),
+            time_hall_free=datetime.time(23, 55),
+            description='some text',
+            seance_base=self.seance_base_bond,
+            admin=self.admin2
+        )
+
+        intersects_morning = seance_morning.validate_seances_intersect(seance_exclude_pk=seance_morning.pk)
+        self.assertEqual(intersects_morning[0].time_starts, datetime.time(23, 50))
+        self.assertEqual(intersects_morning.count(), 1)
+
+        intersects_day = seance_day.validate_seances_intersect(seance_exclude_pk=seance_day.pk)
+        self.assertEqual(intersects_day[0].time_starts, datetime.time(19))
+        self.assertEqual(intersects_day.count(), 1)
+
+        intersects_night = seance_night.validate_seances_intersect(seance_exclude_pk=seance_night.pk)
+        self.assertEqual(intersects_night[0].time_starts, datetime.time(23, 50))
+        self.assertEqual(intersects_night.count(), 1)
+
+    def test_seance_activation(self):
+        """Tests that seance activation works correctly"""
+        seance_test = Seance.objects.create(
+            time_starts=datetime.time(8),
+            description='some text',
+            seance_base=self.seance_base_bond,
+            admin=self.admin2
+        )
+
+        result = seance_test.activate()
+        self.assertFalse(result['success'])
+        self.assertEqual(len(result['errors_list']), 1)
+        self.assertEqual(len(result['seat_categories']), 1)
+
+        price_test = Price.objects.create(
+            seance=seance_test,
+            seat_category=self.seat_category_base,
+            price=200
+        )
+
+        self.assertIsNotNone(Price.objects.get(pk=price_test.pk))
+        result = seance_test.activate()
+        self.assertTrue(result['success'])
+        self.assertEqual(len(result['errors_list']), 0)
+        self.assertEqual(len(result['seat_categories']), 0)
+        self.assertTrue(seance_test.is_active)
