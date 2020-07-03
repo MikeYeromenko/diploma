@@ -1,0 +1,373 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-07-04 00:44+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
+"%100>=11 && n%100<=14)? 2 : 3);\n"
+#: seance/forms.py:11
+msgid "username"
+msgstr "имя пользователя"
+
+#: seance/forms.py:14
+msgid "password"
+msgstr "пароль"
+
+#: seance/forms.py:18
+msgid "repeat password"
+msgstr "повторите пароль"
+
+#: seance/forms.py:20
+msgid "Enter the same password for check please"
+msgstr "Пожалуйста, введите тот же самый пароль для проверки"
+
+#: seance/forms.py:21
+msgid "email"
+msgstr "электронная почта"
+
+#: seance/forms.py:23
+msgid "We recommend to fill email to get tickets on it"
+msgstr "Рекомендуем указать адрес электронной почты для получения билетов на него"
+
+#: seance/forms.py:45
+msgid "passwords mismatch"
+msgstr "пароли не совпадают"
+
+#: seance/forms.py:60
+msgid "default ordering"
+msgstr "порядок по умолчанию"
+
+#: seance/forms.py:61
+msgid "from cheap to expensive"
+msgstr "от дешевых к дорогим"
+
+#: seance/forms.py:62
+msgid "from expensive to cheap"
+msgstr "от дорогих к дешевым"
+
+#: seance/forms.py:63
+msgid "latest first"
+msgstr "от поздних к ранним"
+
+#: seance/forms.py:64
+msgid "closest first"
+msgstr "от ранних к поздним"
+
+#: seance/forms.py:74
+msgid "Order by: "
+msgstr "Упорядочить по: "
+
+#: seance/forms.py:76
+msgid "When? "
+msgstr "Когда? "
+
+#: seance/forms.py:83
+msgid "Password"
+msgstr "Пароль"
+
+#: seance/middlewares.py:23
+msgid "More than 5 minutes inactive. Please login again"
+msgstr "Более 5 минут бездействия на сайте. Пожалуйста, залогиньтесь ещё раз"
+
+#: seance/modal/forms.py:12
+msgid "Order by"
+msgstr "Упорядочить по"
+
+#: seance/modal/forms.py:13
+msgid "When?"
+msgstr "Когда?"
+
+#: seance/models.py:19
+msgid "email address"
+msgstr "адрес электронной почты"
+
+#: seance/models.py:20
+msgid "wallet"
+msgstr "кошелек"
+
+#: seance/models.py:21
+msgid "was deleted?"
+msgstr "удалён?"
+
+#: seance/models.py:23
+msgid "user's last activity was: "
+msgstr "время последней активности пользователя: "
+
+#: seance/models.py:47
+msgid "title"
+msgstr "заглавие"
+
+#: seance/models.py:48
+msgid "starring"
+msgstr "в ролях"
+
+#: seance/models.py:49
+msgid "director"
+msgstr "режиссер"
+
+#: seance/models.py:50
+msgid "duration"
+msgstr "продолжительность"
+
+#: seance/models.py:51 seance/models.py:84 seance/models.py:237
+msgid "description"
+msgstr "описание"
+
+#: seance/models.py:52
+msgid "film picture"
+msgstr "изображение фильма"
+
+#: seance/models.py:53 seance/models.py:86 seance/models.py:141
+#: seance/models.py:175 seance/models.py:218 seance/models.py:241
+#: seance/models.py:410 seance/models.py:429
+msgid "instance created at"
+msgstr "объект создан"
+
+#: seance/models.py:54 seance/models.py:87 seance/models.py:142
+#: seance/models.py:176 seance/models.py:219 seance/models.py:242
+msgid "instance updated at"
+msgstr "обект обновлен"
+
+#: seance/models.py:55 seance/models.py:88 seance/models.py:240
+msgid "in run?"
+msgstr "активен?"
+
+#: seance/models.py:56 seance/models.py:89 seance/models.py:143
+#: seance/models.py:243
+msgid "instance created by"
+msgstr "объект создан"
+
+#: seance/models.py:72 seance/models.py:171
+msgid "film"
+msgstr "фильм"
+
+#: seance/models.py:73
+msgid "picture"
+msgstr "изображение"
+
+#: seance/models.py:76
+msgid "additional image"
+msgstr "дополнительное изображение"
+
+#: seance/models.py:77
+msgid "additional images"
+msgstr "дополнителные изображения"
+
+#: seance/models.py:81
+msgid "name"
+msgstr "имя"
+
+#: seance/models.py:82
+msgid "how many seats?"
+msgstr "сколько кресел?"
+
+#: seance/models.py:83
+msgid "how many rows?"
+msgstr "сколько рядов"
+
+#: seance/models.py:139
+msgid "category name"
+msgstr "название категории"
+
+#: seance/models.py:154 seance/models.py:172
+msgid "hall"
+msgstr "кинозал"
+
+#: seance/models.py:156 seance/models.py:216
+msgid "seat category"
+msgstr ""
+
+#: seance/models.py:157
+msgid "number of seat"
+msgstr "категория кресел"
+
+#: seance/models.py:158
+msgid "number of row"
+msgstr "номер ряда"
+
+#: seance/models.py:162 seance/models.py:426
+msgid "seat"
+msgstr "кресло"
+
+#: seance/models.py:163
+msgid "seats"
+msgstr "кресла"
+
+#: seance/models.py:173
+msgid "starts"
+msgstr "начало"
+
+#: seance/models.py:174
+msgid "ends"
+msgstr "конец"
+
+#: seance/models.py:214 seance/models.py:248 seance/models.py:424
+msgid "seance"
+msgstr "сеанс"
+
+#: seance/models.py:217
+msgid "price per one seat"
+msgstr "цена за одно место"
+
+#: seance/models.py:230
+msgid "starts at "
+msgstr "время начала"
+
+#: seance/models.py:231
+msgid "ends at "
+msgstr "время окончания"
+
+#: seance/models.py:232
+msgid "hall free at "
+msgstr "киназал осовободится в "
+
+#: seance/models.py:234
+msgid "advertisements duration "
+msgstr "продолжительность рекламы"
+
+#: seance/models.py:236
+msgid "cleaning duration "
+msgstr "продолжительность уборки"
+
+#: seance/models.py:239
+msgid "base seance"
+msgstr "базовый сеанс"
+
+#: seance/models.py:249
+msgid "seances"
+msgstr "сеансы"
+
+#: seance/models.py:409
+msgid "user"
+msgstr "пользователь"
+
+#: seance/models.py:411
+msgid "was returned?"
+msgstr "возвращена?"
+
+#: seance/models.py:412
+msgid "returned at"
+msgstr "возвращена"
+
+#: seance/models.py:425
+msgid "date of seance"
+msgstr "дата сеанса"
+
+#: seance/models.py:427
+msgid "price"
+msgstr "цена"
+
+#: seance/models.py:428
+msgid "purchase"
+msgstr "покупка"
+
+#: seance/models.py:430
+msgid "was_returned?"
+msgstr "возвращена?"
+
+#: seance/templates/layout/base_old.html:21
+msgid "LogOut"
+msgstr "Выйти"
+
+#: seance/templates/layout/base_old.html:22
+msgid "My tickets"
+msgstr "Мои билеты"
+
+#: seance/templates/layout/base_old.html:24
+msgid "LogIn"
+msgstr "Войти"
+
+#: seance/templates/layout/base_old.html:26
+msgid "Registration"
+msgstr "Регистрация"
+
+#: seance/templates/layout/base_old.html:27
+msgid "Main"
+msgstr "Главная"
+
+#: seance/templates/layout/base_old.html:28
+msgid "Basket"
+msgstr "Корзина"
+
+#: seance/templates/layout/base_old.html:30
+msgid "MyAdmin"
+msgstr "Администрирование"
+
+#: seance/templates/layout/base_price_drawer.html:10
+msgid "Seat category: "
+msgstr "Категория кресел"
+
+#: seance/templates/layout/base_price_drawer.html:12
+msgid "Choose"
+msgstr "Выберите"
+
+#: seance/templates/layout/base_seance_list.html:35
+msgid "Details..."
+msgstr "Детали..."
+
+#: seance/templates/layout/base_seance_list.html:39
+msgid "Update"
+msgstr "Обновить"
+
+#: seance/templates/layout/base_seance_list.html:42
+msgid "Delete"
+msgstr "Удалить"
+
+#: seance/templates/layout/base_seance_list.html:46
+msgid "Activate"
+msgstr "Активировать"
+
+#: seance/templates/registration/logged_out.html:5
+#: seance/templates/registration/logged_out.html:10
+msgid "Logout"
+msgstr "Выйти"
+
+#: seance/templates/registration/logged_out.html:11
+msgid "You have logged out successfully"
+msgstr "Вы успешно вышли"
+
+#: seance/templates/registration/login.html:6
+msgid "You have already logged in"
+msgstr "Вы уже вошли"
+
+#: seance/templates/registration/login.html:15
+msgid "Login"
+msgstr "Войти"
+
+#: seance/templates/registration/login.html:21
+msgid "Join with Google"
+msgstr "Войти при помощи Гугл"
+
+#: seance/templates/registration/register_user.html:10
+msgid "Submit"
+msgstr "Принять"
+
+#: seance/templates/seance/basket.html:20
+msgid "Cancel"
+msgstr "Отменить"
+
+#: seance/templates/seance/basket.html:29
+msgid "Add one more tickets"
+msgstr "Добавить ещё один билет"
+
+#: seance/templates/seance/basket.html:35
+msgid "Buy"
+msgstr "Купить"
+
+#: seance/templates/seance/purchase_list.html:6
+msgid "Total sum of money spent"
+msgstr "Общая потраченная сумма"
