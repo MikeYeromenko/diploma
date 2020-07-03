@@ -12,7 +12,7 @@ from django.utils import timezone, dateformat
 from django.views.generic import ListView, CreateView, TemplateView, FormView, DetailView, RedirectView, View
 
 from seance.forms import RegistrationForm, OrderingForm, UserAuthenticationForm
-from seance.models import Seance, AdvUser, Hall, Seat, Purchase, Ticket
+from seance.models import Seance, AdvUser, Hall, Seat, Purchase, Ticket, purchase_created
 
 
 class SeanceListView(ListView):
@@ -206,6 +206,7 @@ class PurchaseCreateView(LoginRequiredMixin, RedirectView):
                                           purchase=purchase,
                                           price=ticket.get('price')
                                           )
+                purchase_created.send(PurchaseCreateView, isinstance=user, purchase=purchase)
                 self.session_clean_and_redirect(request, change_url=False)
                 return super().post(request, *args, **kwargs)
             messages.add_message(request, messages.INFO, 'Insufficient funds')

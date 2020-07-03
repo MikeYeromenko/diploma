@@ -3,12 +3,15 @@ from colorfield.fields import ColorField
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Q, F, Min, Sum, Max
+from django.dispatch import Signal
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
 from cinema.settings import DEFAULT_SUM_TO_WALLET
-from seance.utilities import get_timestamp_path
+from seance.utilities import get_timestamp_path, send_tickets
+
+purchase_created = Signal(providing_args=['instance'])
 
 
 class AdvUser(AbstractUser):
@@ -17,6 +20,7 @@ class AdvUser(AbstractUser):
     was_deleted = models.BooleanField(default=False, verbose_name=_('was deleted?'))
     last_activity = models.DateTimeField(auto_now_add=True, blank=True, null=True,
                                          verbose_name=_('user\'s last activity was: '))
+    # email_verified = models.BooleanField(default=False, verbose_name=_('Verified email?'))
 
     def delete(self, *args, **kwargs):
         self.is_active = False
@@ -449,3 +453,10 @@ class Ticket(models.Model):
 class Return:
     """For future goals))"""
     pass
+
+
+def purchase_created_dispatcher(sender, **kwargs):
+    send_tickets(kwargs.get('instance'), kwargs.get('purchase'))
+
+
+purchase_created.connect(purchase_created_dispatcher)
