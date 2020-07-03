@@ -357,4 +357,22 @@ class GeneralModelsTestCase(TestCase, BaseInitial):
         self.assertEqual(self.purchase.tickets.count(), 2)
         self.assertEqual(self.purchase.total_price, 240)
 
+    def test_related_objects_deletion(self):
+        """Tests that related objects can't be deleted"""
+        with self.assertRaises(ProtectedError):
+            self.film_bond.delete()
+
+        with self.assertRaises(ProtectedError):
+            self.hall_yellow.delete()
+
+        with self.assertRaises(ProtectedError):
+            self.seance_base_bond.delete()
+
+        with self.assertRaises(ProtectedError):
+            self.seance_bond_12.delete()
+
+        with self.assertRaises(ProtectedError):
+            self.seat_category_base.delete()
+
+
 
