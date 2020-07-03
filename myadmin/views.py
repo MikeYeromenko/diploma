@@ -87,10 +87,12 @@ class FilmDeleteView(IsStaffRequiredMixin, DeleteView):
         self.object = self.get_object()
         success_url = self.get_success_url()
         # check if there are related SBases to our Film
-        if self.object.base_seances:
+        seance_bases = self.object.base_seances
+        if seance_bases.count():
             messages.add_message(request, messages.INFO, f"We can't delete film: {self.object.title}, "
                                                          f"because there are SBases related to it. First "
-                                                         f"we need to delete all SeanceBase objects")
+                                                         f"we need to delete all SeanceBase objects:"
+                                                         f" {seance_bases}")
             return redirect(success_url)
         self.object.delete()
         return redirect(success_url)
@@ -213,7 +215,8 @@ class SeanceBaseTemplateView(IsStaffRequiredMixin, TemplateView):
         form = forms.SeanceBaseCreateForm(initial={'date_starts': datetime.date.today(),
                                                    'date_ends': datetime.date.today() + datetime.timedelta(days=15),
                                                    })
-        sb_list = SeanceBase.objects.filter(date_ends__gte=datetime.date.today())
+        # sb_list = SeanceBase.objects.filter(date_ends__gte=datetime.date.today())
+        sb_list = SeanceBase.objects.filter()
         context['sb_objects'] = [(sb, forms.SeanceBaseCreateForm(instance=sb)) for sb in sb_list]
         context['form'] = form
         return context
