@@ -11,6 +11,7 @@ from django.utils.translation import gettext_lazy as _
 from cinema.settings import DEFAULT_SUM_TO_WALLET
 from seance.utilities import get_timestamp_path, send_tickets
 
+
 purchase_created = Signal(providing_args=['instance'])
 
 

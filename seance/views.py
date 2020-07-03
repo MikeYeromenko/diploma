@@ -13,6 +13,7 @@ from django.views.generic import ListView, CreateView, TemplateView, FormView, D
 
 from seance.forms import RegistrationForm, OrderingForm, UserAuthenticationForm
 from seance.models import Seance, AdvUser, Hall, Seat, Purchase, Ticket, purchase_created
+from seance.task import send_tickets_with_celery
 
 
 class SeanceListView(ListView):
@@ -206,7 +207,7 @@ class PurchaseCreateView(LoginRequiredMixin, RedirectView):
                                           purchase=purchase,
                                           price=ticket.get('price')
                                           )
-                purchase_created.send(PurchaseCreateView, instance=user, purchase=purchase)
+                send_tickets_with_celery.delay(user.pk, purchase.pk)
                 self.session_clean_and_redirect(request, change_url=False)
                 return super().post(request, *args, **kwargs)
             messages.add_message(request, messages.INFO, 'Insufficient funds')

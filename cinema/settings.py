@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'rest_auth.registration',
     'rest_framework_swagger',
-    'API_admin',
+    'API_admin'
 ]
 
 MIDDLEWARE = [
@@ -183,3 +183,8 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
+# REDIS related settings
+CELERY_BROKER_URL = 'redis://h:peb2f56c7cdb08fec930d75ecb6397247ae01d0eda50fd81a6e108c0ad33a7143@ec2-34-252-21-252.eu-west-1.compute.amazonaws.com:14869'
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
