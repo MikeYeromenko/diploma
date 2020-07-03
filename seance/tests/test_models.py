@@ -284,3 +284,67 @@ class GeneralModelsTestCase(TestCase, BaseInitial):
         ordered_closest_first = Seance.order_queryset('closest', seances)
         self.assertEqual(ordered_closest_first[0].time_starts, datetime.time(12))
         self.assertEqual(ordered_closest_first[5].time_starts, datetime.time(23, 50))
+
+    def test_seance_base_basic(self):
+        """Tests basic properties of SB"""
+        seance_base_test = SeanceBase.objects.create(
+            film=self.film_bond,
+            hall=self.hall_yellow,
+            date_starts=datetime.date.today()
+        )
+        self.assertEqual(seance_base_test.date_ends, datetime.date.today() + datetime.timedelta(days=15))
+        self.assertEqual(seance_base_test.film.title, 'James Bond')
+        self.assertEqual(seance_base_test.hall.name, 'Yellow')
+
+        self.assertTrue(timezone.now() - datetime.timedelta(minutes=2) < seance_base_test.created_at < timezone.now())
+
+    def test_seance_base_intersect(self):
+        """
+        Tests that intersect validation works correctly
+        """
+        intersections = SeanceBase.validate_seances_base_intersect(
+            date_starts=(datetime.date.today() - datetime.timedelta(days=16)),
+            date_ends=datetime.date.today() - datetime.timedelta(days=1),
+            hall=self.hall_red,
+            film=self.film_365
+        )
+
+        self.assertEqual(intersections.count(), 0)
+
+        intersections = SeanceBase.validate_seances_base_intersect(
+            date_starts=(datetime.date.today() - datetime.timedelta(days=15)),
+            date_ends=datetime.date.today(),
+            hall=self.hall_red,
+            film=self.film_365
+        )
+
+        self.assertEqual(intersections.all()[0].date_starts, datetime.date.today())
+
+        intersections = SeanceBase.validate_seances_base_intersect(
+            date_starts=(datetime.date.today() + datetime.timedelta(days=30)),
+            date_ends=datetime.date.today(),
+            hall=self.hall_red,
+            film=self.film_365
+        )
+
+        self.assertEqual(intersections.all()[0].date_ends, datetime.date.today() + datetime.timedelta(days=30))
+
+        intersections = SeanceBase.validate_seances_base_intersect(
+            date_starts=(datetime.date.today() + datetime.timedelta(days=31)),
+            date_ends=datetime.date.today() + datetime.timedelta(days=50),
+            hall=self.hall_red,
+            film=self.film_365
+        )
+
+        self.assertFalse(intersections.count())
+
+        intersections = SeanceBase.validate_seances_base_intersect(
+            date_starts=(datetime.date.today() + datetime.timedelta(days=15)),
+            date_ends=datetime.date.today() + datetime.timedelta(days=30),
+            hall=self.hall_yellow,
+            film=self.film_365
+        )
+
+        self.assertFalse(intersections.count())
+
+
