@@ -98,7 +98,19 @@ class GeneralModelsTestCase(TestCase, BaseInitial):
         """
         self.assertEqual(self.user.username, 'test_user')
         self.assertEqual(self.user.wallet, 10000)
+
+        # sum_money_spent property works correctly
         self.assertEqual(self.user.sum_money_spent, 280)
+
+        # checks that user deleted softly
+        user2 = AdvUser(
+            username='user2'
+        )
+        user2.set_password('pass1234')
+        user2.save()
+        self.assertFalse(user2.was_deleted)
+        user2.delete()
+        self.assertTrue(user2.was_deleted)
 
     def test_film_model_basic(self):
         """
