@@ -128,7 +128,7 @@ class GeneralModelsTestCase(TestCase, BaseInitial):
         """
         Test Seance has __str__ that returns its 'Seance with Film.title'
         """
-        self.assertEqual(self.seance_bond_12.__str__(), f'Seance with James Bond in 12:00:00-14:00:00 o\'clock')
+        self.assertEqual(self.seance_bond_12.__str__(), f'Seance with James Bond in 12:00:00-14:00:00 o-clock')
 
     def test_hall_model_basic(self):
         """

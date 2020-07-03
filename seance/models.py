@@ -393,7 +393,7 @@ class Seance(models.Model):
         return self.seance_base.date_ends >= timezone.now().date() and self.is_active
 
     def __str__(self):
-        return f'Seance with {self.seance_base.film.title} in {self.time_starts}-{self.time_ends} o\'clock'
+        return f'Seance with {self.seance_base.film.title} in {self.time_starts}-{self.time_ends} o-clock'
 
     def __repr__(self):
         return f'Seance with {self.seance_base.film.title} in {self.time_starts}-{self.time_ends} o\'clock'

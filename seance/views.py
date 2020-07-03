@@ -206,7 +206,7 @@ class PurchaseCreateView(LoginRequiredMixin, RedirectView):
                                           purchase=purchase,
                                           price=ticket.get('price')
                                           )
-                purchase_created.send(PurchaseCreateView, isinstance=user, purchase=purchase)
+                purchase_created.send(PurchaseCreateView, instance=user, purchase=purchase)
                 self.session_clean_and_redirect(request, change_url=False)
                 return super().post(request, *args, **kwargs)
             messages.add_message(request, messages.INFO, 'Insufficient funds')

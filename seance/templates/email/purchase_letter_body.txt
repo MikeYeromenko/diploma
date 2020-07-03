@@ -2,7 +2,7 @@ Dear {{ user.username }}!
 
 You bought tickets to the cinema.
 
-Here they are: {user.purchases.last().tickets.values('seance', 'seat', 'date_seance')}
-
+Here they are: {% for ticket in purchase.tickets.all %}
+{{ forloop.counter }}. Seance: {{ ticket.seance }}, date: {{ ticket.date_seance|date }}, seat: {{ ticket.seat }}
+{% endfor %}
 We are glad you are with us)
-
