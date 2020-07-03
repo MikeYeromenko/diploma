@@ -356,44 +356,6 @@ class Seance(models.Model):
                 'success': self.is_active}
 
     @staticmethod
-    def order_by_expensive_first(seances):
-        """
-        Orders seances beginning from expensive to cheap
-        :return: "ordered" list
-        """
-        # create list of tuples, where on first position is price of the most expensive seat in seance,
-        # and on the second - number of that seance in seances
-        prices_max = [seance.prices.order_by('-price')[0].price for seance in seances]
-        min_price = min(prices_max) - 1
-        result = []
-        for i in range(len(prices_max)):
-            max_index = prices_max.index(max(prices_max))
-            # set that value to min_price for it not to interfere the latest search
-            prices_max[max_index] = min_price
-            result.append(seances[max_index])
-        return result
-
-    @staticmethod
-    def order_by_cheap_first(seances):
-        """
-        Orders seances beginning from expensive to cheap
-        :return: ordered list
-        """
-        # create list of tuples, where on first position is price of the most expensive seat in seance,
-        # and on the second - number of that seance in seances
-
-        prices_min = [seance.prices.all().order_by('price')[0].price for seance in seances]
-        max_price = max(prices_min) + 1
-        result = []
-        for i in range(len(prices_min)):
-            # find index of minimum element. It corresponds to index of seance with minimum price
-            min_index = prices_min.index(min(prices_min))
-            # set that value to min_value for it not to interfere the latest searches
-            prices_min[min_index] = max_price
-            result.append(seances[min_index])
-        return result
-
-    @staticmethod
     def get_active_seances_for_day(date=None):
         """
         Returns queryset of active seances for some day, which comes in 'date'.
