@@ -98,7 +98,7 @@ class GeneralModelsTestCase(TestCase, BaseInitial):
         """
         self.assertEqual(self.user.username, 'test_user')
         self.assertEqual(self.user.wallet, 10000)
-
+        self.assertEqual(self.user.sum_money_spent, 280)
 
     def test_film_model_basic(self):
         """
