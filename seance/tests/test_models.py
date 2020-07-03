@@ -4,7 +4,7 @@ from django.db.models import ProtectedError
 from django.test import TestCase
 from django.utils import timezone
 
-from seance.models import Film, Hall, Seance, AdvUser, Purchase, Ticket, SeanceBase
+from seance.models import Film, Hall, Seance, AdvUser, Purchase, Ticket, SeanceBase, SeatCategory, Seat
 
 
 class BaseInitial:
@@ -12,6 +12,7 @@ class BaseInitial:
 
         self.film_bond = Film.objects.get(title='James Bond')
         self.film_365 = Film.objects.get(title='365 Days')
+        self.seat_category_base = SeatCategory.objects.get(name='base')
         self.hall_yellow = Hall.objects.get(name='Yellow')
         self.hall_red = Hall.objects.get(name='Red')
         self.seance_base_bond = SeanceBase.objects.get(film=self.film_bond)
@@ -158,6 +159,38 @@ class GeneralModelsTestCase(TestCase, BaseInitial):
 
         # hall was created no more then 2 minutes ago
         self.assertTrue(timezone.now() - datetime.timedelta(minutes=2) < self.hall_yellow.created_at < timezone.now())
+
+    def test_hall_activation(self):
+        """Tests that hall activation method works correctly"""
+        hall_test = Hall.objects.create(
+            name='Test hall',
+            quantity_seats=12,
+            quantity_rows=3,
+            description='some text',
+            admin=self.admin2
+        )
+        # when creating new hall is active is False by default
+        self.assertFalse(hall_test.is_active)
+
+        self.assertFalse(hall_test.validate_all_seats_created())
+
+        self.assertFalse(hall_test.get_seat_categories())
+
+        result = hall_test.activate_hall()
+
+        self.assertFalse(result['success'])
+        self.assertFalse(result['created_seats'])
+        self.assertEqual(result['uncreated_seats'], 12)
+
+        for i in range(1, 4):
+            hall_test.create_or_update_seats(seat_category=self.seat_category_base, row=i,
+                                             number_starts=1, number_ends=4)
+
+        self.assertEqual(Seat.objects.filter(hall=hall_test).count(), 12)
+        result = hall_test.activate_hall()
+        self.assertTrue(result['success'])
+        self.assertTrue(hall_test.is_active)
+
 
     def test_seance_model_basic(self):
         """

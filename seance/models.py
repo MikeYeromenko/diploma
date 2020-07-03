@@ -1,13 +1,11 @@
 import datetime
-
 from colorfield.fields import ColorField
-from django.contrib import messages
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models import Q, F, Min, Sum, Count, Max
-from django.shortcuts import get_object_or_404
+from django.db.models import Q, F, Min, Sum, Max
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
 
 from cinema.settings import DEFAULT_SUM_TO_WALLET
 from seance.utilities import get_timestamp_path
