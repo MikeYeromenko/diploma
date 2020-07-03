@@ -66,12 +66,33 @@ class CinemaUrlsTestCase(TestCase):
         """
         Test that url basket/redirect/ exists, resolves to the correct cbv and has expected name
         """
-        registration = resolve('/basket/redirect/')
-        self.assertEqual(registration.func.__name__, 'BasketRedirectView')
-        self.assertEqual(registration.url_name, 'basket-redirect')
+        basket = resolve('/basket/redirect/')
+        self.assertEqual(basket.func.__name__, 'BasketRedirectView')
+        self.assertEqual(basket.url_name, 'basket-redirect')
+
+    def test_url_for_basket_cancel(self):
+        """
+        Test that url basket/cancel/ exists, resolves to the correct cbv and has expected name
+        """
+        basket = resolve('/basket/cancel/')
+        self.assertEqual(basket.func.__name__, 'BasketCancelView')
+        self.assertEqual(basket.url_name, 'basket-cancel')
+
+    def test_url_for_buying(self):
+        """
+        Test that url buy/ exists, resolves to the correct cbv and has expected name
+        """
+        url = resolve('/buy/')
+        self.assertEqual(url.func.__name__, 'PurchaseCreateView')
+        self.assertEqual(url.url_name, 'buy')
+
+    def test_url_for_purchases(self):
+        """
+        Test that url my_tickets/ exists, resolves to the correct cbv and has expected name
+        """
+        url = resolve('/my_tickets/')
+        self.assertEqual(url.func.__name__, 'PurchaseListView')
+        self.assertEqual(url.url_name, 'my_tickets')
 
 
-    # path('buy/', PurchaseCreateView.as_view(), name='buy'),
-    # path('my_tickets/', PurchaseListView.as_view(), name='my_tickets'),
-    # path('basket/cancel/', BasketCancelView.as_view(), name='basket-cancel'),
 
