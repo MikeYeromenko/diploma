@@ -17,5 +17,8 @@
           </div>
 
         </form>
+        <form class="google" action="{% url "social:begin" "google-oauth2" %}" method="get">
+            <input type="submit" value="{% trans 'Join with Google' %}" class="input-submit">
+        </form>
     {% endif %}
 {% endblock content %}

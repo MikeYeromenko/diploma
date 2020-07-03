@@ -43,18 +43,6 @@ class FilmUpdateView(IsStaffRequiredMixin, UpdateView):
         kwargs = super().get_form_kwargs()
         return kwargs
 
-    # def post(self, request, *args, **kwargs):
-    #     """Adds admin, who edit film, to admin field"""
-    #     film = get_object_or_404(Film, pk=kwargs.get('pk'))
-    #     film.admin = get_object_or_404(AdvUser, pk=request.user.pk)
-    #     # form = FilmModelForm(request.POST, request.FILES, instance=film)
-    #     form = FilmModelForm(request.POST, request.FILES)
-    #     if form.is_valid():
-    #         film = form.save()
-    #         messages.add_message(request, messages.SUCCESS, _('Film was edited successfully'))
-    #         return redirect(self.success_url)
-    #     return render(request, 'myadmin/films/film_update_form.html', {'form': form})
-
 
 class FilmListView(IsStaffRequiredMixin, ListView):
     model = Film
@@ -72,12 +60,6 @@ class FilmCreateView(IsStaffRequiredMixin, CreateView):
     form_class = forms.FilmModelForm
     success_url = reverse_lazy('myadmin:film_list')
     template_name = 'myadmin/films/film_create_form.html'
-    #
-    # def get_initial(self):
-    #     """Return the initial data to use for forms on this view."""
-    #     initial = super().get_initial()
-    #     initial.update({'admin': self.request.user})
-    #     return initial.copy()
 
     def post(self, request, *args, **kwargs):
         """Adds admin, who creates film, to admin field"""
@@ -97,6 +79,22 @@ class FilmDeleteView(IsStaffRequiredMixin, DeleteView):
     success_url = reverse_lazy('myadmin:film_list')
     template_name = 'myadmin/films/film_confirm_delete.html'
 
+    def delete(self, request, *args, **kwargs):
+        """
+        We can't delete film, if there are Seance Base objects related to it. First we need to delete SeanceBase
+        object
+        """
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        # check if there are related SBases to our Film
+        if self.object.base_seances:
+            messages.add_message(request, messages.INFO, f"We can't delete film: {self.object.title}, "
+                                                         f"because there are SBases related to it. First "
+                                                         f"we need to delete all SeanceBase objects")
+            return redirect(success_url)
+        self.object.delete()
+        return redirect(success_url)
+
 
 class SeatCategoryCRUDView(IsStaffRequiredMixin, FormView):
     template_name = 'myadmin/seat_category/seat_category_list_form.html'
@@ -108,8 +106,6 @@ class SeatCategoryCRUDView(IsStaffRequiredMixin, FormView):
         categories = SeatCategory.objects.all()
         object_list = [(category, forms.SeatCategoryModelForm(instance=category)) for category in categories]
         context['object_list'] = object_list
-        # context['category_forms_list'] = category_forms_list
-        # form_create = forms.SeatCategoryCreateForm()
         return context
 
     def post(self, request, *args, **kwargs):

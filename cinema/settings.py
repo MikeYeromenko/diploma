@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'rest_auth.registration',
     'rest_framework_swagger',
-    'API_admin'
+    'API_admin',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -81,7 +82,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'seance.middlewares.seance_context_processor'
+                'seance.middlewares.seance_context_processor',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -188,3 +191,23 @@ CELERY_BROKER_URL = 'redis://h:peb2f56c7cdb08fec930d75ecb6397247ae01d0eda50fd81a
 
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+
+
+# Google Consumer Key
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '233438195119-4a1d35aao761856msko06q9voutdf34e.apps.googleusercontent.com'
+# Google Consumer Secret
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'C8U3GfjiSD-nlvrbemlYwnvv'
+
+
+AUTHENTICATION_BACKENDS = (
+    # 'social_core.backends.open_id.OpenIdAuth',
+    # 'social_core.backends.google.GoogleOpenId',
+    'social_core.backends.google.GoogleOAuth2',
+    # 'social_core.backends.google.GoogleOAuth',
+    # 'social_core.backends.twitter.TwitterOAuth',
+    # 'social_core.backends.yahoo.YahooOpenId',
+
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'

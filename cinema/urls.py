@@ -25,6 +25,7 @@ urlpatterns = [
     path('myadmin/', include('myadmin.urls')),
     path('api-admin/', include('API_admin.urls', namespace='api_admin')),
     path('api/', include('seance.API.urls', namespace='api')),
+    path('social/', include('social_django.urls', namespace='social')),
     # path('modal/', include('seance.modal.urls')),
 ]
 
