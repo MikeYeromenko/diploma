@@ -74,5 +74,4 @@ class CinemaUrlsTestCase(TestCase):
     # path('buy/', PurchaseCreateView.as_view(), name='buy'),
     # path('my_tickets/', PurchaseListView.as_view(), name='my_tickets'),
     # path('basket/cancel/', BasketCancelView.as_view(), name='basket-cancel'),
-    # path('seance/<int:pk>/', SeanceDetailView.as_view(), name='seance_detail'),
 

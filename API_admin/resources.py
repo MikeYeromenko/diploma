@@ -20,7 +20,7 @@ class ViewSetInsertMixin:
         serializer.save(admin=self.request.user)
 
 
-class SeatCategoryViewSetMixin(ViewSetInsertMixin, viewsets.ModelViewSet):
+class SeatCategoryViewSet(ViewSetInsertMixin, viewsets.ModelViewSet):
     queryset = SeatCategory.objects.all()
 
     def get_serializer_class(self):
@@ -80,6 +80,7 @@ class HallViewSetMixin(ViewSetInsertMixin, viewsets.ModelViewSet):
 
 class CreateSeatsAPIView(CreateAPIView):
     permission_classes = (IsAdminUser, )
+    serializer_class = serial.SeatModelSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = serial.CreateSeatsSerializer(data=request.data)
@@ -142,6 +143,7 @@ class SeanceViewSetMixin(ViewSetInsertMixin, viewsets.ModelViewSet):
 
 class SeanceActivateView(UpdateAPIView):
     queryset = Seance.objects.all()
+    serializer_class = serial.SeanceHyperSerializer
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -154,18 +156,3 @@ class SeanceActivateView(UpdateAPIView):
                                                                 context={'request': request}).data
                          }, status=status.HTTP_200_OK)
 
-# class ImageUploadAPIView(UpdateAPIView):
-#     permission_classes = (IsAdminUser, )
-#     parser_classes = (FileUploadParser, )
-#     queryset = Film.objects.all()
-#
-#     def update(self, request, *args, **kwargs):
-#         instance = self.get_object()
-#         image_serializer = serial.ImageSerializer(data=request.data)
-#
-#         if image_serializer.is_valid():
-#             instance.image = image_serializer.data
-#             # image_serializer.save()
-#             return Response(image_serializer.data, status=status.HTTP_201_CREATED)
-#         else:
-#             return Response(image_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
