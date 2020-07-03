@@ -265,3 +265,22 @@ class GeneralModelsTestCase(TestCase, BaseInitial):
         self.assertEqual(len(result['errors_list']), 0)
         self.assertEqual(len(result['seat_categories']), 0)
         self.assertTrue(seance_test.is_active)
+
+    def test_seance_ordering(self):
+        """Tests, that seances are ordered by price or by time correctly"""
+        seances = Seance.objects.all()
+        ordered_cheap_first = Seance.order_queryset('cheap', seances)
+        self.assertEqual(ordered_cheap_first[0].prices.all()[0].price, 100)
+        self.assertEqual(ordered_cheap_first[5].prices.all()[0].price, 200)
+
+        ordered_expensive_first = Seance.order_queryset('expensive', seances)
+        self.assertEqual(ordered_expensive_first[0].prices.all()[0].price, 200)
+        self.assertEqual(ordered_expensive_first[5].prices.all()[0].price, 100)
+
+        ordered_latest_first = Seance.order_queryset('latest', seances)
+        self.assertEqual(ordered_latest_first[0].time_starts, datetime.time(23, 50))
+        self.assertEqual(ordered_latest_first[5].time_starts, datetime.time(12))
+
+        ordered_closest_first = Seance.order_queryset('closest', seances)
+        self.assertEqual(ordered_closest_first[0].time_starts, datetime.time(12))
+        self.assertEqual(ordered_closest_first[5].time_starts, datetime.time(23, 50))

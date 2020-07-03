@@ -375,13 +375,9 @@ class Seance(models.Model):
         orders seances queryset by users ordering
         """
         if ordering_param == 'cheap':
-            # return seances.order_by('prices__price')
-            # return Seance.order_by_cheap_first(seances)
             return seances.annotate(min_price=Min('prices__price')).order_by('min_price')
         if ordering_param == 'expensive':
-            # return seances.order_by('-prices__price')
             return seances.annotate(max_price=Max('prices__price')).order_by('-max_price')
-            # return Seance.order_by_expensive_first(seances)
         elif ordering_param == 'latest':
             return seances.order_by('-time_starts')
         elif ordering_param == 'closest':
