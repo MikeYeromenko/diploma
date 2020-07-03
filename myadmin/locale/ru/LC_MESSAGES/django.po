@@ -1,0 +1,221 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-07-04 00:44+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
+"%100>=11 && n%100<=14)? 2 : 3);\n"
+#: myadmin/forms.py:258
+msgid "Seats start number"
+msgstr "Создать сидения с: "
+
+#: myadmin/forms.py:260
+msgid "Seats end number"
+msgstr "по: "
+
+#: myadmin/forms.py:267
+msgid "Row number"
+msgstr "Номер ряда"
+
+#: myadmin/forms.py:269
+msgid "Choice seats category"
+msgstr "Выберите категорию сидения"
+
+#: myadmin/templates/myadmin/base_confirm_delete.html:5
+msgid "Are you sure you want to delete "
+msgstr "Вы уверены, что хотите удалить "
+
+#: myadmin/templates/myadmin/base_navbar_admin.html:18
+msgid "Main"
+msgstr "Главная"
+
+#: myadmin/templates/myadmin/base_navbar_admin.html:19
+#: myadmin/templates/myadmin/price/price_list.html:14
+msgid "Prices"
+msgstr "Прайсы"
+
+#: myadmin/templates/myadmin/base_navbar_admin.html:20
+msgid "Seat categories"
+msgstr "Категории кресел"
+
+#: myadmin/templates/myadmin/base_navbar_admin.html:21
+msgid "SeanceBases"
+msgstr "Базовый сеанс"
+
+#: myadmin/templates/myadmin/base_navbar_admin.html:23
+msgid "Films"
+msgstr "Фильмы"
+
+#: myadmin/templates/myadmin/base_navbar_admin.html:28
+msgid "Films list"
+msgstr "Список фильмов"
+
+#: myadmin/templates/myadmin/base_navbar_admin.html:29
+msgid "Create new film"
+msgstr ""
+
+#: myadmin/templates/myadmin/base_navbar_admin.html:37
+#: myadmin/templates/myadmin/seance_base/seance_base_list.html:24
+msgid "Seances"
+msgstr "Сеансы"
+
+#: myadmin/templates/myadmin/base_navbar_admin.html:42
+msgid "Seance list"
+msgstr "Список сеансов"
+
+#: myadmin/templates/myadmin/base_navbar_admin.html:43
+msgid "Create new Seance"
+msgstr "Создать новый сеанс"
+
+#: myadmin/templates/myadmin/base_navbar_admin.html:51
+#: myadmin/templates/myadmin/hall/hall_list.html:9
+msgid "Halls"
+msgstr "Кинозалы"
+
+#: myadmin/templates/myadmin/base_navbar_admin.html:56
+msgid "Hall list"
+msgstr "Список кинозалов"
+
+#: myadmin/templates/myadmin/base_navbar_admin.html:57
+msgid "Create new Hall"
+msgstr "Создать новый кинозал"
+
+#: myadmin/templates/myadmin/films/film_confirm_delete.html:5
+msgid "film"
+msgstr "фильм"
+
+#: myadmin/templates/myadmin/films/film_create_form.html:9
+#: myadmin/templates/myadmin/price/price_list.html:10
+#: myadmin/templates/myadmin/seance_base/seance_base_list.html:10
+#: myadmin/templates/myadmin/seat_category/seat_category_list_form.html:10
+msgid "Create"
+msgstr "Создать"
+
+#: myadmin/templates/myadmin/films/film_list.html:11
+msgid "Show all"
+msgstr "Показать все"
+
+#: myadmin/templates/myadmin/films/film_list.html:15
+msgid "Show only active"
+msgstr "Показать только активные"
+
+#: myadmin/templates/myadmin/films/film_list.html:53
+#: myadmin/templates/myadmin/films/film_update_form.html:9
+#: myadmin/templates/myadmin/hall/hall_activate.html:28
+#: myadmin/templates/myadmin/hall/hall_list.html:29
+#: myadmin/templates/myadmin/price/price_list.html:24
+#: myadmin/templates/myadmin/seance_base/seance_base_list.html:29
+#: myadmin/templates/myadmin/seat_category/seat_category_list_form.html:20
+msgid "Update"
+msgstr "Обновить"
+
+#: myadmin/templates/myadmin/films/film_list.html:56
+#: myadmin/templates/myadmin/hall/hall_list.html:32
+#: myadmin/templates/myadmin/price/price_list.html:30
+#: myadmin/templates/myadmin/seance_base/seance_base_list.html:32
+#: myadmin/templates/myadmin/seat_category/seat_category_list_form.html:25
+msgid "Delete"
+msgstr "Удалить"
+
+#: myadmin/templates/myadmin/hall/hall_activate.html:5
+msgid "Hall activation"
+msgstr "Активировать кинозал"
+
+#: myadmin/templates/myadmin/hall/hall_activate.html:35
+msgid "Hall activated successfully!"
+msgstr "Кинозал успешно активирован!"
+
+#: myadmin/templates/myadmin/hall/hall_activate.html:36
+msgid "Look in hall list"
+msgstr "Посмотреть в списке кинозалов"
+
+#: myadmin/templates/myadmin/hall/hall_activate.html:55
+msgid "Seat category: "
+msgstr "Категория кресла: "
+
+#: myadmin/templates/myadmin/hall/hall_activate.html:56
+msgid "Color"
+msgstr "Цвет"
+
+#: myadmin/templates/myadmin/hall/hall_confirm_delete.html:5
+msgid "hall"
+msgstr "кинозал"
+
+#: myadmin/templates/myadmin/hall/hall_list.html:36
+msgid "Activate"
+msgstr "Активировать"
+
+#: myadmin/templates/myadmin/price/price_confirm_delete.html:5
+msgid "price"
+msgstr "прайс"
+
+#: myadmin/templates/myadmin/price/price_create_update.html:5
+msgid "Updating price object"
+msgstr "Обновить прайс"
+
+#: myadmin/templates/myadmin/price/price_list.html:6
+msgid "Create new price"
+msgstr "Создать новый прайс"
+
+#: myadmin/templates/myadmin/seance_base/seance_base_list.html:5
+msgid "Create new base seance"
+msgstr "Создать новый базовый сеанс"
+
+#: myadmin/templates/myadmin/seance_base/seance_base_list.html:14
+msgid "Seance bases"
+msgstr "Базовые сеансы"
+
+#: myadmin/templates/myadmin/seance_base/seancebase_confirm_delete.html:5
+msgid "base seance"
+msgstr "базовый сеанс"
+
+#: myadmin/templates/myadmin/seances/seance_activate.html:5
+msgid "Seance activation"
+msgstr "Активация сеанса"
+
+#: myadmin/templates/myadmin/seances/seance_activate.html:26
+msgid "Seance activated successfully"
+msgstr "Сеанс успешно активирован"
+
+#: myadmin/templates/myadmin/seances/seance_activate.html:27
+msgid "Look in seance list"
+msgstr "Посмотреть в списке сеансов"
+
+#: myadmin/templates/myadmin/seances/seance_confirm_delete.html:5
+msgid "seance"
+msgstr "сеанс"
+
+#: myadmin/templates/myadmin/seat_category/seat_category_delete.html:5
+msgid "seat category"
+msgstr "категория сидения"
+
+#: myadmin/templates/myadmin/seat_category/seat_category_list_form.html:6
+msgid "Create new category"
+msgstr "Создать новую категорию"
+
+#: myadmin/templates/myadmin/seat_category/seat_category_list_form.html:13
+msgid "Seat categories:"
+msgstr "Категория сидения"
+
+#: myadmin/views.py:72
+msgid "Film was created successfully"
+msgstr "Фильм был успешно создан"
+
+#: myadmin/views.py:127 myadmin/views.py:140
+#, python-brace-format
+msgid "Seat category {seat_category.name}"
+msgstr "Категория кресел "
