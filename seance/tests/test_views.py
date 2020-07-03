@@ -37,55 +37,14 @@ class SeanceListViewTestCase(TestCase, BaseInitial):
         with self.assertTemplateUsed('seance/index.html'):
             response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
-        quantity = Seance.objects.filter(Q(date_starts__lte=datetime.date.today()) & Q(date_ends__gte=datetime.date.today()) &
+        quantity = Seance.objects.filter(Q(seance_base__date_starts__lte=datetime.date.today()) &
+                                         Q(seance_base__date_ends__gte=datetime.date.today()) &
                                          Q(time_starts__gt=timezone.now()) & Q(is_active=True)).count()
 
         self.assertEqual(len(response.context['seance_list']), quantity)
 
-        self.assertEqual(response.context['seance_list'][0].film.title, 'James Bond')
+        self.assertEqual(response.context['seance_list'][0].seance_base.film.title, 'James Bond')
 
-    def test_ordering_queryset(self):
-        """
-        Test ordering_queryset method
-        """
-        # test ordering 'from expensive to cheap'
-        response = self.client.get(reverse_lazy('seance:index'), data={'ordering': 'expensive'})
-        seances = response.context.get('seance_list')
-
-        seances_test = Seance.objects.filter(
-            Q(date_starts__lte=datetime.date.today()) & Q(date_ends__gte=datetime.date.today()) &
-            Q(time_starts__gt=timezone.now()) & Q(is_active=True)).order_by('-ticket_price')
-
-        # the quantity of elements in seances dependes upon a time of the day. In the evening there may be
-        # a situation, that seances is empty, because time_starts of them passed
-        if seances_test:
-            self.assertEqual(seances[0].ticket_price, seances_test[0].ticket_price)
-            if len(seances_test) > 2:
-                self.assertEqual(seances[1].ticket_price, seances_test[1].ticket_price)
-
-        # test ordering 'latest'
-        response = self.client.get(reverse_lazy('seance:index'), data={'ordering': 'latest'})
-        seances = response.context.get('seance_list')
-
-        seances_test = Seance.objects.filter(
-            Q(date_starts__lte=datetime.date.today()) & Q(date_ends__gte=datetime.date.today()) &
-            Q(time_starts__gt=timezone.now()) & Q(is_active=True)).order_by('-time_starts')
-        if seances_test:
-            self.assertEqual(seances[0].time_starts, seances_test[0].time_starts)
-            if len(seances_test) > 2:
-                self.assertEqual(seances[1].time_starts, seances_test[1].time_starts)
-
-        # test ordering 'closest'
-        response = self.client.get(reverse_lazy('seance:index'), data={'ordering': 'closest'})
-        seances = response.context.get('seance_list')
-
-        seances_test = Seance.objects.filter(
-            Q(date_starts__lte=datetime.date.today()) & Q(date_ends__gte=datetime.date.today()) &
-            Q(time_starts__gt=timezone.now()) & Q(is_active=True)).order_by('time_starts')
-        if seances_test:
-            self.assertEqual(seances[0].time_starts, seances_test[0].time_starts)
-            if len(seances_test) > 2:
-                self.assertEqual(seances[1].time_starts, seances_test[1].time_starts)
 
 class AuthenticationTestCase(TestCase, BaseInitial):
 
