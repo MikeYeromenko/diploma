@@ -1,7 +1,5 @@
-from django.urls import path, include, re_path
-from django.views.decorators.http import require_GET
+from django.urls import path, include
 from rest_framework import routers
-from rest_framework.authtoken.views import obtain_auth_token
 
 from seance.API import resources
 
@@ -23,6 +21,5 @@ urlpatterns = [
     path('basket/cancel/', resources.BasketCancelAPIView.as_view(), name='basket-cancel'),
     path('basket/add/', resources.BasketAddAPIView.as_view(), name='basket-add'),
     path('basket/', resources.BasketAPIView.as_view(), name='basket'),
-    # path('myadmin/', include('seance.API.API_admin.urls')),
     path('', include(router.urls)),
 ]
