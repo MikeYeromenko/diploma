@@ -200,7 +200,23 @@ class GeneralModelsTestCase(TestCase, BaseInitial):
 
         self.assertFalse(seance_test.in_run)
 
-        self.assertEqual(Seance.get_active_seances_for_day(datetime.date.today()), 6)
+        self.assertEqual(Seance.get_active_seances_for_day(datetime.date.today()).count(), 6)
+
+        sb_new = SeanceBase.objects.create(
+            film=self.film_terminator,
+            hall=self.hall_yellow,
+            date_starts=datetime.date.today() + datetime.timedelta(days=1)
+        )
+
+        Seance.objects.create(
+            seance_base=sb_new,
+            time_starts=datetime.time(8),
+            description='sdfgsdfg',
+            admin=self.admin2,
+            is_active=True
+        )
+        self.assertEqual(Seance.get_active_seances_for_day(datetime.date.today() +
+                                                           datetime.timedelta(days=1)).count(), 7)
 
     def test_validate_seance_intersect(self):
         """

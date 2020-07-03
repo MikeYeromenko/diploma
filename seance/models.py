@@ -414,14 +414,6 @@ class Purchase(models.Model):
     class Meta:
         ordering = ('-created_at', )
 
-    # @property
-    # def total_price(self):
-    #     """Counts total price of purchase"""
-    #     total_price = 0
-    #     for price in self.tickets.values('price'):
-    #         total_price += price.get('price')
-    #     return total_price
-
 
 class Ticket(models.Model):
     seance = models.ForeignKey(Seance, on_delete=models.PROTECT, related_name='tickets', verbose_name=_('seance'))
