@@ -63,6 +63,8 @@ class BaseInitial:
             price=120
         )
 
+        self.purchase = Purchase.objects.get(user=self.user)
+
         self.admin2 = get_user_model().objects.create_superuser(
             username='admin2', email='admin2@somesite.com'
         )
@@ -346,5 +348,13 @@ class GeneralModelsTestCase(TestCase, BaseInitial):
         )
 
         self.assertFalse(intersections.count())
+
+    def test_purchase_model_basic(self):
+        """Tests Purchase and its manager class to work correctly"""
+        self.assertEqual(self.purchase.user, self.user)
+        self.assertFalse(self.purchase.was_returned)
+        self.assertFalse(self.purchase.returned_at)
+        self.assertEqual(self.purchase.tickets.count(), 2)
+        self.assertEqual(self.purchase.total_price, 240)
 
 

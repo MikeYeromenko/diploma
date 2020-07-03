@@ -402,8 +402,6 @@ class PurchaseManager(models.Manager):
 
 class Purchase(models.Model):
     user = models.ForeignKey(AdvUser, on_delete=models.PROTECT, related_name='purchases', verbose_name=_('user'))
-
-    # maybe it has sense to set total_price as property without saving to database
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_('instance created at'))
     was_returned = models.BooleanField(default=False, verbose_name=_('was returned?'))
     returned_at = models.DateTimeField(blank=True, null=True, verbose_name=_('returned at'))
