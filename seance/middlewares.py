@@ -3,6 +3,8 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.utils.translation import gettext_lazy as _
 
+from cinema.settings import INACTIVITY_NOT_SUPERUSER_LOGOUT_FOR as TIME_LOGOUT
+
 
 class LogoutIfInActiveMiddleware:
     def __init__(self, get_response):
@@ -16,12 +18,15 @@ class LogoutIfInActiveMiddleware:
             last_activity = request.session.get('last_activity')        # we got it in type "str"
             if last_activity:
                 last_activity = datetime.datetime.strptime(last_activity, '%Y-%m-%d %H:%M:%S.%f')
-                if last_activity > datetime.datetime.now() - datetime.timedelta(minutes=5):
+                if last_activity > datetime.datetime.now() - TIME_LOGOUT:
                     request.session['last_activity'] = str(datetime.datetime.now())
                 else:
                     logout(request)
-                    messages.add_message(request, messages.INFO, _('More than 5 minutes inactive. '
+                    messages.add_message(request, messages.INFO, _(f'More than {str(TIME_LOGOUT)} minutes inactive. '
                                                                    'Please login again'))
+            else:
+                logout(request)
+                messages.add_message(request, messages.INFO, _(f'Request does not contain last_activity, but must'))
 
         response = self.get_response(request)
 
