@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.urls import reverse_lazy
 from django.utils import timezone
 
-from seance.models import Seance, Hall, SeanceBase
+from seance.models import Seance, Hall, SeanceBase, AdvUser
 from seance.tests.test_models import BaseInitial
 
 
@@ -181,7 +181,8 @@ class BasketViewTestCase(TestCase, BaseInitial):
         self.assertEqual(response.status_code, 302)
 
         # login user
-        self.client.login(username=self.user.username, password='password1234')
+        auth_data = {'username': self.user.username, 'password': 'password1234'}
+        self.client.post('/accounts/login/', data=auth_data)
         with self.assertTemplateUsed('seance/basket.html'):
             response = self.client.get(reverse_lazy('seance:basket'))
         self.assertEqual(response.status_code, 200)
@@ -203,7 +204,11 @@ class BasketViewTestCase(TestCase, BaseInitial):
         """Test that 'basket' was added to context"""
         # seat_pk, seance_pk, seance_date, row, number
 
-        self.client.login(username='test_user', password='password1234')
+        auth_data = {'username': self.user.username, 'password': 'password1234'}
+        self.client.post('/accounts/login/', data=auth_data)
+
+        response = self.client.get(reverse_lazy('seance:index'))
+        self.assertTrue(response.context.get('user').is_authenticated)
 
         self.client.get(reverse_lazy('seance:basket-redirect'), data={
             'row': 1,
@@ -214,6 +219,8 @@ class BasketViewTestCase(TestCase, BaseInitial):
         })
 
         response = self.client.get(reverse_lazy('seance:basket'))
+
+        self.assertEqual(response.status_code, 200)
 
         self.assertIsNotNone(response.context.get('basket'))
 
