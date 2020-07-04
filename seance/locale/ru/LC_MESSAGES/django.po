@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-04 00:44+0300\n"
+"POT-Creation-Date: 2020-07-04 08:57+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,6 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
+
 #: seance/forms.py:11
 msgid "username"
 msgstr "имя пользователя"
@@ -79,9 +80,15 @@ msgstr "Когда? "
 msgid "Password"
 msgstr "Пароль"
 
-#: seance/middlewares.py:23
-msgid "More than 5 minutes inactive. Please login again"
+#: seance/middlewares.py:25
+#, fuzzy
+#| msgid "More than 5 minutes inactive. Please login again"
+msgid "More than {str(TIME_LOGOUT)} minutes inactive. Please login again"
 msgstr "Более 5 минут бездействия на сайте. Пожалуйста, залогиньтесь ещё раз"
+
+#: seance/middlewares.py:29
+msgid "Request does not contain last_activity, but must"
+msgstr "В запросе отсутствует информация о времени последней активности, но должна быть"
 
 #: seance/modal/forms.py:12
 msgid "Order by"
@@ -189,7 +196,7 @@ msgstr "кинозал"
 
 #: seance/models.py:156 seance/models.py:216
 msgid "seat category"
-msgstr ""
+msgstr "категория кресел"
 
 #: seance/models.py:157
 msgid "number of seat"
@@ -279,6 +286,53 @@ msgstr "покупка"
 msgid "was_returned?"
 msgstr "возвращена?"
 
+#: seance/templates/layout/base_navbar.html:20
+msgid "Home"
+msgstr "Главная"
+
+#: seance/templates/layout/base_navbar.html:21
+#: seance/templates/layout/base_old.html:26
+msgid "Registration"
+msgstr "Регистрация"
+
+#: seance/templates/layout/base_navbar.html:23
+#: seance/templates/registration/logged_out.html:5
+#: seance/templates/registration/logged_out.html:10
+msgid "Logout"
+msgstr "Выйти"
+
+#: seance/templates/layout/base_navbar.html:25
+msgid "Profile"
+msgstr "Профиль"
+
+#: seance/templates/layout/base_navbar.html:31
+msgid "Watch profile info"
+msgstr "Просмотр профиля"
+
+#: seance/templates/layout/base_navbar.html:32
+msgid "Change profile info"
+msgstr "Изменить профиль"
+
+#: seance/templates/layout/base_navbar.html:33
+#: seance/templates/layout/base_old.html:28
+msgid "Basket"
+msgstr "Корзина"
+
+#: seance/templates/layout/base_navbar.html:34
+#, fuzzy
+#| msgid "purchase"
+msgid "Purchases"
+msgstr "покупка"
+
+#: seance/templates/layout/base_navbar.html:42
+#: seance/templates/registration/login.html:15
+msgid "Login"
+msgstr "Войти"
+
+#: seance/templates/layout/base_navbar.html:45
+msgid "To admin page"
+msgstr "Администрирование"
+
 #: seance/templates/layout/base_old.html:21
 msgid "LogOut"
 msgstr "Выйти"
@@ -291,17 +345,9 @@ msgstr "Мои билеты"
 msgid "LogIn"
 msgstr "Войти"
 
-#: seance/templates/layout/base_old.html:26
-msgid "Registration"
-msgstr "Регистрация"
-
 #: seance/templates/layout/base_old.html:27
 msgid "Main"
 msgstr "Главная"
-
-#: seance/templates/layout/base_old.html:28
-msgid "Basket"
-msgstr "Корзина"
 
 #: seance/templates/layout/base_old.html:30
 msgid "MyAdmin"
@@ -331,11 +377,6 @@ msgstr "Удалить"
 msgid "Activate"
 msgstr "Активировать"
 
-#: seance/templates/registration/logged_out.html:5
-#: seance/templates/registration/logged_out.html:10
-msgid "Logout"
-msgstr "Выйти"
-
 #: seance/templates/registration/logged_out.html:11
 msgid "You have logged out successfully"
 msgstr "Вы успешно вышли"
@@ -343,10 +384,6 @@ msgstr "Вы успешно вышли"
 #: seance/templates/registration/login.html:6
 msgid "You have already logged in"
 msgstr "Вы уже вошли"
-
-#: seance/templates/registration/login.html:15
-msgid "Login"
-msgstr "Войти"
 
 #: seance/templates/registration/login.html:21
 msgid "Join with Google"
