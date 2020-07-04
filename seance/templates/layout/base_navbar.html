@@ -44,7 +44,7 @@
                             {% if user.is_staff %}
                                 <li><a href="{% url 'myadmin:main' %}">{% trans 'To admin page' %}</a></li>
                             {% endif %}
-                            <li><a href="">{% trans 'Contacts' %}</a></li>
+                            <li><a href="{% url 'seance:contacts' %}">{% trans 'Contacts' %}</a></li>
 
 						</ul>
 
@@ -58,7 +58,7 @@
 										</ul> <!-- cd-header-buttons -->
 									</div>
 									<div id="cd-search" class="cd-search">
-										<form action="#" method="post">
+										<form action="" method="">
 											<input name="Search" type="search" placeholder="Search...">
 										</form>
 									</div>

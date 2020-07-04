@@ -290,3 +290,7 @@ class PurchaseListView(LoginRequiredMixin, ListView):
         return context
 
 
+class ContactsView(TemplateView):
+    template_name = 'seance/contacts.html'
+
+
