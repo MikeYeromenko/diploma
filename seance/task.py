@@ -18,4 +18,4 @@ def send_tickets_with_celery(user_pk, purchase_pk):
     subject = render_to_string('email/purchase_letter_subject.txt', context)
     body_text = render_to_string('email/purchase_letter_body.txt', context)
     user.email_user(subject, body_text)
-    return None
+

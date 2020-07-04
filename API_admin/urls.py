@@ -19,6 +19,7 @@ router.register('seance', resources.SeanceViewSetMixin, basename='seance')
 
 
 urlpatterns = [
+    path('seance/params/', resources.SeanceByParamsViewSet.as_view({'get': 'list'})),
     path('seance/activate/<int:pk>/', resources.SeanceActivateView.as_view(), name='activate_seance'),
     path('hall/<int:pk>/create-seats/', resources.CreateSeatsAPIView.as_view(), name='create_seats'),
     path('swagger-docs/', schema_view),

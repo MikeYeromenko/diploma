@@ -156,3 +156,21 @@ class SeanceActivateView(UpdateAPIView):
                                                                 context={'request': request}).data
                          }, status=status.HTTP_200_OK)
 
+
+class SeanceByParamsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    serializer_class = serial.SeanceHyperSerializer
+    permission_classes = (IsAdminUser, )
+
+    def get_queryset(self):
+        queryset = Seance.objects.all()
+        hall_pk = self.request.GET.get('hall_pk')
+        starts = self.request.GET.get('starts')
+        ends = self.request.GET.get('ends')
+        if hall_pk:
+            hall = get_object_or_404(Hall, pk=hall_pk)
+            queryset = queryset.filter(seance_base__hall=hall)
+        if starts:
+            queryset = queryset.filter(time_starts__gt=starts)
+        if ends:
+            queryset = queryset.filter(time_starts__lt=ends)
+        return queryset
