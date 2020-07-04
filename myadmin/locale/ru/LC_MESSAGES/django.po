@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-04 08:57+0300\n"
+"POT-Creation-Date: 2020-07-04 09:10+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,7 +51,7 @@ msgstr "Прайсы"
 
 #: myadmin/templates/myadmin/base_navbar_admin.html:20
 msgid "Seat categories"
-msgstr "Категории кресел"
+msgstr "Кресла"
 
 #: myadmin/templates/myadmin/base_navbar_admin.html:21
 msgid "SeanceBases"

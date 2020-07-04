@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-04 08:57+0300\n"
+"POT-Creation-Date: 2020-07-04 09:11+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,7 +42,8 @@ msgstr "электронная почта"
 
 #: seance/forms.py:23
 msgid "We recommend to fill email to get tickets on it"
-msgstr "Рекомендуем указать адрес электронной почты для получения билетов на него"
+msgstr ""
+"Рекомендуем указать адрес электронной почты для получения билетов на него"
 
 #: seance/forms.py:45
 msgid "passwords mismatch"
@@ -88,7 +89,9 @@ msgstr "Более 5 минут бездействия на сайте. Пожа
 
 #: seance/middlewares.py:29
 msgid "Request does not contain last_activity, but must"
-msgstr "В запросе отсутствует информация о времени последней активности, но должна быть"
+msgstr ""
+"В запросе отсутствует информация о времени последней активности, но должна "
+"быть"
 
 #: seance/modal/forms.py:12
 msgid "Order by"
@@ -331,7 +334,11 @@ msgstr "Войти"
 
 #: seance/templates/layout/base_navbar.html:45
 msgid "To admin page"
-msgstr "Администрирование"
+msgstr "Админинка"
+
+#: seance/templates/layout/base_navbar.html:47
+msgid "Contacts"
+msgstr "Контакты"
 
 #: seance/templates/layout/base_old.html:21
 msgid "LogOut"
