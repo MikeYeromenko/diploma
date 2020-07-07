@@ -179,9 +179,10 @@ class PriceTemplateView(IsStaffRequiredMixin, TemplateView):
 
 class PriceUpdateView(IsStaffRequiredMixin, UpdateView):
     model = Price
-    fields = ('seance', 'seat_category', 'price')
+    # fields = ('seance', 'seat_category', 'price')
     template_name = 'myadmin/price/price_create_update.html'
     success_url = reverse_lazy('myadmin:price_list')
+    form_class = forms.PriceModelForm
 
 
 class PriceDeleteView(IsStaffRequiredMixin, DeleteView):
@@ -204,6 +205,7 @@ class PriceCreateView(IsStaffRequiredMixin, CreateView):
     model = Price
     success_url = reverse_lazy('myadmin:price_list')
     template_name = 'myadmin/price/price_list.html'
+    form_class = forms.PriceModelForm
 
 
 class SeanceBaseTemplateView(IsStaffRequiredMixin, TemplateView):
